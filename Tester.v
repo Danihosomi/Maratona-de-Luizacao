@@ -10,9 +10,9 @@ module Tester();
     .instruction(instruction)
   );
 
-  initial begin
-    forever clk = #( CLK_HALF_PERIOD )  ~clk;
-  end
+  // initial begin
+  //   forever clk = #(CLK_HALF_PERIOD) ~clk;
+  // end
 
   integer curr_cycle = 0;
   always @(posedge clk) begin
