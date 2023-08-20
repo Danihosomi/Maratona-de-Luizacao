@@ -14,8 +14,9 @@ module InstructionFetch(
   );
 
   InstructionMemory instructionMemory(
-    .address(pc),
-    .data(instruction)
+    .clk(clk),
+    .readAdress(pc),
+    .instruction(instruction)
   );
 
 endmodule
