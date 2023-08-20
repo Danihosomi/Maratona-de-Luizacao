@@ -7,7 +7,7 @@ run:
 	./obj_dir/VTester
 
 TARGET_ASSEMBLY_FILE?="main.asm"
-compile-firmware: 
+compile-firmware: install
 	( \
        . scripts/venv/bin/activate; \
 	   test -d temp || mkdir temp; \
@@ -16,12 +16,16 @@ compile-firmware:
     )
 
 
-install: venv
+python-dependencies-folder := scripts/venv/include
+install: $(python-dependencies-folder)
+$(python-dependencies-folder): scripts/requirements.txt scripts/venv
 	. scripts/venv/bin/activate && pip install -r scripts/requirements.txt
 
-venv:
+scripts/venv: 
 	test -d scripts/venv || python3 -m venv scripts/venv
 
 clean:
 	rm -rf scripts/venv
 	rm -rf temp
+
+.PHONY: install clean compile-firmware
