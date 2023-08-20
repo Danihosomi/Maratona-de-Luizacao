@@ -13,8 +13,7 @@ module InstructionFetch(
     .currentAddress(pc)
   );
 
-  ROM instructionMemory(
-    .clk(clk),
+  InstructionMemory instructionMemory(
     .address(pc),
     .data(instruction)
   );
