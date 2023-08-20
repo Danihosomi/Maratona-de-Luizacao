@@ -1,10 +1,9 @@
 module ROM (
-  input clk,
   input [31:0] address,
   output reg [31:0] data
 );
 
-  always @(posedge clk) begin
+  always @(*) begin
     case(address[9:2]) 
       0: data <= 32'h00000000;
       1: data <= 32'h00000001;
