@@ -1,4 +1,5 @@
 module Memory (
+  input clk,
   input [31:0] address,
   input readWrite,
   reg [31:0] data
@@ -8,11 +9,12 @@ module Memory (
   reg [31:0] romData;
 
   ROM MemoryROM(
+    .clk(clk),
     .address(address),
     .data(romData)
   );
 
-  always @(*) begin
+  always @(posedge clk) begin
     // ROM
     if (readWrite == 0 && adress[10] == 0) begin
       data <= romData;
