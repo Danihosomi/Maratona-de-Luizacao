@@ -33,4 +33,37 @@ module CPU(
   wire [31:0] exLHSRegisterValue;
   wire [31:0] exRHSRegisterValue;
 
+  // TODO: Execution stage
+
+  // TODO Ex/Mem barrier
+
+  // TODO Mem Stage
+
+  MEM_WB_Barrier mem_wb_barrier(
+    .clk(clk),
+    .memMemoryData(1),
+    .memExecutionData(1),
+    .memShouldUseMemoryData(0),
+    .memIsRegisterWrite(0),
+    .wbMemoryData(wbMemoryData),
+    .wbExecutionData(wbExecutionData),
+    .wbShouldUseMemoryData(wbShouldUseMemoryData),
+    .wbIsRegisterWrite(wbIsRegisterWrite)
+  );
+
+  wire [31:0] wbMemoryData;
+  wire [31:0] wbExecutionData;
+  wire wbShouldUseMemoryData;
+  wire wbDataToWrite;
+  wire wbIsRegisterWrite;
+
+  WriteBackStage writeBackStage(
+    .memoryData(wbMemoryData),
+    .executionData(wbExecutionData),
+    .shouldUseMemoryData(wbShouldUseMemoryData),
+    .dataToWrite(writeBackData)
+  );
+
+  wire [31:0] writeBackData;
+
 endmodule
