@@ -1,7 +1,7 @@
 module ProgramCounter(
-    input clk,
-    input [31:0]nextAddress,
-    output [31:0]currentAddress
+  input clk,
+  input [31:0]nextAddress,
+  output [31:0]currentAddress
 );
   reg [31:0] tempAddress;
   

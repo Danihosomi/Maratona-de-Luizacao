@@ -1,0 +1,4 @@
+bronzebeard==0.2.1
+intelhex==2.3.0
+pyserial==3.5
+pyusb==1.2.1

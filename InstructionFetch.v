@@ -5,7 +5,7 @@ module InstructionFetch(
   wire [31:0] pc;
   wire [31:0] nextPc;
 
-  assign nextPc = pc + 1;
+  assign nextPc = pc + 4;
 
   ProgramCounter programCounter(
     .clk(clk),
@@ -13,9 +13,10 @@ module InstructionFetch(
     .currentAddress(pc)
   );
 
-  InstructionMemoryAccess instructionMemory(
-    .MemoryAddress(pc),
-    .Instruction32b(instruction)
+  InstructionMemory instructionMemory(
+    .clk(clk),
+    .readAdress(pc),
+    .instruction(instruction)
   );
 
 endmodule
