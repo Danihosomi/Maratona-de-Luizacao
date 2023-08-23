@@ -7,12 +7,23 @@ module ALUControl (
 
         always @* begin
             case (ALUOp)
-                2'b00: result = 4'b0010; // Example operation for addition
-                2'b01: result = 4'b0110;                   // Example operation for bitwise AND, OR, etc.
-                2'b11: result = 4'b0110;                 // Example operation for no operation
-                2'b10: result = func3[0] ? 4'b0000 : (func3[1] ? 4'b0001 : 4'b0010); // Example operation for subtraction
-                default: result = 4'b0010;               // Default case
+                2'b00: result = 4'b0010; 
+                2'b01: result = 4'b0110;                   
+                2'b11: result = 4'b0110;               
+                2'b10: 
+                    case (func3)
+                        3'b000: result = func7 ? 4'b0110 : 4'b0010;
+                        3'b110: result = 4'b0001;
+                        3'b111: result = 4'b0000;
+                        default: result = 4'b0010;
+                    endcase
+                default: result = 4'b0010;
             endcase
         end
 
 endmodule
+
+// 0000 AND
+// 0001 OR
+// 0010 ADD
+// 0110 SUB

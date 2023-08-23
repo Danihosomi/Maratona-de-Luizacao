@@ -19,6 +19,17 @@ module Tester();
   //   .result(resultALUControl)
   // );
 
+  // wire [31:0] resultALU;
+  // wire zero;
+
+  // ALU alu(
+  //   .ALUControl(resultALUControl),
+  //   .operand1(32'h00000011),
+  //   .operand2(32'h0000000A),
+  //   .resultALU(resultALU),
+  //   .zero(zero)
+  // );
+
   initial begin
     clk = #(CLK_HALF_PERIOD) ~clk;
   end
