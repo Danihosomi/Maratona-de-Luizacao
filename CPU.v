@@ -16,11 +16,26 @@ module CPU(
     .writeBackData(writeBackData),
     .shouldWriteToRegister(wbIsRegisterWrite),
     .LHSRegisterValue(idLHSRegisterValue),
-    .RHSRegisterValue(idRHSRegisterValue)
+    .RHSRegisterValue(idRHSRegisterValue),
+    .branch(branch),
+    .MemRead(MemRead),
+    .MemtoReg(MemtoReg),
+    .ALUOp(ALUOp),
+    .MemWrite(MemWrite),
+    .ALUSrc(ALUSrc),
+    .RegWrite(RegWrite)
   );
 
   wire [31:0] idLHSRegisterValue;
   wire [31:0] idRHSRegisterValue;
+
+  wire branch;
+  wire MemRead;
+  wire MemtoReg;
+  wire ALUOp;
+  wire MemWrite;
+  wire ALUSrc;
+  wire RegWrite;
 
   ID_EX_Barrier id_ex_barrier(
     .clk(clk),

@@ -4,8 +4,26 @@ module InstructionDecodeStage(
   input [31:0] writeBackData,
   input shouldWriteToRegister,
   output [31:0] LHSRegisterValue,
-  output [31:0] RHSRegisterValue
-);  
+  output [31:0] RHSRegisterValue,
+  output branch,
+  output MemRead,
+  output MemtoReg,
+  output ALUOp,
+  output MemWrite,
+  output ALUSrc,
+  output RegWrite
+);
+
+  Control control(
+    instruction,
+    branch,
+    MemRead,
+    MemtoReg,
+    ALUOp,
+    MemWrite,
+    ALUSrc,
+    RegWrite
+  );
 
   RegisterFile registerFile(
     .clk(clk),
