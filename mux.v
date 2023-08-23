@@ -6,7 +6,7 @@ module MUX(
 );
 
 always @(*) begin
-    case (sel)
+    case (dataSelector)
         0: outputData = firstData;
         1: outputData = secondData;
     endcase
