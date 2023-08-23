@@ -10,17 +10,26 @@ module Tester();
   //   .instruction(instruction)
   // );
 
+  //wire [3:0] resultALUControl;
+
+  // ALUControl aluControl(
+  //   .ALUOp(2'b10),
+  //   .func3(3'b110),
+  //   .func7(1'b0),
+  //   .result(resultALUControl)
+  // );
+
   initial begin
     clk = #(CLK_HALF_PERIOD) ~clk;
   end
 
   // integer curr_cycle = 0;
   // always @(posedge clk) begin
-  //   if (curr_cycle != MAX_CYCLES) begin
-  //     if (instruction != 0) begin
-  //       $display(instruction);
-  //     end
-  //     curr_cycle++;
-  //   end
+    //   if (curr_cycle != MAX_CYCLES) begin
+      //     if (instruction != 0) begin
+        //       $display(instruction);
+      //     end
+      //     curr_cycle++;
+    //   end
   // end
 endmodule
