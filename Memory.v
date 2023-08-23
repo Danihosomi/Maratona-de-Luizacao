@@ -2,13 +2,13 @@ module Memory (
   input clk,
   input [31:0] address,
   input readWrite,
-  reg [31:0] data
+  output [31:0] data
 );
 
   reg [31:0] ram [255:0];
   reg [31:0] romData;
 
-  ROM MemoryROM(
+  ROMMemory MemoryROM(
     .clk(clk),
     .address(address),
     .data(romData)

@@ -4,7 +4,7 @@ module InstructionMemory (
     output [31:0] instruction
 );
 
-    ROM instructionMemoryROM(
+    ROMMemory instructionMemoryROM(
         .clk(clk),
         .address(readAdress),
         .data(instruction)

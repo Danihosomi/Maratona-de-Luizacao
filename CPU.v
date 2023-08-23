@@ -3,12 +3,12 @@ module CPU(
 );
   wire [31:0] instruction;
   wire branch;
-  wire MemRead;
-  wire MemtoReg;
-  wire ALUOp;
-  wire MemWrite;
-  wire ALUSrc;
-  wire RegWrite;
+  wire memRead;
+  wire memToReg;
+  wire aluOp;
+  wire memWrite;
+  wire aluSrc;
+  wire regWrite;
 
   InstructionFetch instructionFetch(
     .clk(clk),
@@ -18,12 +18,12 @@ module CPU(
   Control control(
     instruction,
     branch,
-    MemRead,
-    MemtoReg,
-    ALUOp,
-    MemWrite,
-    ALUSrc,
-    RegWrite
+    memRead,
+    memToReg,
+    aluOp,
+    memWrite,
+    aluSrc,
+    regWrite
   );
 
 endmodule
