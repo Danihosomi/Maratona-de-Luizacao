@@ -3,3 +3,4 @@ obj_dir/**
 *.fs
 scripts/venv/*
 temp/*
+output/*
