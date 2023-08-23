@@ -6,6 +6,20 @@ build: *.v
 run:
 	./obj_dir/VTester
 
+.PHONY: test
+test: ./output/V$(T).vcd
+
+./output/V%.vcd: ./obj_dir/V%
+	test -d output || mkdir output;
+	cd output; ../$<
+
+./obj_dir/V%: %.v tests/%_TestBench.cpp
+	verilator -Wall --trace --build -cc $< --exe $(word 2, $^)
+
+./obj_dir/V%: %.v
+	verilator -Wall --trace -cc $<
+
+
 TARGET_ASSEMBLY_FILE?="main.asm"
 compile-firmware: install
 	( \
@@ -27,5 +41,7 @@ scripts/venv:
 clean:
 	rm -rf scripts/venv
 	rm -rf temp
+	rm -rf obj_dir
+	rm -rf output
 
 .PHONY: install clean compile-firmware
