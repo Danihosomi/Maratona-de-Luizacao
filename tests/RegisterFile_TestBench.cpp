@@ -62,6 +62,8 @@ void testReadAfterWrite() {
 
 void testZeroRegister() {
     VRegisterFile *dut = new VRegisterFile;
+    dut->clk ^= 1; dut->eval();
+    dut->clk ^= 1; dut->eval();
 
     std::cout << std::endl << "##### If we try to store anything in the zero register #####" << std::endl;
     dut->source1RegisterIndex = 0;
