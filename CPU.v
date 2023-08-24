@@ -129,12 +129,8 @@ module CPU(
   wire wbMemToReg;
   wire wbRegWrite;
 
-  WriteBackStage writeBackStage(
-    .memoryData(wbMemoryData),
-    .executionData(wbExecutionData),
-    .shouldUseMemoryData(wbMemToReg),
-    .dataToWrite(writeBackData)
-  );
+  // WriteBack mux
+  assign writeBackData = (wbMemToReg) ? wbMemoryData : wbExecutionData;
 
   wire [31:0] writeBackData;
 
