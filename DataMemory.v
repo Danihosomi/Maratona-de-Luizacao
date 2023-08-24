@@ -4,7 +4,7 @@ module DataMemory (
   input memRead,
   input [31:0] address,
   input [31:0] writeData,
-  output [31:0] readData
+  output reg [31:0] readData
 );
 
   reg [31:0] ramData;
