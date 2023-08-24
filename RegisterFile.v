@@ -10,10 +10,8 @@ module RegisterFile(
 );
   reg [31:0] registers [32];
 
-  assign registers[0] = 0;
-
-  assign source1RegisterData = registers[source1RegisterIndex];
-  assign source2RegisterData = registers[source2RegisterIndex];
+  assign source1RegisterData = (source1RegisterIndex == 0) ? 0 : registers[source1RegisterIndex];
+  assign source2RegisterData = (source2RegisterIndex == 0) ? 0 : registers[source2RegisterIndex];
 
   // Writing at the rising edge solves the structural hazard of reading and writing at the same clock
   always @(posedge clk) begin
