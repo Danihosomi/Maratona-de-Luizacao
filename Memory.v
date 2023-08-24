@@ -2,7 +2,8 @@ module Memory (
   input clk,
   input [31:0] address,
   input readWrite,
-  output [31:0] data
+  input [31:0] dataIn,
+  output [31:0] dataOut
 );
 
   reg [31:0] ramData;
@@ -18,8 +19,8 @@ module Memory (
     .clk(clk),
     .writeEnable(readWrite & address[10]),
     .address(address),
-    .data_in(ramData),
-    .data_out(ramData)
+    .dataIn(dataIn),
+    .dataOut(ramData)
   );
 
   always @(posedge clk) begin
@@ -30,10 +31,7 @@ module Memory (
 
     if (adress[10] == 1) begin
       if (readWrite == 0) begin
-        data <= ramData;
-      end
-      else begin
-        ramData <= data;
+        dataOut <= ramData;
       end
     end
   end

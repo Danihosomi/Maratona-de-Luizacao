@@ -12,8 +12,8 @@ module DataMemory (
     .clk(clk),
     .writeEnable(memWrite),
     .address(address),
-    .data_in(writeData),
-    .data_out(ramData)
+    .dataIn(writeData),
+    .dataOut(ramData)
   );
 
   // Change on clock to avoid reading and writing at same time
