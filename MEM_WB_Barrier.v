@@ -5,29 +5,18 @@ module MEM_WB_Barrier(
   input [4:0] memWriteRegisterIndex,  
   input memMemToReg,
   input memRegWrite,
-  output [31:0] wbMemoryData,
-  output [31:0] wbExecutionData,
-  output [4:0] wbWriteRegisterIndex,
-  output wbMemToReg,
-  output wbRegWrite
+  output reg [31:0] wbMemoryData,
+  output reg [31:0] wbExecutionData,
+  output reg [4:0] wbWriteRegisterIndex,
+  output reg wbMemToReg,
+  output reg wbRegWrite
 );
-  reg [31:0] regMemoryData;
-  reg [31:0] regExecutionData;
-  reg [4:0] regWriteRegisterIndex;
-  reg regMemToReg;
-  reg regRegWrite;
-
-  assign wbMemoryData = regMemoryData;
-  assign wbExecutionData = regExecutionData;
-  assign wbWriteRegisterIndex = regWriteRegisterIndex;
-  assign wbMemToReg = regMemToReg;
-  assign wbRegWrite = regRegWrite;
 
   always @(posedge clk) begin
-    regMemoryData <= memMemoryData;
-    regExecutionData <= memExecutionData;
-    regWriteRegisterIndex <= memWriteRegisterIndex;
-    regMemToReg <= memMemToReg;
-    regRegWrite <= memRegWrite;
+    wbMemoryData <= memMemoryData;
+    wbExecutionData <= memExecutionData;
+    wbWriteRegisterIndex <= memWriteRegisterIndex;
+    wbMemToReg <= memMemToReg;
+    wbRegWrite <= memRegWrite;
   end
 endmodule

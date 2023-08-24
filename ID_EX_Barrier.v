@@ -8,43 +8,25 @@ module ID_EX_Barrier(
   input idMemWrite,
   input idMemToReg,
   input idRegWrite,
-  output [31:0] exLHSRegisterValue,
-  output [31:0] exRHSRegisterValue,
-  output [4:0] exWriteRegisterIndex,
-  output exAluOp,
-  output exAluSrc,
-  output exMemWrite,
-  output exMemToReg,
-  output exRegWrite
+  output reg [31:0] exLHSRegisterValue,
+  output reg [31:0] exRHSRegisterValue,
+  output reg [4:0] exWriteRegisterIndex,
+  output reg exAluOp,
+  output reg exAluSrc,
+  output reg exMemWrite,
+  output reg exMemToReg,
+  output reg exRegWrite
 );
 
-  reg [31:0] regLHSRegisterValue;
-  reg [31:0] regRHSRegisterValue;
-  reg [4:0] regWriteRegisterIndex;
-  reg regAluOp;
-  reg regAluSrc;
-  reg regMemWrite;
-  reg regMemToReg;
-  reg regRegWrite;
-
-  assign exLHSRegisterValue = regLHSRegisterValue;
-  assign exRHSRegisterValue = regRHSRegisterValue;
-  assign exWriteRegisterIndex = regWriteRegisterIndex;
-  assign exAluOp = regAluOp;
-  assign exAluSrc = regAluSrc;
-  assign exMemWrite = regMemWrite;
-  assign exMemToReg = regMemToReg;
-  assign exRegWrite = regRegWrite;
-
   always @(posedge clk) begin
-    regLHSRegisterValue <= idLHSRegisterValue;
-    regRHSRegisterValue <= idRHSRegisterValue;
-    regWriteRegisterIndex <= idWriteRegisterIndex;
-    regAluOp <= idAluOp;
-    regAluSrc <= idAluSrc;
-    regMemWrite <= idMemWrite;
-    regMemToReg <= idMemToReg;
-    regRegWrite <= idRegWrite;
+    exLHSRegisterValue <= idLHSRegisterValue;
+    exRHSRegisterValue <= idRHSRegisterValue;
+    exWriteRegisterIndex <= idWriteRegisterIndex;
+    exAluOp <= idAluOp;
+    exAluSrc <= idAluSrc;
+    exMemWrite <= idMemWrite;
+    exMemToReg <= idMemToReg;
+    exRegWrite <= idRegWrite;
   end
 
 endmodule
