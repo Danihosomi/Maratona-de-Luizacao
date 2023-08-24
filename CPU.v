@@ -41,7 +41,7 @@ module CPU(
   wire branch;
   wire aluOp;
   wire aluSrc;
-  wire memRead; // TODO: This must be forwarded
+  wire memRead;
   wire memWrite;
   wire memToReg;
   wire regWrite;
@@ -148,12 +148,14 @@ module CPU(
   wire memMemToReg;
   wire memRegWrite;
 
-  // Memory memory(
-  //   .clk(clk),
-  //   .address(memAluResult), // The address come from the ALU
-  //   .readWrite(memMemWrite), // TODO: the design actually uses 2 flags, as it is possible that it is neither read nor write
-  //   .data(memMemoryData)
-  // );
+  DataMemory dataMemory(
+    .clk(clk),
+    .memWrite(memMemWrite),
+    .memRead(0), // TODO: add Memory read to the pipeline
+    .address(memAluResult),
+    .writeData(memMemoryWriteData),
+    .readData(memMemoryData)
+  );
 
   wire [31:0] memMemoryData;
 
