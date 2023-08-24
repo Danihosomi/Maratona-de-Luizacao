@@ -1,9 +1,12 @@
 module Tester();
   parameter CLK_HALF_PERIOD = 5;
-  // parameter MAX_CYCLES = 1000; // Stores the number of clock cycles we want to test
+  parameter MAX_CYCLES = 10; // Stores the number of clock cycles we want to test
   
   reg clk;
+  wire [31:0] debug;
   // wire [31:0] instruction;
+
+  CPU cpu(clk, debug);
 
   // InstructionFetch instructionFetch(
   //   .clk(clk),
@@ -30,17 +33,17 @@ module Tester();
   //   .zero(zero)
   // );
 
-  initial begin
-    clk = #(CLK_HALF_PERIOD) ~clk;
-  end
 
-  // integer curr_cycle = 0;
-  // always @(posedge clk) begin
-    //   if (curr_cycle != MAX_CYCLES) begin
-      //     if (instruction != 0) begin
-        //       $display(instruction);
-      //     end
-      //     curr_cycle++;
-    //   end
+  // --------- UNCOMMENT THIS FOR TESTING ---------
+  // initial begin
+  //   forever clk = #(CLK_HALF_PERIOD) ~clk;
   // end
+
+  integer curr_cycle = 0;
+  always @(posedge clk) begin
+      if (curr_cycle != MAX_CYCLES) begin
+          $display(debug);
+          curr_cycle++;
+      end
+  end
 endmodule

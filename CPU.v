@@ -1,6 +1,9 @@
 module CPU(
-  input clk
+  input clk,
+  output [31:0] debug
 );
+  assign debug = instruction;
+
   wire [31:0] instruction;
 
   InstructionFetch instructionFetch(
