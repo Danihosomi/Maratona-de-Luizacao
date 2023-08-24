@@ -14,7 +14,7 @@ module CPU(
     .clk(clk),
     .source1RegisterIndex(instruction[19:15]),
     .source2RegisterIndex(instruction[24:20]),
-    .writeRegisterIndex(instruction[11:7]),
+    .writeRegisterIndex(wbWriteRegisterIndex),
     .writeRegisterData(writeBackData),
     .shouldWrite(wbRegWrite),
     .source1RegisterData(idLHSRegisterValue),
@@ -47,6 +47,7 @@ module CPU(
     .clk(clk),
     .idLHSRegisterValue(idLHSRegisterValue),
     .idRHSRegisterValue(idRHSRegisterValue),
+    .idWriteRegisterIndex(instruction[11:7]),
     .idAluOp(aluOp),
     .idAluSrc(aluSrc),
     .idMemWrite(memWrite),
@@ -54,6 +55,7 @@ module CPU(
     .idRegWrite(regWrite),
     .exLHSRegisterValue(exLHSRegisterValue),
     .exRHSRegisterValue(exRHSRegisterValue),
+    .exWriteRegisterIndex(exWriteRegisterIndex),
     .exAluOp(exAluOp),
     .exAluSrc(exAluSrc),
     .exMemWrite(exMemWrite),
@@ -63,6 +65,7 @@ module CPU(
 
   wire [31:0] exLHSRegisterValue;
   wire [31:0] exRHSRegisterValue;
+  wire [4:0] exWriteRegisterIndex;
   wire exAluOp;
   wire exAluSrc;
   wire exMemWrite;
@@ -74,12 +77,14 @@ module CPU(
   EX_MEM_Barrier ex_mem_barrier(
     .clk(clk),
     .exAluResult(1),
-    .exMemoryWriteData(1),
+    .exMemoryWriteData(exLHSRegisterValue),
+    .exWriteRegisterIndex(exWriteRegisterIndex),
     .exMemWrite(exMemWrite),
     .exMemToReg(exMemToReg),
     .exRegWrite(exRegWrite),
     .memAluResult(memAluResult),
     .memMemoryWriteData(memMemoryWriteData),
+    .memWriteRegisterIndex(memWriteRegisterIndex),
     .memMemWrite(memMemWrite),
     .memMemToReg(memMemToReg),
     .memRegWrite(memRegWrite)
@@ -87,6 +92,7 @@ module CPU(
 
   wire [31:0] memAluResult;
   wire [31:0] memMemoryWriteData;
+  wire [4:0] memWriteRegisterIndex;
   wire memMemWrite;
   wire memMemToReg;
   wire memRegWrite;
@@ -104,16 +110,19 @@ module CPU(
     .clk(clk),
     .memMemoryData(memMemoryData),
     .memExecutionData(memAluResult),
+    .memWriteRegisterIndex(memWriteRegisterIndex),
     .memMemToReg(memMemToReg),
     .memRegWrite(memRegWrite),
     .wbMemoryData(wbMemoryData),
     .wbExecutionData(wbExecutionData),
+    .wbWriteRegisterIndex(wbWriteRegisterIndex),
     .wbMemToReg(wbMemToReg),
     .wbRegWrite(wbRegWrite)
   );
 
   wire [31:0] wbMemoryData;
   wire [31:0] wbExecutionData;
+  wire [4:0] wbWriteRegisterIndex;
   wire wbMemToReg;
   wire wbRegWrite;
 
