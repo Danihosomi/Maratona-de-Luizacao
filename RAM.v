@@ -2,18 +2,18 @@ module RAM(
     input clk,
     input writeEnable,
     input [31:0] address,
-    input [31:0] data_in,
-    output [31:0] data_out
+    input [31:0] dataIn,
+    output [31:0] dataOut
 );
 
     reg [31:0] memory [255:0];
 
     always @(posedge clk) begin
         if (writeEnable) begin
-            memory[address[9:2]] <= data_in;
+            memory[address[9:2]] <= dataIn;
         end
     end
 
-    assign data_out = memory[address[9:2]];
+    assign dataOut = memory[address[9:2]];
 endmodule
 
