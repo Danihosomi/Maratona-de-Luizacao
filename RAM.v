@@ -16,4 +16,3 @@ module RAM(
 
     assign dataOut = memory[address[9:2]];
 endmodule
-
