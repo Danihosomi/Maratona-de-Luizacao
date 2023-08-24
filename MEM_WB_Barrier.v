@@ -2,27 +2,27 @@ module MEM_WB_Barrier(
   input clk,
   input [31:0] memMemoryData,
   input [31:0] memExecutionData,
-  input memShouldUseMemoryData,
-  input memIsRegisterWrite,
+  input memMemToReg,
+  input memRegWrite,
   output [31:0] wbMemoryData,
   output [31:0] wbExecutionData,
-  output wbShouldUseMemoryData,
-  output wbIsRegisterWrite
+  output wbMemToReg,
+  output wbRegWrite
 );
   reg [31:0] regMemoryData;
   reg [31:0] regExecutionData;
-  reg regShouldUseMemoryData;
-  reg regIsRegisterWrite;
+  reg regMemToReg;
+  reg regRegWrite;
 
   assign wbMemoryData = regMemoryData;
   assign wbExecutionData = regExecutionData;
-  assign wbShouldUseMemoryData = regShouldUseMemoryData;
-  assign wbIsRegisterWrite = regIsRegisterWrite;
+  assign wbMemToReg = regMemToReg;
+  assign wbRegWrite = regRegWrite;
 
   always @(posedge clk) begin
     regMemoryData <= memMemoryData;
     regExecutionData <= memExecutionData;
-    regShouldUseMemoryData <= memShouldUseMemoryData;
-    regIsRegisterWrite <= memIsRegisterWrite;
+    regMemToReg <= memMemToReg;
+    regRegWrite <= memRegWrite;
   end
 endmodule

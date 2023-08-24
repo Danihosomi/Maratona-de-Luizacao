@@ -14,7 +14,7 @@ module CPU(
     .clk(clk),
     .instruction(instruction),
     .writeBackData(writeBackData),
-    .shouldWriteToRegister(wbIsRegisterWrite),
+    .shouldWriteToRegister(wbRegWrite),
     .LHSRegisterValue(idLHSRegisterValue),
     .RHSRegisterValue(idRHSRegisterValue),
     .branch(branch),
@@ -52,21 +52,21 @@ module CPU(
     .clk(clk),
     .idLHSRegisterValue(idLHSRegisterValue),
     .idRHSRegisterValue(idRHSRegisterValue),
-    .idIsMemoryWrite(memWrite),
-    .idShouldUseMemoryData(memToReg),
-    .idIsRegisterWrite(regWrite),
+    .idMemWrite(memWrite),
+    .idMemToReg(memToReg),
+    .idRegWrite(regWrite),
     .exLHSRegisterValue(exLHSRegisterValue),
     .exRHSRegisterValue(exRHSRegisterValue),
-    .exIsMemoryWrite(exIsMemoryWrite),
-    .exShouldUseMemoryData(exShouldUseMemoryData),
-    .exIsRegisterWrite(exIsRegisterWrite)
+    .exMemWrite(exMemWrite),
+    .exMemToReg(exMemToReg),
+    .exRegWrite(exRegWrite)
   );
 
   wire [31:0] exLHSRegisterValue;
   wire [31:0] exRHSRegisterValue;
-  wire exIsMemoryWrite;
-  wire exShouldUseMemoryData;
-  wire exIsRegisterWrite;
+  wire exMemWrite;
+  wire exMemToReg;
+  wire exRegWrite;
 
   // TODO: Execution stage
 
@@ -74,26 +74,26 @@ module CPU(
     .clk(clk),
     .exAluResult(1),
     .exMemoryWriteData(1),
-    .exIsMemoryWrite(exIsMemoryWrite),
-    .exShouldUseMemoryData(exShouldUseMemoryData),
-    .exIsRegisterWrite(exIsRegisterWrite),
+    .exMemWrite(exMemWrite),
+    .exMemToReg(exMemToReg),
+    .exRegWrite(exRegWrite),
     .memAluResult(memAluResult),
     .memMemoryWriteData(memMemoryWriteData),
-    .memIsMemoryWrite(memIsMemoryWrite),
-    .memShouldUseMemoryData(memShouldUseMemoryData),
-    .memIsRegisterWrite(memIsRegisterWrite)
+    .memMemWrite(memMemWrite),
+    .memMemToReg(memMemToReg),
+    .memRegWrite(memRegWrite)
   );
 
   wire [31:0] memAluResult;
   wire [31:0] memMemoryWriteData;
-  wire memIsMemoryWrite;
-  wire memShouldUseMemoryData;
-  wire memIsRegisterWrite;
+  wire memMemWrite;
+  wire memMemToReg;
+  wire memRegWrite;
 
   // Memory memory(
   //   .clk(clk),
   //   .address(memAluResult), // The address come from the ALU
-  //   .readWrite(memIsMemoryWrite), // TODO: the design actually uses 2 flags, as it is possible that it is neither read nor write
+  //   .readWrite(memMemWrite), // TODO: the design actually uses 2 flags, as it is possible that it is neither read nor write
   //   .data(memMemoryData)
   // );
 
@@ -103,23 +103,23 @@ module CPU(
     .clk(clk),
     .memMemoryData(memMemoryData),
     .memExecutionData(memAluResult),
-    .memShouldUseMemoryData(memShouldUseMemoryData),
-    .memIsRegisterWrite(memIsRegisterWrite),
+    .memMemToReg(memMemToReg),
+    .memRegWrite(memRegWrite),
     .wbMemoryData(wbMemoryData),
     .wbExecutionData(wbExecutionData),
-    .wbShouldUseMemoryData(wbShouldUseMemoryData),
-    .wbIsRegisterWrite(wbIsRegisterWrite)
+    .wbMemToReg(wbMemToReg),
+    .wbRegWrite(wbRegWrite)
   );
 
   wire [31:0] wbMemoryData;
   wire [31:0] wbExecutionData;
-  wire wbShouldUseMemoryData;
-  wire wbIsRegisterWrite;
+  wire wbMemToReg;
+  wire wbRegWrite;
 
   WriteBackStage writeBackStage(
     .memoryData(wbMemoryData),
     .executionData(wbExecutionData),
-    .shouldUseMemoryData(wbShouldUseMemoryData),
+    .shouldUseMemoryData(wbMemToReg),
     .dataToWrite(writeBackData)
   );
 
