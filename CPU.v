@@ -46,6 +46,8 @@ module CPU(
   wire memToReg;
   wire regWrite;
 
+  // TODO: Immediate generation
+
   ID_EX_Barrier id_ex_barrier(
     .clk(clk),
     .idLHSRegisterValue(idLHSRegisterValue),
@@ -53,6 +55,7 @@ module CPU(
     .idLHSRegisterIndex(instruction[19:15]),
     .idRHSRegisterIndex(instruction[24:20]),
     .idWriteRegisterIndex(instruction[11:7]),
+    .idImmediateValue(1),
     .idAluOp(aluOp),
     .idAluSrc(aluSrc),
     .idMemWrite(memWrite),
@@ -63,6 +66,7 @@ module CPU(
     .exLHSRegisterIndex(exLHSRegisterIndex),
     .exRHSRegisterIndex(exRHSRegisterIndex),
     .exWriteRegisterIndex(exWriteRegisterIndex),
+    .exImmediateValue(exImmediateValue),
     .exAluOp(exAluOp),
     .exAluSrc(exAluSrc),
     .exMemWrite(exMemWrite),
@@ -75,12 +79,17 @@ module CPU(
   wire [4:0] exLHSRegisterIndex;
   wire [4:0] exRHSRegisterIndex;
   wire [4:0] exWriteRegisterIndex;
+  wire [31:0] exImmediateValue;
   wire exAluOp;
   wire exAluSrc;
   wire exMemWrite;
   wire exMemToReg;
   wire exRegWrite;
 
+  wire [31:0] exRHSInput;
+  assign exRHSInput = (exAluSrc) ? exImmediateValue : exRHSRegisterValue;
+
+  // Hazard handling
   ForwardingUnit lhsForwardingUnit(
     .executeStageReadRegisterIndex(exLHSRegisterIndex),
     .memoryStageWriteRegisterIndex(memWriteRegisterIndex),
@@ -106,10 +115,14 @@ module CPU(
   // 00 -> exLHSRegisterValue
   // 01 -> writeBackData
   // 10 -> memAluResult
-  // Same for the rhs but the 00 should be the result from the alusrc mux instead
+
+  // TODO: Mux for alu input on rhsAluInputSelect
+  // 00 -> exRHSInput
+  // 01 -> writeBackData
+  // 10 -> memAluResult
 
 
-  // TODO: Rest of execution stage
+  // TODO: ALU control and ALU
 
 
   EX_MEM_Barrier ex_mem_barrier(
