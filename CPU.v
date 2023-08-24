@@ -8,25 +8,6 @@ module CPU(
     .instruction(instruction)
   );
 
-  wire branch;
-  wire memRead;
-  wire memToReg;
-  wire aluOp;
-  wire memWrite;
-  wire aluSrc;
-  wire regWrite;
-
-  Control control(
-    instruction,
-    branch,
-    memRead,
-    memToReg,
-    aluOp,
-    memWrite,
-    aluSrc,
-    regWrite
-  );
-
   // TODO If/Id barrier
 
   InstructionDecodeStage instructionDecodeStage(
@@ -48,29 +29,82 @@ module CPU(
   wire [31:0] idLHSRegisterValue;
   wire [31:0] idRHSRegisterValue;
 
+  // Control control(
+  //   instruction,
+  //   branch,
+  //   memRead,
+  //   memToReg,
+  //   aluOp,
+  //   memWrite,
+  //   aluSrc,
+  //   regWrite
+  // );
+
+  wire branch;
+  wire memRead;
+  wire memToReg;
+  wire aluOp;
+  wire memWrite;
+  wire aluSrc;
+  wire regWrite;
+
   ID_EX_Barrier id_ex_barrier(
     .clk(clk),
     .idLHSRegisterValue(idLHSRegisterValue),
     .idRHSRegisterValue(idRHSRegisterValue),
+    .idIsMemoryWrite(memWrite),
+    .idShouldUseMemoryData(memToReg),
+    .idIsRegisterWrite(regWrite),
     .exLHSRegisterValue(exLHSRegisterValue),
-    .exRHSRegisterValue(exRHSRegisterValue)
+    .exRHSRegisterValue(exRHSRegisterValue),
+    .exIsMemoryWrite(exIsMemoryWrite),
+    .exShouldUseMemoryData(exShouldUseMemoryData),
+    .exIsRegisterWrite(exIsRegisterWrite)
   );
 
   wire [31:0] exLHSRegisterValue;
   wire [31:0] exRHSRegisterValue;
+  wire exIsMemoryWrite;
+  wire exShouldUseMemoryData;
+  wire exIsRegisterWrite;
 
   // TODO: Execution stage
 
-  // TODO Ex/Mem barrier
+  EX_MEM_Barrier ex_mem_barrier(
+    .clk(clk),
+    .exAluResult(1),
+    .exMemoryWriteData(1),
+    .exIsMemoryWrite(exIsMemoryWrite),
+    .exShouldUseMemoryData(exShouldUseMemoryData),
+    .exIsRegisterWrite(exIsRegisterWrite),
+    .memAluResult(memAluResult),
+    .memMemoryWriteData(memMemoryWriteData),
+    .memIsMemoryWrite(memIsMemoryWrite),
+    .memShouldUseMemoryData(memShouldUseMemoryData),
+    .memIsRegisterWrite(memIsRegisterWrite)
+  );
 
-  // TODO Mem Stage
+  wire [31:0] memAluResult;
+  wire [31:0] memMemoryWriteData;
+  wire memIsMemoryWrite;
+  wire memShouldUseMemoryData;
+  wire memIsRegisterWrite;
+
+  // Memory memory(
+  //   .clk(clk),
+  //   .address(memAluResult), // The address come from the ALU
+  //   .readWrite(memIsMemoryWrite), // TODO: the design actually uses 2 flags, as it is possible that it is neither read nor write
+  //   .data(memMemoryData)
+  // );
+
+  wire [31:0] memMemoryData;
 
   MEM_WB_Barrier mem_wb_barrier(
     .clk(clk),
-    .memMemoryData(1),
-    .memExecutionData(1),
-    .memShouldUseMemoryData(0),
-    .memIsRegisterWrite(0),
+    .memMemoryData(memMemoryData),
+    .memExecutionData(memAluResult),
+    .memShouldUseMemoryData(memShouldUseMemoryData),
+    .memIsRegisterWrite(memIsRegisterWrite),
     .wbMemoryData(wbMemoryData),
     .wbExecutionData(wbExecutionData),
     .wbShouldUseMemoryData(wbShouldUseMemoryData),
@@ -80,7 +114,6 @@ module CPU(
   wire [31:0] wbMemoryData;
   wire [31:0] wbExecutionData;
   wire wbShouldUseMemoryData;
-  wire wbDataToWrite;
   wire wbIsRegisterWrite;
 
   WriteBackStage writeBackStage(
