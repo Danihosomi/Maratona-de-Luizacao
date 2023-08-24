@@ -10,35 +10,30 @@ module CPU(
 
   // TODO If/Id barrier
 
-  InstructionDecodeStage instructionDecodeStage(
+  RegisterFile registerFile(
     .clk(clk),
-    .instruction(instruction),
-    .writeBackData(writeBackData),
-    .shouldWriteToRegister(wbRegWrite),
-    .LHSRegisterValue(idLHSRegisterValue),
-    .RHSRegisterValue(idRHSRegisterValue),
-    .branch(branch),
-    .MemRead(memRead),
-    .MemtoReg(memToReg),
-    .ALUOp(aluOp),
-    .MemWrite(memWrite),
-    .ALUSrc(aluSrc),
-    .RegWrite(regWrite)
+    .source1RegisterIndex(instruction[19:15]),
+    .source2RegisterIndex(instruction[24:20]),
+    .writeRegisterIndex(instruction[11:7]),
+    .writeRegisterData(writeBackData),
+    .shouldWrite(wbRegWrite),
+    .source1RegisterData(idLHSRegisterValue),
+    .source2RegisterData(idRHSRegisterValue)
   );
 
   wire [31:0] idLHSRegisterValue;
   wire [31:0] idRHSRegisterValue;
 
-  // Control control(
-  //   instruction,
-  //   branch,
-  //   memRead,
-  //   memToReg,
-  //   aluOp,
-  //   memWrite,
-  //   aluSrc,
-  //   regWrite
-  // );
+  Control control(
+    instruction,
+    branch,
+    memRead,
+    memToReg,
+    aluOp,
+    memWrite,
+    aluSrc,
+    regWrite
+  );
 
   wire branch;
   wire aluOp;
