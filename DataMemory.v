@@ -7,15 +7,19 @@ module DataMemory (
   output [31:0] readData
 );
 
-  reg [31:0] ram [255:0];
+  reg [31:0] ramData;
+  RAM DataMemoryRAM(
+    .clk(clk),
+    .writeEnable(memWrite),
+    .address(address),
+    .data_in(writeData),
+    .data_out(ramData)
+  );
 
   // Change on clock to avoid reading and writing at same time
   always @(posedge clk) begin
-    if(memWrite == 1) begin
-      ram[address[9:2]] <= writeData;
-    end
     if (memRead == 1) begin
-      readData <= ram[address[9:2]];
+      readData <= ramData;
     end
   end
 

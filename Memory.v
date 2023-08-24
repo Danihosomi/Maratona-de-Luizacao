@@ -5,13 +5,21 @@ module Memory (
   output [31:0] data
 );
 
-  reg [31:0] ram [255:0];
+  reg [31:0] ramData;
   reg [31:0] romData;
 
-  ROMMemory MemoryROM(
+  ROM MemoryROM(
     .clk(clk),
     .address(address),
     .data(romData)
+  );
+  
+  RAM MemoryRAM(
+    .clk(clk),
+    .writeEnable(readWrite & address[10]),
+    .address(address),
+    .data_in(ramData),
+    .data_out(ramData)
   );
 
   always @(posedge clk) begin
@@ -22,10 +30,10 @@ module Memory (
 
     if (adress[10] == 1) begin
       if (readWrite == 0) begin
-        data <= mem[adress[9:2]];
+        data <= ramData;
       end
       else begin
-        mem[adress[9:2]] <= data;
+        ramData <= data;
       end
     end
   end

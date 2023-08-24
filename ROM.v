@@ -1,4 +1,4 @@
-module ROMMemory (
+module ROM (
   input clk,
   input [31:0] address,
   output reg [31:0] data
