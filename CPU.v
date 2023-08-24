@@ -50,6 +50,8 @@ module CPU(
     .clk(clk),
     .idLHSRegisterValue(idLHSRegisterValue),
     .idRHSRegisterValue(idRHSRegisterValue),
+    .idLHSRegisterIndex(instruction[19:15]),
+    .idRHSRegisterIndex(instruction[24:20]),
     .idWriteRegisterIndex(instruction[11:7]),
     .idAluOp(aluOp),
     .idAluSrc(aluSrc),
@@ -58,6 +60,8 @@ module CPU(
     .idRegWrite(regWrite),
     .exLHSRegisterValue(exLHSRegisterValue),
     .exRHSRegisterValue(exRHSRegisterValue),
+    .exLHSRegisterIndex(exLHSRegisterIndex),
+    .exRHSRegisterIndex(exRHSRegisterIndex),
     .exWriteRegisterIndex(exWriteRegisterIndex),
     .exAluOp(exAluOp),
     .exAluSrc(exAluSrc),
@@ -68,6 +72,8 @@ module CPU(
 
   wire [31:0] exLHSRegisterValue;
   wire [31:0] exRHSRegisterValue;
+  wire [4:0] exLHSRegisterIndex;
+  wire [4:0] exRHSRegisterIndex;
   wire [4:0] exWriteRegisterIndex;
   wire exAluOp;
   wire exAluSrc;
@@ -75,7 +81,36 @@ module CPU(
   wire exMemToReg;
   wire exRegWrite;
 
-  // TODO: Execution stage
+  ForwardingUnit lhsForwardingUnit(
+    .executeStageReadRegisterIndex(exLHSRegisterIndex),
+    .memoryStageWriteRegisterIndex(memWriteRegisterIndex),
+    .writebackStageWriteRegisterIndex(wbWriteRegisterIndex),
+    .isMemoryStageWrite(memRegWrite),
+    .isWritebackStageWrite(wbRegWrite),
+    .forwardSelect(lhsAluInputSelect)
+  );
+
+  ForwardingUnit rhsForwardingUnit(
+    .executeStageReadRegisterIndex(exRHSRegisterIndex),
+    .memoryStageWriteRegisterIndex(memWriteRegisterIndex),
+    .writebackStageWriteRegisterIndex(wbWriteRegisterIndex),
+    .isMemoryStageWrite(memRegWrite),
+    .isWritebackStageWrite(wbRegWrite),
+    .forwardSelect(rhsAluInputSelect)
+  );
+
+  wire [1:0] lhsAluInputSelect;
+  wire [1:0] rhsAluInputSelect;
+
+  // TODO: Mux for alu input on lhsAluInputSelect
+  // 00 -> exLHSRegisterValue
+  // 01 -> writeBackData
+  // 10 -> memAluResult
+  // Same for the rhs but the 00 should be the result from the alusrc mux instead
+
+
+  // TODO: Rest of execution stage
+
 
   EX_MEM_Barrier ex_mem_barrier(
     .clk(clk),

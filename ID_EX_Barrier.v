@@ -2,6 +2,8 @@ module ID_EX_Barrier(
   input clk,
   input [31:0] idLHSRegisterValue,
   input [31:0] idRHSRegisterValue,
+  input [4:0] idLHSRegisterIndex,
+  input [4:0] idRHSRegisterIndex,
   input [4:0] idWriteRegisterIndex,
   input idAluOp,
   input idAluSrc,
@@ -10,6 +12,8 @@ module ID_EX_Barrier(
   input idRegWrite,
   output reg [31:0] exLHSRegisterValue,
   output reg [31:0] exRHSRegisterValue,
+  output reg [4:0] exLHSRegisterIndex,
+  output reg [4:0] exRHSRegisterIndex,
   output reg [4:0] exWriteRegisterIndex,
   output reg exAluOp,
   output reg exAluSrc,
@@ -21,6 +25,8 @@ module ID_EX_Barrier(
   always @(posedge clk) begin
     exLHSRegisterValue <= idLHSRegisterValue;
     exRHSRegisterValue <= idRHSRegisterValue;
+    exLHSRegisterIndex <= idLHSRegisterIndex;
+    exRHSRegisterIndex <= idRHSRegisterIndex;
     exWriteRegisterIndex <= idWriteRegisterIndex;
     exAluOp <= idAluOp;
     exAluSrc <= idAluSrc;
