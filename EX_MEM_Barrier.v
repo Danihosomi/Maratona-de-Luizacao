@@ -4,12 +4,14 @@ module EX_MEM_Barrier(
   input [31:0] exMemoryWriteData,
   input [4:0] exWriteRegisterIndex,
   input exMemWrite,
+  input exMemRead,
   input exMemToReg,
   input exRegWrite,
   output reg [31:0] memAluResult,
   output reg [31:0] memMemoryWriteData,
   output reg [4:0] memWriteRegisterIndex,
   output reg memMemWrite,
+  output reg memMemRead,
   output reg memMemToReg,
   output reg memRegWrite
 );
@@ -19,6 +21,7 @@ module EX_MEM_Barrier(
     memMemoryWriteData <= exMemoryWriteData;
     memWriteRegisterIndex <= exWriteRegisterIndex;
     memMemWrite <= exMemWrite;
+    memMemRead <= exMemRead;
     memMemToReg <= exMemToReg;
     memRegWrite <= exRegWrite;
   end

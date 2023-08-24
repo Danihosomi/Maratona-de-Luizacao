@@ -9,6 +9,7 @@ module ID_EX_Barrier(
   input idAluOp,
   input idAluSrc,
   input idMemWrite,
+  input idMemRead,
   input idMemToReg,
   input idRegWrite,
   output reg [31:0] exLHSRegisterValue,
@@ -20,6 +21,7 @@ module ID_EX_Barrier(
   output reg exAluOp,
   output reg exAluSrc,
   output reg exMemWrite,
+  output reg exMemRead,
   output reg exMemToReg,
   output reg exRegWrite
 );
@@ -34,6 +36,7 @@ module ID_EX_Barrier(
     exAluOp <= idAluOp;
     exAluSrc <= idAluSrc;
     exMemWrite <= idMemWrite;
+    exMemRead <= idMemRead;
     exMemToReg <= idMemToReg;
     exRegWrite <= idRegWrite;
   end

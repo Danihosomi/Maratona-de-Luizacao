@@ -59,6 +59,7 @@ module CPU(
     .idAluOp(aluOp),
     .idAluSrc(aluSrc),
     .idMemWrite(memWrite),
+    .idMemRead(memRead),
     .idMemToReg(memToReg),
     .idRegWrite(regWrite),
     .exLHSRegisterValue(exLHSRegisterValue),
@@ -70,6 +71,7 @@ module CPU(
     .exAluOp(exAluOp),
     .exAluSrc(exAluSrc),
     .exMemWrite(exMemWrite),
+    .exMemRead(exMemRead),
     .exMemToReg(exMemToReg),
     .exRegWrite(exRegWrite)
   );
@@ -83,6 +85,7 @@ module CPU(
   wire exAluOp;
   wire exAluSrc;
   wire exMemWrite;
+  wire exMemRead;
   wire exMemToReg;
   wire exRegWrite;
 
@@ -131,12 +134,14 @@ module CPU(
     .exMemoryWriteData(exRHSRegisterValue),
     .exWriteRegisterIndex(exWriteRegisterIndex),
     .exMemWrite(exMemWrite),
+    .exMemRead(exMemRead),
     .exMemToReg(exMemToReg),
     .exRegWrite(exRegWrite),
     .memAluResult(memAluResult),
     .memMemoryWriteData(memMemoryWriteData),
     .memWriteRegisterIndex(memWriteRegisterIndex),
     .memMemWrite(memMemWrite),
+    .memMemRead(memMemRead),
     .memMemToReg(memMemToReg),
     .memRegWrite(memRegWrite)
   );
@@ -145,13 +150,14 @@ module CPU(
   wire [31:0] memMemoryWriteData;
   wire [4:0] memWriteRegisterIndex;
   wire memMemWrite;
+  wire memMemRead;
   wire memMemToReg;
   wire memRegWrite;
 
   DataMemory dataMemory(
     .clk(clk),
     .memWrite(memMemWrite),
-    .memRead(0), // TODO: add Memory read to the pipeline
+    .memRead(memMemRead), // TODO: add Memory read to the pipeline
     .address(memAluResult),
     .writeData(memMemoryWriteData),
     .readData(memMemoryData)
