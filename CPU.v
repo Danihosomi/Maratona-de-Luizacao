@@ -115,7 +115,7 @@ module CPU(
   EX_MEM_Barrier ex_mem_barrier(
     .clk(clk),
     .exAluResult(1),
-    .exMemoryWriteData(exLHSRegisterValue),
+    .exMemoryWriteData(exRHSRegisterValue),
     .exWriteRegisterIndex(exWriteRegisterIndex),
     .exMemWrite(exMemWrite),
     .exMemToReg(exMemToReg),
