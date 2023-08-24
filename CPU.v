@@ -41,22 +41,26 @@ module CPU(
   // );
 
   wire branch;
-  wire memRead;
-  wire memToReg;
   wire aluOp;
-  wire memWrite;
   wire aluSrc;
+  wire memRead; // TODO: This must be forwarded
+  wire memWrite;
+  wire memToReg;
   wire regWrite;
 
   ID_EX_Barrier id_ex_barrier(
     .clk(clk),
     .idLHSRegisterValue(idLHSRegisterValue),
     .idRHSRegisterValue(idRHSRegisterValue),
+    .idAluOp(aluOp),
+    .idAluSrc(aluSrc),
     .idMemWrite(memWrite),
     .idMemToReg(memToReg),
     .idRegWrite(regWrite),
     .exLHSRegisterValue(exLHSRegisterValue),
     .exRHSRegisterValue(exRHSRegisterValue),
+    .exAluOp(exAluOp),
+    .exAluSrc(exAluSrc),
     .exMemWrite(exMemWrite),
     .exMemToReg(exMemToReg),
     .exRegWrite(exRegWrite)
@@ -64,6 +68,8 @@ module CPU(
 
   wire [31:0] exLHSRegisterValue;
   wire [31:0] exRHSRegisterValue;
+  wire exAluOp;
+  wire exAluSrc;
   wire exMemWrite;
   wire exMemToReg;
   wire exRegWrite;
