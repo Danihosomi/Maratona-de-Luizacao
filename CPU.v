@@ -185,7 +185,6 @@ module CPU(
 
   wire [31:0] rhsAluInput;
 
-  // TODO: ALU control and ALU
   ALUControl aluControl(
     .ALUOp(exAluOp),
     .func3(exFunct3),
@@ -209,7 +208,7 @@ module CPU(
   EX_MEM_Barrier ex_mem_barrier(
     .clk(clk),
     .exAluResult(resultALU),
-    .exMemoryWriteData(exRHSRegisterValue),
+    .exMemoryWriteData(rhsAluInput),
     .exWriteRegisterIndex(exWriteRegisterIndex),
     .exMemWrite(exMemWrite),
     .exMemRead(exMemRead),
