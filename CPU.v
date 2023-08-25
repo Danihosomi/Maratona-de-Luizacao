@@ -9,6 +9,8 @@ module CPU(
   ProgramCounter programCounter(
     .clk(clk),
     .isStalled(isPipelineStalled),
+    .shouldGoToTarget(0), // TODO: Branching
+    .jumpTarget(0), // TODO: branching
     .pc(pc)
   );
 
