@@ -11,7 +11,7 @@ module Alu (
             4'b0010: resultALU = operand1 + operand2; 
             4'b0110: resultALU = operand1 - operand2; 
             4'b0000: resultALU = operand1 & operand2; 
-            4'b0001: resultALU = operand1 ^ operand2; 
+            4'b0001: resultALU = operand1 | operand2; 
             default: resultALU = operand1 + operand2;
         endcase
         
