@@ -2,7 +2,7 @@ module CPU(
   input clk,
   output [31:0] debug
 );
-  assign debug = instruction;
+  assign debug = memMemoryData;
 
   wire [31:0] instruction;
 
@@ -46,7 +46,7 @@ module CPU(
   wire memToReg;
   wire regWrite;
 
-  ImmediateGeneration ImmediateGeneration(
+  ImmediateGeneration immediateGeneration(
     .instruction(instruction),
     .immediate(idImmediateValue)
   );
@@ -149,7 +149,7 @@ module CPU(
   Alu alu(
     .ALUControl(aluControlInput),
     .operand1(exLHSRegisterValue),
-    .operand2(exRHSRegisterValue),
+    .operand2(exRHSInput),
     .resultALU(resultALU),
     .zero(zero)
   );
@@ -186,7 +186,7 @@ module CPU(
   DataMemory dataMemory(
     .clk(clk),
     .memWrite(memMemWrite),
-    .memRead(memMemRead), // TODO: add Memory read to the pipeline
+    .memRead(memMemRead),
     .address(memAluResult),
     .writeData(memMemoryWriteData),
     .readData(memMemoryData)
