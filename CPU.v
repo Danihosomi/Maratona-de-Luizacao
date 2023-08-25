@@ -8,6 +8,7 @@ module CPU(
 
   ProgramCounter programCounter(
     .clk(clk),
+    .isStalled(isPipelineStalled),
     .pc(pc)
   );
 
@@ -22,7 +23,7 @@ module CPU(
 
   IF_ID_Barrier if_id_barrier(
     .clk(clk),
-    .dontUpdate(0),
+    .dontUpdate(isPipelineStalled), // We must not update repeat the instruction
     .ifInstruction(instruction),
     .idInstruction(idInstruction)
   );
