@@ -46,7 +46,12 @@ module CPU(
   wire memToReg;
   wire regWrite;
 
-  // TODO: Immediate generation
+  ImmediateGeneration ImmediateGeneration(
+    .instruction(instruction),
+    .immediate(idImmediateValue)
+  );
+
+  wire [31:0] idImmediateValue;
 
   ID_EX_Barrier id_ex_barrier(
     .clk(clk),
@@ -55,7 +60,7 @@ module CPU(
     .idLHSRegisterIndex(instruction[19:15]),
     .idRHSRegisterIndex(instruction[24:20]),
     .idWriteRegisterIndex(instruction[11:7]),
-    .idImmediateValue(1),
+    .idImmediateValue(idImmediateValue),
     .idFunct3(instruction[14:12]),
     .idFunct7(instruction[31:25]),
     .idAluOp(aluOp),
