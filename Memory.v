@@ -9,7 +9,7 @@ module Memory (
   reg [31:0] ramData;
   reg [31:0] romData;
 
-  ROM MemoryROM(
+  ROMMemory MemoryROM(
     .clk(clk),
     .address(address),
     .data(romData)
