@@ -22,6 +22,9 @@ module CPU(
   wire [4:0] idLHSRegisterIndex;
   wire [4:0] idRHSRegisterIndex;
 
+  assign idLHSRegisterIndex = idInstruction[19:15];
+  assign idRHSRegisterIndex = idInstruction[24:20];
+
   RegisterFile registerFile(
     .clk(clk),
     .source1RegisterIndex(idLHSRegisterIndex),
@@ -66,8 +69,8 @@ module CPU(
     .clk(clk),
     .idLHSRegisterValue(idLHSRegisterValue),
     .idRHSRegisterValue(idRHSRegisterValue),
-    .idLHSRegisterIndex(instruction[19:15]),
-    .idRHSRegisterIndex(instruction[24:20]),
+    .idLHSRegisterIndex(idLHSRegisterIndex),
+    .idRHSRegisterIndex(idRHSRegisterIndex),
     .idWriteRegisterIndex(idInstruction[11:7]),
     .idImmediateValue(idImmediateValue),
     .idFunct3(idInstruction[14:12]),
