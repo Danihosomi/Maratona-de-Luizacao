@@ -27,6 +27,7 @@ module Control(
       'b1100011: aluOp = 'b01;
       'b0010011: aluOp = 'b10;
       'b0110011: aluOp = 'b10;
+      default:   aluOp = 'b11;
     endcase
   end
 
