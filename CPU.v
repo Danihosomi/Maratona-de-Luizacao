@@ -154,16 +154,27 @@ module CPU(
   wire [1:0] lhsAluInputSelect;
   wire [1:0] rhsAluInputSelect;
 
-  // TODO: Mux for alu input on lhsAluInputSelect
-  // 00 -> exLHSRegisterValue
-  // 01 -> writeBackData
-  // 10 -> memAluResult
+  _MUX4 mux4_lhsAluInputSelect(
+    .dataSelector(lhsAluInputSelect),
+    .firstData(exLHSRegisterValue),
+    .secondData(writeBackData),
+    .thirdData(memAluResult),
+    .fourthData(32'h00000000),
+    .outputData(lhsAluInput)
+  );
 
-  // TODO: Mux for alu input on rhsAluInputSelect
-  // 00 -> exRHSInput
-  // 01 -> writeBackData
-  // 10 -> memAluResult
+  wire [31:0] lhsAluInput;
 
+  _MUX4 mux4_rhsAluInputSelect(
+    .dataSelector(rhsAluInputSelect),
+    .firstData(exRHSInput),
+    .secondData(writeBackData),
+    .thirdData(memAluResult),
+    .fourthData(32'h00000000),
+    .outputData(rhsAluInput)
+  );
+
+  wire [31:0] rhsAluInput;
 
   // TODO: ALU control and ALU
   ALUControl aluControl(
@@ -177,8 +188,8 @@ module CPU(
 
   Alu alu(
     .ALUControl(aluControlInput),
-    .operand1(exLHSRegisterValue),
-    .operand2(exRHSInput),
+    .operand1(lhsAluInput),
+    .operand2(rhsAluInput),
     .resultALU(resultALU),
     .zero(zero)
   );
