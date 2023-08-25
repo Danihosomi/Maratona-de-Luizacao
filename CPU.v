@@ -11,12 +11,21 @@ module CPU(
     .instruction(instruction)
   );
 
-  // TODO If/Id barrier
+  IF_ID_Barrier if_id_barrier(
+    .clk(clk),
+    .dontUpdate(0),
+    .ifInstruction(instruction),
+    .idInstruction(idInstruction)
+  );
+
+  wire [31:0] idInstruction;
+  wire [4:0] idLHSRegisterIndex;
+  wire [4:0] idRHSRegisterIndex;
 
   RegisterFile registerFile(
     .clk(clk),
-    .source1RegisterIndex(instruction[19:15]),
-    .source2RegisterIndex(instruction[24:20]),
+    .source1RegisterIndex(idLHSRegisterIndex),
+    .source2RegisterIndex(idRHSRegisterIndex),
     .writeRegisterIndex(wbWriteRegisterIndex),
     .writeRegisterData(writeBackData),
     .shouldWrite(wbRegWrite),
@@ -28,7 +37,7 @@ module CPU(
   wire [31:0] idRHSRegisterValue;
 
   Control control(
-    .instruction(instruction[6:0]),
+    .instruction(idInstruction[6:0]),
     .branch(branch),
     .memRead(memRead),
     .memToReg(memToReg),
@@ -47,7 +56,7 @@ module CPU(
   wire regWrite;
 
   ImmediateGeneration immediateGeneration(
-    .instruction(instruction),
+    .instruction(idInstruction),
     .immediate(idImmediateValue)
   );
 
@@ -59,10 +68,10 @@ module CPU(
     .idRHSRegisterValue(idRHSRegisterValue),
     .idLHSRegisterIndex(instruction[19:15]),
     .idRHSRegisterIndex(instruction[24:20]),
-    .idWriteRegisterIndex(instruction[11:7]),
+    .idWriteRegisterIndex(idInstruction[11:7]),
     .idImmediateValue(idImmediateValue),
-    .idFunct3(instruction[14:12]),
-    .idFunct7(instruction[31:25]),
+    .idFunct3(idInstruction[14:12]),
+    .idFunct7(idInstruction[31:25]),
     .idAluOp(aluOp),
     .idAluSrc(aluSrc),
     .idMemWrite(memWrite),
