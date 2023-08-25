@@ -13,7 +13,7 @@ with open(args.srcPath, 'rb') as machineCode:
     endiannessCorrectedInstruction = bytearray(instruction)
     endiannessCorrectedInstruction.reverse()
 
-    compiledMemory.append(f'        {instructionAddress}: data <= 32\'h{endiannessCorrectedInstruction.hex()};\n')
+    compiledMemory.append(f'        {instructionAddress}: data = 32\'h{endiannessCorrectedInstruction.hex()};\n')
     instructionAddress += 1
 
 

@@ -2,7 +2,7 @@ module CPU(
   input clk,
   output [31:0] debug
 );
-  assign debug = instruction;
+  assign debug = resultALU;
 
   wire isPipelineStalled;
 
@@ -18,7 +18,6 @@ module CPU(
   wire [31:0] instruction;
 
   InstructionMemory instructionMemory(
-    .clk(clk),
     .readAddress(pc),
     .instruction(instruction)
   );
