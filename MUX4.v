@@ -1,4 +1,4 @@
-module MUX4(
+module _MUX4(
     input [1:0] dataSelector,
     input [31:0] firstData,
     input [31:0] secondData,
