@@ -28,18 +28,18 @@ module CPU(
   wire [31:0] idRHSRegisterValue;
 
   Control control(
-    instruction,
-    branch,
-    memRead,
-    memToReg,
-    aluOp,
-    memWrite,
-    aluSrc,
-    regWrite
+    .instruction(instruction[6:0]),
+    .branch(branch),
+    .memRead(memRead),
+    .memToReg(memToReg),
+    .aluOp(aluOp),
+    .memWrite(memWrite),
+    .aluSrc(aluSrc),
+    .regWrite(regWrite)
   );
 
   wire branch;
-  wire aluOp;
+  wire [1:0] aluOp;
   wire aluSrc;
   wire memRead;
   wire memWrite;
@@ -56,6 +56,8 @@ module CPU(
     .idRHSRegisterIndex(instruction[24:20]),
     .idWriteRegisterIndex(instruction[11:7]),
     .idImmediateValue(1),
+    .idFunct3(instruction[14:12]),
+    .idFunct7(instruction[31:25]),
     .idAluOp(aluOp),
     .idAluSrc(aluSrc),
     .idMemWrite(memWrite),
@@ -82,7 +84,9 @@ module CPU(
   wire [4:0] exRHSRegisterIndex;
   wire [4:0] exWriteRegisterIndex;
   wire [31:0] exImmediateValue;
-  wire exAluOp;
+  wire [2:0] exFunct3;
+  wire [6:0] exFunct7;
+  wire [1:0] exAluOp;
   wire exAluSrc;
   wire exMemWrite;
   wire exMemRead;
@@ -126,11 +130,29 @@ module CPU(
 
 
   // TODO: ALU control and ALU
+  ALUControl aluControl(
+    .ALUOp(exAluOp),
+    .func3(exFunct3),
+    .func7(exFunct7),
+    .result(aluControlInput)
+  );
 
+  wire [3:0] aluControlInput;
+
+  Alu alu(
+    .ALUControl(aluControlInput),
+    .operand1(exLHSRegisterValue),
+    .operand2(exRHSRegisterValue),
+    .resultALU(resultALU),
+    .zero(zero)
+  );
+
+  wire [31:0] resultALU;
+  wire zero;
 
   EX_MEM_Barrier ex_mem_barrier(
     .clk(clk),
-    .exAluResult(1),
+    .exAluResult(resultALU),
     .exMemoryWriteData(exRHSRegisterValue),
     .exWriteRegisterIndex(exWriteRegisterIndex),
     .exMemWrite(exMemWrite),
