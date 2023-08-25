@@ -1,5 +1,4 @@
 module DataMemory (
-  input clk,
   input memWrite,
   input memRead,
   input [31:0] address,
@@ -7,20 +6,12 @@ module DataMemory (
   output reg [31:0] readData
 );
 
-  reg [31:0] ramData;
   RAM DataMemoryRAM(
-    .clk(clk),
     .writeEnable(memWrite),
+    .readEnable(memRead),
     .address(address),
     .dataIn(writeData),
-    .dataOut(ramData)
+    .dataOut(readData)
   );
-
-  // Change on clock to avoid reading and writing at same time
-  always @(posedge clk) begin
-    if (memRead == 1) begin
-      readData <= ramData;
-    end
-  end
 
 endmodule

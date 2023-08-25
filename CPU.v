@@ -231,7 +231,6 @@ module CPU(
   wire memRegWrite;
 
   DataMemory dataMemory(
-    .clk(clk),
     .memWrite(memMemWrite),
     .memRead(memMemRead),
     .address(memAluResult),
