@@ -12,7 +12,7 @@ module ALUControl (
             2'b11: result = 4'b0110;               
             2'b10: 
                 case (func3)
-                    3'b000: result = func7 ? 4'b0110 : 4'b0010;
+                    3'b000: result = func7[5] ? 4'b0110 : 4'b0010;
                     3'b110: result = 4'b0001;
                     3'b111: result = 4'b0000;
                     default: result = 4'b0010;
