@@ -103,8 +103,8 @@ module CPU(
     .idFunct7(idInstruction[31:25]),
     .idAluOp(controlSignals[6:5]),
     .idAluSrc(controlSignals[4]),
-    .idMemWrite(controlSignals[3]),
-    .idMemRead(controlSignals[2]),
+    .idMemWrite(controlSignals[2]),
+    .idMemRead(controlSignals[3]),
     .idMemToReg(controlSignals[1]),
     .idRegWrite(controlSignals[0]),
     .exLHSRegisterValue(exLHSRegisterValue),
@@ -137,9 +137,6 @@ module CPU(
   wire exMemRead;
   wire exMemToReg;
   wire exRegWrite;
-
-  wire [31:0] exRHSInput;
-  assign exRHSInput = (exAluSrc) ? exImmediateValue : exRHSRegisterValue;
 
   // Hazard handling
   ForwardingUnit lhsForwardingUnit(
@@ -176,7 +173,7 @@ module CPU(
 
   _MUX4 mux4_rhsAluInputSelect(
     .dataSelector(rhsAluInputSelect),
-    .firstData(exRHSInput),
+    .firstData(exRHSRegisterValue),
     .secondData(writeBackData),
     .thirdData(memAluResult),
     .fourthData(32'h00000000),
@@ -194,10 +191,13 @@ module CPU(
 
   wire [3:0] aluControlInput;
 
+  wire [31:0] rhsAluInputWithImmediate; // TODO: Better naming
+  assign rhsAluInputWithImmediate = (exAluSrc) ? exImmediateValue : rhsAluInput;
+
   Alu alu(
     .ALUControl(aluControlInput),
     .operand1(lhsAluInput),
-    .operand2(rhsAluInput),
+    .operand2(rhsAluInputWithImmediate),
     .resultALU(resultALU),
     .zero(zero)
   );
