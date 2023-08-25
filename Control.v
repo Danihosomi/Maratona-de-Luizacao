@@ -20,7 +20,7 @@ module Control(
   assign aluSrc = ((opcode == 'b0010011) || (opcode == 'b0000011) || (opcode == 'b0100011)) ? 1 : 0;
   assign regWrite = ((opcode == 'b0000011) || (opcode == 'b0010011) || (opcode == 'b0110011)) ? 1 : 0;
 
-  always @* begin
+  always @(opcode) begin
     case (opcode)
       'b0000011: aluOp = 'b00;
       'b0100011: aluOp = 'b00;
