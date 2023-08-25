@@ -2,7 +2,7 @@ module CPU(
   input clk,
   output [31:0] debug
 );
-  assign debug = memMemoryData;
+  assign debug = instruction;
 
   wire isPipelineStalled;
 
