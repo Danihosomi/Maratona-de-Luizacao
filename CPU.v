@@ -4,6 +4,8 @@ module CPU(
 );
   assign debug = memMemoryData;
 
+  wire isPipelineStalled;
+
   wire [31:0] instruction;
 
   InstructionFetch instructionFetch(
@@ -24,6 +26,14 @@ module CPU(
 
   assign idLHSRegisterIndex = idInstruction[19:15];
   assign idRHSRegisterIndex = idInstruction[24:20];
+
+  StallUnit stallUnit(
+    .decodeStageLHSReadRegisterIndex(idLHSRegisterIndex),
+    .decodeStageRHSReadRegisterIndex(idRHSRegisterIndex),
+    .executionStageWriteRegisterIndex(exWriteRegisterIndex),
+    .isExecutionStageMemoryReadOperation(exMemRead),
+    .isPipelineStalled(isPipelineStalled)
+  );
 
   RegisterFile registerFile(
     .clk(clk),
