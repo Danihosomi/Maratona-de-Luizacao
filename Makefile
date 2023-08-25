@@ -1,4 +1,4 @@
-all: build run
+all: compile-firmware build run
 
 build: *.v
 	verilator --binary Tester.v --clk clk
