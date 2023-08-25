@@ -4,19 +4,51 @@ module CPU(
 );
   assign debug = memMemoryData;
 
+  wire isPipelineStalled;
+
+  ProgramCounter programCounter(
+    .clk(clk),
+    .isStalled(isPipelineStalled),
+    .shouldGoToTarget(0), // TODO: Branching
+    .jumpTarget(0), // TODO: branching
+    .pc(pc)
+  );
+
+  wire [31:0] pc;
   wire [31:0] instruction;
 
-  InstructionFetch instructionFetch(
+  InstructionMemory instructionMemory(
     .clk(clk),
+    .readAddress(pc),
     .instruction(instruction)
   );
 
-  // TODO If/Id barrier
+  IF_ID_Barrier if_id_barrier(
+    .clk(clk),
+    .dontUpdate(isPipelineStalled), // We must not update repeat the instruction
+    .ifInstruction(instruction),
+    .idInstruction(idInstruction)
+  );
+
+  wire [31:0] idInstruction;
+  wire [4:0] idLHSRegisterIndex;
+  wire [4:0] idRHSRegisterIndex;
+
+  assign idLHSRegisterIndex = idInstruction[19:15];
+  assign idRHSRegisterIndex = idInstruction[24:20];
+
+  StallUnit stallUnit(
+    .decodeStageLHSReadRegisterIndex(idLHSRegisterIndex),
+    .decodeStageRHSReadRegisterIndex(idRHSRegisterIndex),
+    .executionStageWriteRegisterIndex(exWriteRegisterIndex),
+    .isExecutionStageMemoryReadOperation(exMemRead),
+    .isPipelineStalled(isPipelineStalled)
+  );
 
   RegisterFile registerFile(
     .clk(clk),
-    .source1RegisterIndex(instruction[19:15]),
-    .source2RegisterIndex(instruction[24:20]),
+    .source1RegisterIndex(idLHSRegisterIndex),
+    .source2RegisterIndex(idRHSRegisterIndex),
     .writeRegisterIndex(wbWriteRegisterIndex),
     .writeRegisterData(writeBackData),
     .shouldWrite(wbRegWrite),
@@ -28,7 +60,7 @@ module CPU(
   wire [31:0] idRHSRegisterValue;
 
   Control control(
-    .instruction(instruction[6:0]),
+    .instruction(idInstruction[6:0]),
     .branch(branch),
     .memRead(memRead),
     .memToReg(memToReg),
@@ -45,9 +77,15 @@ module CPU(
   wire memWrite;
   wire memToReg;
   wire regWrite;
+  wire [7:0] controlSignals;
+
+  assign controlSignals = (isPipelineStalled) ? 0 :
+                          {branch, aluOp, aluSrc, memRead, memWrite, memToReg, regWrite};
+
+  
 
   ImmediateGeneration immediateGeneration(
-    .instruction(instruction),
+    .instruction(idInstruction),
     .immediate(idImmediateValue)
   );
 
@@ -57,18 +95,18 @@ module CPU(
     .clk(clk),
     .idLHSRegisterValue(idLHSRegisterValue),
     .idRHSRegisterValue(idRHSRegisterValue),
-    .idLHSRegisterIndex(instruction[19:15]),
-    .idRHSRegisterIndex(instruction[24:20]),
-    .idWriteRegisterIndex(instruction[11:7]),
+    .idLHSRegisterIndex(idLHSRegisterIndex),
+    .idRHSRegisterIndex(idRHSRegisterIndex),
+    .idWriteRegisterIndex(idInstruction[11:7]),
     .idImmediateValue(idImmediateValue),
-    .idFunct3(instruction[14:12]),
-    .idFunct7(instruction[31:25]),
-    .idAluOp(aluOp),
-    .idAluSrc(aluSrc),
-    .idMemWrite(memWrite),
-    .idMemRead(memRead),
-    .idMemToReg(memToReg),
-    .idRegWrite(regWrite),
+    .idFunct3(idInstruction[14:12]),
+    .idFunct7(idInstruction[31:25]),
+    .idAluOp(controlSignals[6:5]),
+    .idAluSrc(controlSignals[4]),
+    .idMemWrite(controlSignals[3]),
+    .idMemRead(controlSignals[2]),
+    .idMemToReg(controlSignals[1]),
+    .idRegWrite(controlSignals[0]),
     .exLHSRegisterValue(exLHSRegisterValue),
     .exRHSRegisterValue(exRHSRegisterValue),
     .exLHSRegisterIndex(exLHSRegisterIndex),
@@ -125,18 +163,28 @@ module CPU(
   wire [1:0] lhsAluInputSelect;
   wire [1:0] rhsAluInputSelect;
 
-  // TODO: Mux for alu input on lhsAluInputSelect
-  // 00 -> exLHSRegisterValue
-  // 01 -> writeBackData
-  // 10 -> memAluResult
+  _MUX4 mux4_lhsAluInputSelect(
+    .dataSelector(lhsAluInputSelect),
+    .firstData(exLHSRegisterValue),
+    .secondData(writeBackData),
+    .thirdData(memAluResult),
+    .fourthData(32'h00000000),
+    .outputData(lhsAluInput)
+  );
 
-  // TODO: Mux for alu input on rhsAluInputSelect
-  // 00 -> exRHSInput
-  // 01 -> writeBackData
-  // 10 -> memAluResult
+  wire [31:0] lhsAluInput;
 
+  _MUX4 mux4_rhsAluInputSelect(
+    .dataSelector(rhsAluInputSelect),
+    .firstData(exRHSInput),
+    .secondData(writeBackData),
+    .thirdData(memAluResult),
+    .fourthData(32'h00000000),
+    .outputData(rhsAluInput)
+  );
 
-  // TODO: ALU control and ALU
+  wire [31:0] rhsAluInput;
+
   ALUControl aluControl(
     .ALUOp(exAluOp),
     .func3(exFunct3),
@@ -148,8 +196,8 @@ module CPU(
 
   Alu alu(
     .ALUControl(aluControlInput),
-    .operand1(exLHSRegisterValue),
-    .operand2(exRHSInput),
+    .operand1(lhsAluInput),
+    .operand2(rhsAluInput),
     .resultALU(resultALU),
     .zero(zero)
   );
@@ -160,7 +208,7 @@ module CPU(
   EX_MEM_Barrier ex_mem_barrier(
     .clk(clk),
     .exAluResult(resultALU),
-    .exMemoryWriteData(exRHSRegisterValue),
+    .exMemoryWriteData(rhsAluInput),
     .exWriteRegisterIndex(exWriteRegisterIndex),
     .exMemWrite(exMemWrite),
     .exMemRead(exMemRead),

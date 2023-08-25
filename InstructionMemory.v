@@ -1,12 +1,12 @@
 module InstructionMemory (
     input clk,
-    input [31:0] readAdress,
+    input [31:0] readAddress,
     output [31:0] instruction
 );
 
     ROMMemory instructionMemoryROM(
         .clk(clk),
-        .address(readAdress),
+        .address(readAddress),
         .data(instruction)
     );
 
