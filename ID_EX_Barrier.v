@@ -37,6 +37,8 @@ module ID_EX_Barrier(
     exRHSRegisterIndex <= idRHSRegisterIndex;
     exWriteRegisterIndex <= idWriteRegisterIndex;
     exImmediateValue <= idImmediateValue;
+    exFunct3 <= idFunct3;
+    exFunct7 <= idFunct7;
     exAluOp <= idAluOp;
     exAluSrc <= idAluSrc;
     exMemWrite <= idMemWrite;
