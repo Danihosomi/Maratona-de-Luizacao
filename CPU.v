@@ -75,6 +75,8 @@ module CPU(
     .exRHSRegisterIndex(exRHSRegisterIndex),
     .exWriteRegisterIndex(exWriteRegisterIndex),
     .exImmediateValue(exImmediateValue),
+    .exFunct3(exFunct3),
+    .exFunct7(exFunct7),
     .exAluOp(exAluOp),
     .exAluSrc(exAluSrc),
     .exMemWrite(exMemWrite),

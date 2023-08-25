@@ -6,7 +6,7 @@ module Control(
   output reg [1:0] aluOp,
   output memWrite,
   output aluSrc,
-  output regWrite,
+  output regWrite
 );
 
   reg [6:0] opcode;
