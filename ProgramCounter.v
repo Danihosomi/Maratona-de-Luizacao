@@ -1,13 +1,8 @@
 module ProgramCounter(
   input clk,
-  input [31:0]nextAddress,
-  output [31:0]currentAddress
+  output reg [31:0]pc
 );
-  reg [31:0] tempAddress;
-  
-  assign currentAddress = tempAddress;
-
   always @(posedge clk) begin
-    tempAddress <= nextAddress;
+    pc <= pc + 4;
   end 
 endmodule

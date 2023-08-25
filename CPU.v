@@ -6,10 +6,17 @@ module CPU(
 
   wire isPipelineStalled;
 
+  ProgramCounter programCounter(
+    .clk(clk),
+    .pc(pc)
+  );
+
+  wire [31:0] pc;
   wire [31:0] instruction;
 
-  InstructionFetch instructionFetch(
+  InstructionMemory instructionMemory(
     .clk(clk),
+    .readAddress(pc),
     .instruction(instruction)
   );
 
