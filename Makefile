@@ -26,7 +26,7 @@ compile-firmware: install
        . scripts/venv/bin/activate; \
 	   test -d temp || mkdir temp; \
 	   bronzebeard --include assembly/ --output temp/firmware.data assembly/$(TARGET_ASSEMBLY_FILE); \
-       python3 scripts/compile_firmware.py --src temp/firmware.data --dest ROM.v \
+       python3 scripts/compile_firmware.py --src temp/firmware.data --dest ROMMemory.v \
     )
 
 
