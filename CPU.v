@@ -75,6 +75,12 @@ module CPU(
   wire memWrite;
   wire memToReg;
   wire regWrite;
+  wire [7:0] controlSignals;
+
+  assign controlSignals = (isPipelineStalled) ? 0 :
+                          {branch, aluOp, aluSrc, memRead, memWrite, memToReg, regWrite};
+
+  
 
   ImmediateGeneration immediateGeneration(
     .instruction(idInstruction),
@@ -93,12 +99,12 @@ module CPU(
     .idImmediateValue(idImmediateValue),
     .idFunct3(idInstruction[14:12]),
     .idFunct7(idInstruction[31:25]),
-    .idAluOp(aluOp),
-    .idAluSrc(aluSrc),
-    .idMemWrite(memWrite),
-    .idMemRead(memRead),
-    .idMemToReg(memToReg),
-    .idRegWrite(regWrite),
+    .idAluOp(controlSignals[6:5]),
+    .idAluSrc(controlSignals[4]),
+    .idMemWrite(controlSignals[3]),
+    .idMemRead(controlSignals[2]),
+    .idMemToReg(controlSignals[1]),
+    .idRegWrite(controlSignals[0]),
     .exLHSRegisterValue(exLHSRegisterValue),
     .exRHSRegisterValue(exRHSRegisterValue),
     .exLHSRegisterIndex(exLHSRegisterIndex),
