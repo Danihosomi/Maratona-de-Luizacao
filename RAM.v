@@ -8,19 +8,16 @@ module RAM(
 
     reg [31:0] memory [255:0];
 
-    always @* begin
-        if (writeEnable) begin
-            memory[address[9:2]] = dataIn;
-            dataOut = 0;
+    always @(address, dataIn, dataOut, writeEnable, readEnable) begin
+        if (writeEnable == 1) begin
+            memory[address[9:2]] <= dataIn;
+        end
+
+        if (readEnable == 1) begin
+          dataOut <= memory[address[9:2]];
         end
         else begin
-          memory[address[9:2]] = memory[address[9:2]];
-          if (readEnable) begin
-            dataOut = memory[address[9:2]];
-          end
-          else begin
-            dataOut = 0;
-          end
+          dataOut <= 0;
         end
     end
 
