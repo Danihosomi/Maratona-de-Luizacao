@@ -1,7 +1,8 @@
 module Memory (
   input clk,
   input [31:0] address,
-  input readWrite,
+  input writeEnable,
+  input readEnable,
   input [31:0] dataIn,
   output [31:0] dataOut
 );
@@ -17,22 +18,22 @@ module Memory (
   
   RAM MemoryRAM(
     .clk(clk),
-    .writeEnable(readWrite & address[10]),
+    .writeEnable(writeEnable & address[10]),
+    .readEnable(readEnable & address[10]),
     .address(address),
     .dataIn(dataIn),
     .dataOut(ramData)
   );
 
-  always @(posedge clk) begin
+  always @* begin
     // ROM
-    if (readWrite == 0 && adress[10] == 0) begin
-      data <= romData;
+    if (readEnable == 1 && adress[10] == 0) begin
+      data = romData;
     end
 
-    if (adress[10] == 1) begin
-      if (readWrite == 0) begin
-        dataOut <= ramData;
-      end
+    // RAM
+    if (readEnable == 1 && adress[10] == 1) begin
+      dataOut = ramData;
     end
   end
 
