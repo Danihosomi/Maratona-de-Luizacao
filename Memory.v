@@ -3,7 +3,7 @@ module Memory (
   input writeEnable,
   input readEnable,
   input [31:0] dataIn,
-  output [31:0] dataOut
+  output reg [31:0] dataOut
 );
 
   reg [31:0] ramData;
@@ -23,13 +23,14 @@ module Memory (
   );
 
   always @* begin
+    dataOut = 0;
     // ROM
-    if (readEnable == 1 && adress[10] == 0) begin
+    if (readEnable == 1 && address[10] == 0) begin
       dataOut = romData;
     end
 
     // RAM
-    if (readEnable == 1 && adress[10] == 1) begin
+    if (readEnable == 1 && address[10] == 1) begin
       dataOut = ramData;
     end
   end
