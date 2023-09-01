@@ -78,8 +78,9 @@ module CPU(
   wire regWrite;
   wire [7:0] controlSignals;
 
-  assign controlSignals = (isPipelineStalled) ? 0 :
-                          {branch, aluOp, aluSrc, memRead, memWrite, memToReg, regWrite};
+  assign controlSignals[5:0] = (isPipelineStalled) ? 0 :
+                          {branch, aluSrc, memRead, memWrite, memToReg, regWrite};
+  assign controlSignals[7:6] = (isPipelineStalled) ? 0 : aluOp;
 
   
 
@@ -100,7 +101,7 @@ module CPU(
     .idImmediateValue(idImmediateValue),
     .idFunct3(idInstruction[14:12]),
     .idFunct7(idInstruction[31:25]),
-    .idAluOp(controlSignals[6:5]),
+    .idAluOp(controlSignals[7:6]),
     .idAluSrc(controlSignals[4]),
     .idMemWrite(controlSignals[2]),
     .idMemRead(controlSignals[3]),
