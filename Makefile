@@ -13,12 +13,11 @@ test: ./output/V$(T).vcd
 	test -d output || mkdir output;
 	cd output; ../$<
 
-./obj_dir/V%: %.v tests/%_TestBench.cpp
-	verilator -Wall --trace --build -cc $< --exe $(word 2, $^)
+./obj_dir/V%: %.v tests/%_TestBench.cpp *.v
+	verilator --trace --build -cc $< --exe $(word 2, $^)
 
 ./obj_dir/V%: %.v
-	verilator -Wall --trace -cc $<
-
+	verilator --trace -cc $<
 
 TARGET_ASSEMBLY_FILE?="main.asm"
 compile-firmware: install
