@@ -7,6 +7,7 @@ args = parser.parse_args()
 
 compiledMemory = []
 instructionAddress = 0
+lastInstruction = ""
 
 with open(args.srcPath, 'rb') as machineCode:
   while (instruction := machineCode.read(4)):
@@ -15,8 +16,9 @@ with open(args.srcPath, 'rb') as machineCode:
 
     compiledMemory.append(f'        {instructionAddress}: data = 32\'h{endiannessCorrectedInstruction.hex()};\n')
     instructionAddress += 1
+    lastInstruction = endiannessCorrectedInstruction.hex()
 
-
+compiledMemory.append(f'        default: data = 32\'h{lastInstruction};\n')
 
 with open(args.memoryPath, 'r+') as memoryFile:
   memoryFileContent = memoryFile.readlines()
