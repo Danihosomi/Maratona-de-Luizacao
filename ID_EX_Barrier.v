@@ -1,5 +1,7 @@
 module ID_EX_Barrier(
   input clk,
+  input flush,
+  input [31:0] idProgramCounter,
   input [31:0] idLHSRegisterValue,
   input [31:0] idRHSRegisterValue,
   input [4:0] idLHSRegisterIndex,
@@ -14,6 +16,8 @@ module ID_EX_Barrier(
   input idMemRead,
   input idMemToReg,
   input idRegWrite,
+  input idBranch,
+  output reg [31:0] exProgramCounter,
   output reg [31:0] exLHSRegisterValue,
   output reg [31:0] exRHSRegisterValue,
   output reg [4:0] exLHSRegisterIndex,
@@ -27,7 +31,8 @@ module ID_EX_Barrier(
   output reg exMemWrite,
   output reg exMemRead,
   output reg exMemToReg,
-  output reg exRegWrite
+  output reg exRegWrite,
+  output reg exBranch
 );
 
   always @(posedge clk) begin
@@ -45,6 +50,17 @@ module ID_EX_Barrier(
     exMemRead <= idMemRead;
     exMemToReg <= idMemToReg;
     exRegWrite <= idRegWrite;
+    exBranch <= idBranch;
+
+    if (flush) begin
+      exAluOp <= 0;
+      exAluSrc <= 0;
+      exMemWrite <= 0;
+      exMemRead <= 0;
+      exMemToReg <= 0;
+      exRegWrite <= 0;
+      exBranch <= 0;
+    end
   end
 
 endmodule

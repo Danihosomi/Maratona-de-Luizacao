@@ -1,16 +1,18 @@
 module CPU(
   input clk,
-  output [31:0] debug
+  output [31:0] debug,
+  output debugBit
 );
-  assign debug = resultALU;
+  assign debug = exImmediateValue;
+  assign debugBit = zero;
 
   wire isPipelineStalled;
 
   ProgramCounter programCounter(
     .clk(clk),
     .isStalled(isPipelineStalled),
-    .shouldGoToTarget(0), // TODO: Branching
-    .jumpTarget(0), // TODO: branching
+    .shouldGoToTarget(shouldBranch),
+    .jumpTarget(branchTarget),
     .pc(pc)
   );
 
@@ -25,16 +27,22 @@ module CPU(
   IF_ID_Barrier if_id_barrier(
     .clk(clk),
     .dontUpdate(isPipelineStalled), // We must not update repeat the instruction
+    .flush(shouldBranch),
     .ifInstruction(instruction),
-    .idInstruction(idInstruction)
+    .ifProgramCounter(pc),
+    .idInstruction(idInstruction),
+    .idProgramCounter(idProgramCounter)
   );
 
   wire [31:0] idInstruction;
+  wire [31:0] idProgramCounter;
   wire [4:0] idLHSRegisterIndex;
   wire [4:0] idRHSRegisterIndex;
+  wire [2:0] idFunct3;
 
   assign idLHSRegisterIndex = idInstruction[19:15];
   assign idRHSRegisterIndex = idInstruction[24:20];
+  assign idFunct3 = idInstruction[14:12];
 
   StallUnit stallUnit(
     .decodeStageLHSReadRegisterIndex(idLHSRegisterIndex),
@@ -81,8 +89,6 @@ module CPU(
   assign controlSignals = (isPipelineStalled) ? 0 :
                           {branch, aluOp, aluSrc, memRead, memWrite, memToReg, regWrite};
 
-  
-
   ImmediateGeneration immediateGeneration(
     .instruction(idInstruction),
     .immediate(idImmediateValue)
@@ -92,6 +98,8 @@ module CPU(
 
   ID_EX_Barrier id_ex_barrier(
     .clk(clk),
+    .flush(shouldBranch),
+    .idProgramCounter(idProgramCounter),
     .idLHSRegisterValue(idLHSRegisterValue),
     .idRHSRegisterValue(idRHSRegisterValue),
     .idLHSRegisterIndex(idLHSRegisterIndex),
@@ -106,6 +114,8 @@ module CPU(
     .idMemRead(controlSignals[3]),
     .idMemToReg(controlSignals[1]),
     .idRegWrite(controlSignals[0]),
+    .idBranch(controlSignals[7]),
+    .exProgramCounter(exProgramCounter),
     .exLHSRegisterValue(exLHSRegisterValue),
     .exRHSRegisterValue(exRHSRegisterValue),
     .exLHSRegisterIndex(exLHSRegisterIndex),
@@ -119,9 +129,11 @@ module CPU(
     .exMemWrite(exMemWrite),
     .exMemRead(exMemRead),
     .exMemToReg(exMemToReg),
-    .exRegWrite(exRegWrite)
+    .exRegWrite(exRegWrite),
+    .exBranch(exBranch)
   );
 
+  wire [31:0] exProgramCounter;
   wire [31:0] exLHSRegisterValue;
   wire [31:0] exRHSRegisterValue;
   wire [4:0] exLHSRegisterIndex;
@@ -136,6 +148,7 @@ module CPU(
   wire exMemRead;
   wire exMemToReg;
   wire exRegWrite;
+  wire exBranch;
 
   // Hazard handling
   ForwardingUnit lhsForwardingUnit(
@@ -203,6 +216,16 @@ module CPU(
 
   wire [31:0] resultALU;
   wire zero;
+
+  BranchTargetCalculator branchTargetCalculator(
+    .programCounter(exProgramCounter),
+    .immediate(exImmediateValue),
+    .branchTarget(branchTarget)
+  );
+
+  wire [31:0] branchTarget;
+  wire shouldBranch;
+  assign shouldBranch = zero && exBranch;
 
   EX_MEM_Barrier ex_mem_barrier(
     .clk(clk),

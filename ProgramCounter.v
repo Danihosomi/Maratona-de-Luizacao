@@ -3,7 +3,7 @@ module ProgramCounter(
   input isStalled,
   input shouldGoToTarget,
   input [31:0] jumpTarget,
-  output reg [31:0]pc
+  output reg [31:0] pc
 );
   always @(posedge clk) begin
     if (isStalled == 0) begin

@@ -4,9 +4,10 @@ module Tester();
   
   reg clk;
   wire [31:0] debug;
+  wire debugBit;
   // wire [31:0] instruction;
 
-  CPU cpu(clk, debug);
+  CPU cpu(clk, debug, debugBit);
 
   // InstructionFetch instructionFetch(
   //   .clk(clk),
@@ -43,6 +44,7 @@ module Tester();
   always @(posedge clk) begin
       if (curr_cycle != MAX_CYCLES) begin
           $display(debug);
+          $display(debugBit);
           curr_cycle++;
       end
   end
