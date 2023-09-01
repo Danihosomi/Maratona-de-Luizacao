@@ -231,12 +231,13 @@ module CPU(
   wire memMemToReg;
   wire memRegWrite;
 
-  DataMemory dataMemory(
-    .memWrite(memMemWrite),
-    .memRead(memMemRead),
+  RAM DataMemoryRAM(
+    .clk(clk),
+    .writeEnable(memMemWrite),
+    .readEnable(memMemRead),
     .address(memAluResult),
-    .writeData(memMemoryWriteData),
-    .readData(memMemoryData)
+    .dataIn(memMemoryWriteData),
+    .dataOut(memMemoryData)
   );
 
   wire [31:0] memMemoryData;
