@@ -18,6 +18,9 @@ module RegisterFile(
     if (shouldWrite) begin
       registers[writeRegisterIndex] <= writeRegisterData;
     end
+    else begin
+      registers[writeRegisterIndex] <= registers[writeRegisterIndex];
+    end
   end
 
 endmodule
