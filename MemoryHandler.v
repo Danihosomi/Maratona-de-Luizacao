@@ -9,7 +9,6 @@ module MemoryHandler (
   input [31:0] instructionMemoryAddress,  // InstructionMemory address for read
   
   // Success signals to DataMemory and InstructionMemory
-  output reg dataMemorySuccess,  // DataMemory success signal
   output reg [31:0] dataMemoryDataOut,  // Data read to DataMemory
   output reg instructionMemorySuccess,  // InstructionMemory success signal
   output reg [31:0] instructionMemoryDataOut  // InstructionMemory success signal
@@ -34,21 +33,18 @@ module MemoryHandler (
     writeEnable = 0;
     readEnable = 0;
     dataIn = 0;
-    dataMemorySuccess = 0;
     dataMemoryDataOut = 0;
     instructionMemorySuccess = 0;
     instructionMemoryDataOut = 0;
     
     if (dataMemoryReadEnable == 1) begin
       address = dataMemoryAddress;
-      dataMemorySuccess = 1;
       dataMemoryDataOut = dataOut;
       readEnable = 1;
     end
 
     if (dataMemoryWriteEnable == 1) begin
       address = dataMemoryAddress;
-      dataMemorySuccess = 1;
       writeEnable = 1;
       dataIn = dataMemoryDataIn;
     end
