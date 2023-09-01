@@ -8,7 +8,7 @@ module RAM(
 
     reg [31:0] memory [255:0];
 
-    always @(address, dataIn, dataOut, writeEnable, readEnable) begin
+    always @(address, dataIn, writeEnable, readEnable) begin
         if (writeEnable == 1) begin
             memory[address[9:2]] <= dataIn;
         end
