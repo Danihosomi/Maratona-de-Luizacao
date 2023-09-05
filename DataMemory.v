@@ -6,12 +6,12 @@ module DataMemory (
   output reg [31:0] readData
 );
 
-  RAM DataMemoryRAM(
-    .writeEnable(memWrite),
-    .readEnable(memRead),
-    .address(address),
-    .dataIn(writeData),
-    .dataOut(readData)
-  );
+RAM DataMemoryRAM(
+  .writeEnable(memWrite),
+  .readEnable(memRead),
+  .address(address),
+  .dataIn(writeData),
+  .dataOut(readData)
+);
 
 endmodule

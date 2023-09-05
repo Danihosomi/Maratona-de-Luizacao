@@ -30,21 +30,21 @@ module ID_EX_Barrier(
   output reg exRegWrite
 );
 
-  always @(posedge clk) begin
-    exLHSRegisterValue <= idLHSRegisterValue;
-    exRHSRegisterValue <= idRHSRegisterValue;
-    exLHSRegisterIndex <= idLHSRegisterIndex;
-    exRHSRegisterIndex <= idRHSRegisterIndex;
-    exWriteRegisterIndex <= idWriteRegisterIndex;
-    exImmediateValue <= idImmediateValue;
-    exFunct3 <= idFunct3;
-    exFunct7 <= idFunct7;
-    exAluOp <= idAluOp;
-    exAluSrc <= idAluSrc;
-    exMemWrite <= idMemWrite;
-    exMemRead <= idMemRead;
-    exMemToReg <= idMemToReg;
-    exRegWrite <= idRegWrite;
-  end
+always @(posedge clk) begin
+  exLHSRegisterValue <= idLHSRegisterValue;
+  exRHSRegisterValue <= idRHSRegisterValue;
+  exLHSRegisterIndex <= idLHSRegisterIndex;
+  exRHSRegisterIndex <= idRHSRegisterIndex;
+  exWriteRegisterIndex <= idWriteRegisterIndex;
+  exImmediateValue <= idImmediateValue;
+  exFunct3 <= idFunct3;
+  exFunct7 <= idFunct7;
+  exAluOp <= idAluOp;
+  exAluSrc <= idAluSrc;
+  exMemWrite <= idMemWrite;
+  exMemRead <= idMemRead;
+  exMemToReg <= idMemToReg;
+  exRegWrite <= idRegWrite;
+end
 
 endmodule
