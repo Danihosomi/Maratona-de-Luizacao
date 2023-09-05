@@ -4,3 +4,4 @@ obj_dir/**
 scripts/venv/*
 temp/*
 output/*
+.nvim/*
