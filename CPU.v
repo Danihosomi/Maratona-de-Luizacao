@@ -5,10 +5,23 @@ module CPU(
   assign debug = resultALU;
 
   wire isPipelineStalled;
+  wire instructionMemorySuccess;
+
+  // Copilot completou aqui. Parece tudo certo
+  MemoryHandler memoryHandler(
+    .dataMemoryWriteEnable(memMemWrite),
+    .dataMemoryReadEnable(memMemRead),
+    .dataMemoryAddress(memAluResult),
+    .dataMemoryDataIn(memMemoryWriteData),
+    .instructionMemoryAddress(pc),
+    .dataMemoryDataOut(memMemoryData),
+    .instructionMemorySuccess(instructionMemorySuccess),
+    .instructionMemoryDataOut(instruction)
+  );
 
   ProgramCounter programCounter(
     .clk(clk),
-    .isStalled(isPipelineStalled),
+    .isStalled(isPipelineStalled | ~instructionMemorySuccess),
     .shouldGoToTarget(0), // TODO: Branching
     .jumpTarget(0), // TODO: branching
     .pc(pc)
@@ -16,11 +29,6 @@ module CPU(
 
   wire [31:0] pc;
   wire [31:0] instruction;
-
-  InstructionMemory instructionMemory(
-    .readAddress(pc),
-    .instruction(instruction)
-  );
 
   IF_ID_Barrier if_id_barrier(
     .clk(clk),
@@ -231,14 +239,14 @@ module CPU(
   wire memMemToReg;
   wire memRegWrite;
 
-  RAM DataMemoryRAM(
-    .clk(clk),
-    .writeEnable(memMemWrite),
-    .readEnable(memMemRead),
-    .address(memAluResult),
-    .dataIn(memMemoryWriteData),
-    .dataOut(memMemoryData)
-  );
+  // RAM DataMemoryRAM(
+  //   .clk(clk),
+  //   .writeEnable(memMemWrite),
+  //   .readEnable(memMemRead),
+  //   .address(memAluResult),
+  //   .dataIn(memMemoryWriteData),
+  //   .dataOut(memMemoryData)
+  // );
 
   wire [31:0] memMemoryData;
 
