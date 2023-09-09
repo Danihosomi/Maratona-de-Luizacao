@@ -21,7 +21,7 @@ module CPU(
 
   ProgramCounter programCounter(
     .clk(clk),
-    .isStalled(isPipelineStalled | ~instructionMemorySuccess),
+    .isStalled(isPipelineStalled),
     .shouldGoToTarget(0), // TODO: Branching
     .jumpTarget(0), // TODO: branching
     .pc(pc)
@@ -49,6 +49,7 @@ module CPU(
     .decodeStageRHSReadRegisterIndex(idRHSRegisterIndex),
     .executionStageWriteRegisterIndex(exWriteRegisterIndex),
     .isExecutionStageMemoryReadOperation(exMemRead),
+    .isInstructionMemoryBlocked(~instructionMemorySuccess),
     .isPipelineStalled(isPipelineStalled)
   );
 
