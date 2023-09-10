@@ -1,4 +1,6 @@
 module MemoryHandler (
+  input clk,
+
   // Signals from DataMemory
   input dataMemoryWriteEnable,   // DataMemory write enable
   input dataMemoryReadEnable,   // DataMemory write enable
@@ -21,6 +23,7 @@ module MemoryHandler (
   reg [31:0] dataOut;
 
   Memory memory(
+    .clk(clk),
     .address(address),
     .writeEnable(writeEnable),
     .readEnable(readEnable),

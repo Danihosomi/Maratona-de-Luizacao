@@ -1,4 +1,5 @@
 module Memory (
+  input clk,
   input [31:0] address,
   input writeEnable,
   input readEnable,
@@ -15,6 +16,7 @@ module Memory (
   );
   
   RAM MemoryRAM(
+    .clk(clk),
     .writeEnable(writeEnable & address[10]),
     .readEnable(readEnable & address[10]),
     .address(address),

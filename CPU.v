@@ -9,6 +9,7 @@ module CPU(
 
   // Copilot completou aqui. Parece tudo certo
   MemoryHandler memoryHandler(
+    .clk(clk),
     .dataMemoryWriteEnable(memMemWrite),
     .dataMemoryReadEnable(memMemRead),
     .dataMemoryAddress(memAluResult),
