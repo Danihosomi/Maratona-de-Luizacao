@@ -7,34 +7,34 @@ module Memory (
   output reg [31:0] dataOut
 );
 
-  reg [31:0] ramData;
-  reg [31:0] romData;
+reg [31:0] ramData;
+reg [31:0] romData;
 
-  ROMMemory MemoryROM(
-    .address(address),
-    .data(romData)
-  );
-  
-  RAM MemoryRAM(
-    .clk(clk),
-    .writeEnable(writeEnable & address[10]),
-    .readEnable(readEnable & address[10]),
-    .address(address),
-    .dataIn(dataIn),
-    .dataOut(ramData)
-  );
+ROMMemory MemoryROM(
+  .address(address),
+  .data(romData)
+);
 
-  always @* begin
-    dataOut = 0;
-    // ROM
-    if (readEnable == 1 && address[10] == 0) begin
-      dataOut = romData;
-    end
+RAM MemoryRAM(
+  .clk(clk),
+  .writeEnable(writeEnable & address[10]),
+  .readEnable(readEnable & address[10]),
+  .address(address),
+  .dataIn(dataIn),
+  .dataOut(ramData)
+);
 
-    // RAM
-    if (readEnable == 1 && address[10] == 1) begin
-      dataOut = ramData;
-    end
+always @* begin
+  dataOut = 0;
+  // ROM
+  if (readEnable == 1 && address[10] == 0) begin
+    dataOut = romData;
   end
+
+  // RAM
+  if (readEnable == 1 && address[10] == 1) begin
+    dataOut = ramData;
+  end
+end
 
 endmodule
