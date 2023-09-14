@@ -1,23 +1,20 @@
 module Memory (
-  input clk,
   input [31:0] address,
   input writeEnable,
   input readEnable,
   input [31:0] dataIn,
-  output [31:0] dataOut
+  output reg [31:0] dataOut
 );
 
   reg [31:0] ramData;
   reg [31:0] romData;
 
   ROMMemory MemoryROM(
-    .clk(clk),
     .address(address),
     .data(romData)
   );
   
   RAM MemoryRAM(
-    .clk(clk),
     .writeEnable(writeEnable & address[10]),
     .readEnable(readEnable & address[10]),
     .address(address),
@@ -26,13 +23,14 @@ module Memory (
   );
 
   always @* begin
+    dataOut = 0;
     // ROM
-    if (readEnable == 1 && adress[10] == 0) begin
-      data = romData;
+    if (readEnable == 1 && address[10] == 0) begin
+      dataOut = romData;
     end
 
     // RAM
-    if (readEnable == 1 && adress[10] == 1) begin
+    if (readEnable == 1 && address[10] == 1) begin
       dataOut = ramData;
     end
   end
