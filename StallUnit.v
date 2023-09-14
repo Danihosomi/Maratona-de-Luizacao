@@ -5,8 +5,8 @@ module StallUnit(
   input isExecutionStageMemoryReadOperation,
   output isPipelineStalled
 );
-  assign isPipelineStalled = (isExecutionStageMemoryReadOperation && (
-    executionStageWriteRegisterIndex == decodeStageRHSReadRegisterIndex || 
-    executionStageWriteRegisterIndex == decodeStageLHSReadRegisterIndex
-  ));
+assign isPipelineStalled = (isExecutionStageMemoryReadOperation && (
+  executionStageWriteRegisterIndex == decodeStageRHSReadRegisterIndex || 
+  executionStageWriteRegisterIndex == decodeStageLHSReadRegisterIndex
+));
 endmodule

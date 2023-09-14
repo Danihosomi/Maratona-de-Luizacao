@@ -12,11 +12,11 @@ module MEM_WB_Barrier(
   output reg wbRegWrite
 );
 
-  always @(posedge clk) begin
-    wbMemoryData <= memMemoryData;
-    wbExecutionData <= memExecutionData;
-    wbWriteRegisterIndex <= memWriteRegisterIndex;
-    wbMemToReg <= memMemToReg;
-    wbRegWrite <= memRegWrite;
-  end
+always @(posedge clk) begin
+  wbMemoryData <= memMemoryData;
+  wbExecutionData <= memExecutionData;
+  wbWriteRegisterIndex <= memWriteRegisterIndex;
+  wbMemToReg <= memMemToReg;
+  wbRegWrite <= memRegWrite;
+end
 endmodule

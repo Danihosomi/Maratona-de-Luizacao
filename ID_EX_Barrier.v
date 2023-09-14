@@ -35,32 +35,32 @@ module ID_EX_Barrier(
   output reg exBranch
 );
 
-  always @(posedge clk) begin
-    exLHSRegisterValue <= idLHSRegisterValue;
-    exRHSRegisterValue <= idRHSRegisterValue;
-    exLHSRegisterIndex <= idLHSRegisterIndex;
-    exRHSRegisterIndex <= idRHSRegisterIndex;
-    exWriteRegisterIndex <= idWriteRegisterIndex;
-    exImmediateValue <= idImmediateValue;
-    exFunct3 <= idFunct3;
-    exFunct7 <= idFunct7;
-    exAluOp <= idAluOp;
-    exAluSrc <= idAluSrc;
-    exMemWrite <= idMemWrite;
-    exMemRead <= idMemRead;
-    exMemToReg <= idMemToReg;
-    exRegWrite <= idRegWrite;
-    exBranch <= idBranch;
+always @(posedge clk) begin
+  exLHSRegisterValue <= idLHSRegisterValue;
+  exRHSRegisterValue <= idRHSRegisterValue;
+  exLHSRegisterIndex <= idLHSRegisterIndex;
+  exRHSRegisterIndex <= idRHSRegisterIndex;
+  exWriteRegisterIndex <= idWriteRegisterIndex;
+  exImmediateValue <= idImmediateValue;
+  exFunct3 <= idFunct3;
+  exFunct7 <= idFunct7;
+  exAluOp <= idAluOp;
+  exAluSrc <= idAluSrc;
+  exMemWrite <= idMemWrite;
+  exMemRead <= idMemRead;
+  exMemToReg <= idMemToReg;
+  exRegWrite <= idRegWrite;
+  exBranch <= idBranch;
 
-    if (flush) begin
-      exAluOp <= 0;
-      exAluSrc <= 0;
-      exMemWrite <= 0;
-      exMemRead <= 0;
-      exMemToReg <= 0;
-      exRegWrite <= 0;
-      exBranch <= 0;
-    end
+  if (flush) begin
+    exAluOp <= 0;
+    exAluSrc <= 0;
+    exMemWrite <= 0;
+    exMemRead <= 0;
+    exMemToReg <= 0;
+    exRegWrite <= 0;
+    exBranch <= 0;
   end
+end
 
 endmodule

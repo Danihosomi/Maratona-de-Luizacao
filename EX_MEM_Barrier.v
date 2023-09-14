@@ -16,13 +16,13 @@ module EX_MEM_Barrier(
   output reg memRegWrite
 );
 
-  always @(posedge clk) begin
-    memAluResult <= exAluResult;
-    memMemoryWriteData <= exMemoryWriteData;
-    memWriteRegisterIndex <= exWriteRegisterIndex;
-    memMemWrite <= exMemWrite;
-    memMemRead <= exMemRead;
-    memMemToReg <= exMemToReg;
-    memRegWrite <= exRegWrite;
-  end
+always @(posedge clk) begin
+  memAluResult <= exAluResult;
+  memMemoryWriteData <= exMemoryWriteData;
+  memWriteRegisterIndex <= exWriteRegisterIndex;
+  memMemWrite <= exMemWrite;
+  memMemRead <= exMemRead;
+  memMemToReg <= exMemToReg;
+  memRegWrite <= exRegWrite;
+end
 endmodule
