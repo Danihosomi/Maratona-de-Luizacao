@@ -8,10 +8,16 @@ module Alu (
 
 always @* begin
   case (ALUControl)
-    4'b0010: resultALU = operand1 + operand2; 
-    4'b0110: resultALU = operand1 - operand2; 
-    4'b0000: resultALU = operand1 & operand2; 
-    4'b0001: resultALU = operand1 | operand2; 
+    4'b0010: resultALU = operand1 + operand2;
+    4'b0110: resultALU = operand1 - operand2;
+    4'b0000: resultALU = operand1 & operand2;
+    4'b0001: resultALU = operand1 | operand2;
+    4'b1000: resultALU = (operand1 == operand2) ? 0 : 1;//beq
+    4'b1001: resultALU = (operand1 != operand2) ? 0 : 1;//bne
+    4'b1010: resultALU = (operand1 < operand2) ? 0 : 1;//blt
+    4'b1011: resultALU = (operand1 >= operand2) ? 0 : 1;//bge
+    4'b1100: resultALU = (operand1 < operand2) ? 0 : 1;//bltu
+    4'b1101: resultALU = (operand1 >= operand2) ? 0 : 1;//bgeu
     default: resultALU = operand1 + operand2;
   endcase
 
