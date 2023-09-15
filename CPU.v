@@ -87,13 +87,13 @@ Control control(
 );
 
 wire branch;
-wire [1:0] aluOp;
+wire [2:0] aluOp;
 wire aluSrc;
 wire memRead;
 wire memWrite;
 wire memToReg;
 wire regWrite;
-wire [7:0] controlSignals;
+wire [8:0] controlSignals;
 
 assign controlSignals = (isPipelineStalled) ? 0 :
   {branch, aluOp, aluSrc, memRead, memWrite, memToReg, regWrite};
@@ -117,13 +117,13 @@ ID_EX_Barrier id_ex_barrier(
   .idImmediateValue(idImmediateValue),
   .idFunct3(idInstruction[14:12]),
   .idFunct7(idInstruction[31:25]),
-  .idAluOp(controlSignals[6:5]),
+  .idAluOp(controlSignals[7:5]),
   .idAluSrc(controlSignals[4]),
   .idMemWrite(controlSignals[2]),
   .idMemRead(controlSignals[3]),
   .idMemToReg(controlSignals[1]),
   .idRegWrite(controlSignals[0]),
-  .idBranch(controlSignals[7]),
+  .idBranch(controlSignals[8]),
   .exProgramCounter(exProgramCounter),
   .exLHSRegisterValue(exLHSRegisterValue),
   .exRHSRegisterValue(exRHSRegisterValue),
@@ -151,7 +151,7 @@ wire [4:0] exWriteRegisterIndex;
 wire [31:0] exImmediateValue;
 wire [2:0] exFunct3;
 wire [6:0] exFunct7;
-wire [1:0] exAluOp;
+wire [2:0] exAluOp;
 wire exAluSrc;
 wire exMemWrite;
 wire exMemRead;

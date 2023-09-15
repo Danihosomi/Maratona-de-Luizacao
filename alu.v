@@ -6,18 +6,28 @@ module Alu (
   output reg zero
 );
 
+`define isNegative(A) A >= 2147483648
+
 always @* begin
   case (ALUControl)
     4'b0010: resultALU = operand1 + operand2;
     4'b0110: resultALU = operand1 - operand2;
     4'b0000: resultALU = operand1 & operand2;
     4'b0001: resultALU = operand1 | operand2;
-    4'b1000: resultALU = (operand1 == operand2) ? 0 : 1;//beq
-    4'b1001: resultALU = (operand1 != operand2) ? 0 : 1;//bne
-    4'b1010: resultALU = (operand1 < operand2) ? 0 : 1;//blt
-    4'b1011: resultALU = (operand1 >= operand2) ? 0 : 1;//bge
-    4'b1100: resultALU = (operand1 < operand2) ? 0 : 1;//bltu
-    4'b1101: resultALU = (operand1 >= operand2) ? 0 : 1;//bgeu
+    4'b1000: resultALU = (operand1 == operand2) ? 0 : 1; //beq
+    4'b1001: resultALU = (operand1 != operand2) ? 0 : 1; //bne
+    4'b1010: begin                                       //blt
+      if(`isNegative(operand1) && !(`isNegative(operand2))) resultALU = 0;
+      else if(!(`isNegative(operand1)) && `isNegative(operand2)) resultALU = 1;
+      else resultALU = (operand1 < operand2) ? 0 : 1;
+    end
+    4'b1011: begin                                       //bge
+      if(`isNegative(operand1) && !(`isNegative(operand2))) resultALU = 1;
+      else if(!(`isNegative(operand1)) && `isNegative(operand2)) resultALU = 0;
+      else resultALU = (operand1 >= operand2) ? 0 : 1;
+    end
+    4'b1100: resultALU = (operand1 < operand2) ? 0 : 1;  //bltu
+    4'b1101: resultALU = (operand1 >= operand2) ? 0 : 1; //bgeu
     default: resultALU = operand1 + operand2;
   endcase
 
