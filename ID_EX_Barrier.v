@@ -36,6 +36,7 @@ module ID_EX_Barrier(
 );
 
 always @(posedge clk) begin
+  exProgramCounter <= idProgramCounter;
   exLHSRegisterValue <= idLHSRegisterValue;
   exRHSRegisterValue <= idRHSRegisterValue;
   exLHSRegisterIndex <= idLHSRegisterIndex;

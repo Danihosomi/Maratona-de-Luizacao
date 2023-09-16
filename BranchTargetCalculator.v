@@ -4,6 +4,6 @@ module BranchTargetCalculator(
   output reg [31:0] branchTarget
 );
 
-  assign branchTarget = programCounter + (immediate << 1);
+  assign branchTarget = programCounter + immediate;
 
 endmodule
