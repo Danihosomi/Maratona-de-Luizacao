@@ -14,6 +14,9 @@ always @* begin
     4'b0110: resultALU = operand1 - operand2;
     4'b0000: resultALU = operand1 & operand2;
     4'b0001: resultALU = operand1 | operand2;
+    4'b0011: resultALU = operand1 << operand2;
+    4'b0100: resultALU = operand1 >> operand2;
+    4'b0101: resultALU = operand1 ^ operand2;
     4'b1000: resultALU = (operand1 == operand2) ? 0 : 1; //beq
     4'b1001: resultALU = (operand1 != operand2) ? 0 : 1; //bne
     4'b1010: begin                                       //blt
@@ -43,4 +46,6 @@ endmodule
 // 0000 AND
 // 0001 OR
 // 0010 ADD
+// 0011 SLL
+// 0100 SR
 // 0110 SUB
