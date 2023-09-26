@@ -1,5 +1,6 @@
 module ProgramCounter(
   input clk,
+  input rst,
   input isStalled,
   input shouldGoToTarget,
   input [31:0] jumpTarget,
@@ -15,6 +16,10 @@ always @(posedge clk) begin
   end
   else begin
     pc <= pc;
+  end
+
+  if (rst) begin
+    pc <= 0;
   end
 end 
 endmodule

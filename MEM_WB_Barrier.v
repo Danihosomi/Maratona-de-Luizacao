@@ -1,5 +1,6 @@
 module MEM_WB_Barrier(
   input clk,
+  input rst,
   input [31:0] memMemoryData,
   input [31:0] memExecutionData,
   input [4:0] memWriteRegisterIndex,  
@@ -18,5 +19,13 @@ always @(posedge clk) begin
   wbWriteRegisterIndex <= memWriteRegisterIndex;
   wbMemToReg <= memMemToReg;
   wbRegWrite <= memRegWrite;
+
+  if (rst) begin
+    wbMemoryData <= 0;
+    wbExecutionData <= 0;
+    wbWriteRegisterIndex <= 0;
+    wbMemToReg <= 0;
+    wbRegWrite <= 0;
+  end
 end
 endmodule

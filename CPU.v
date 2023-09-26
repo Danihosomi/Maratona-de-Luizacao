@@ -1,8 +1,9 @@
 module CPU(
   input clk,
+  input rst,
   output [31:0] debug
 );
-assign debug = resultALU;
+assign debug = idRHSRegisterValue;
 
 wire isPipelineStalled;
 wire instructionMemorySuccess;
@@ -22,6 +23,7 @@ MemoryHandler memoryHandler(
 
 ProgramCounter programCounter(
   .clk(clk),
+  .rst(rst),
   .isStalled(isPipelineStalled),
   .shouldGoToTarget(0), // TODO: Branching
   .jumpTarget(0), // TODO: branching
@@ -33,6 +35,7 @@ wire [31:0] instruction;
 
 IF_ID_Barrier if_id_barrier(
   .clk(clk),
+  .rst(rst),
   .dontUpdate(isPipelineStalled), // We must not update repeat the instruction
   .ifInstruction(instruction),
   .idInstruction(idInstruction)
@@ -56,6 +59,7 @@ StallUnit stallUnit(
 
 RegisterFile registerFile(
   .clk(clk),
+  .rst(rst),
   .source1RegisterIndex(idLHSRegisterIndex),
   .source2RegisterIndex(idRHSRegisterIndex),
   .writeRegisterIndex(wbWriteRegisterIndex),
@@ -103,6 +107,7 @@ wire [31:0] idImmediateValue;
 
 ID_EX_Barrier id_ex_barrier(
   .clk(clk),
+  .rst(rst),
   .idLHSRegisterValue(idLHSRegisterValue),
   .idRHSRegisterValue(idRHSRegisterValue),
   .idLHSRegisterIndex(idLHSRegisterIndex),
@@ -217,6 +222,7 @@ wire zero;
 
 EX_MEM_Barrier ex_mem_barrier(
   .clk(clk),
+  .rst(rst),
   .exAluResult(resultALU),
   .exMemoryWriteData(rhsAluInput),
   .exWriteRegisterIndex(exWriteRegisterIndex),
@@ -245,6 +251,7 @@ wire [31:0] memMemoryData;
 
 MEM_WB_Barrier mem_wb_barrier(
   .clk(clk),
+  .rst(rst),
   .memMemoryData(memMemoryData),
   .memExecutionData(memAluResult),
   .memWriteRegisterIndex(memWriteRegisterIndex),

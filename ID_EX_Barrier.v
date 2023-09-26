@@ -1,5 +1,6 @@
 module ID_EX_Barrier(
   input clk,
+  input rst,
   input [31:0] idLHSRegisterValue,
   input [31:0] idRHSRegisterValue,
   input [4:0] idLHSRegisterIndex,
@@ -45,6 +46,23 @@ always @(posedge clk) begin
   exMemRead <= idMemRead;
   exMemToReg <= idMemToReg;
   exRegWrite <= idRegWrite;
+
+  if (rst) begin
+    exLHSRegisterValue <= 0;
+    exRHSRegisterValue <= 0;
+    exLHSRegisterIndex <= 0;
+    exRHSRegisterIndex <= 0;
+    exWriteRegisterIndex <= 0;
+    exImmediateValue <= 0;
+    exFunct3 <= 0;
+    exFunct7 <= 0;
+    exAluOp <= 0;
+    exAluSrc <= 0;
+    exMemWrite <= 0;
+    exMemRead <= 0;
+    exMemToReg <= 0;
+    exRegWrite <= 0;
+  end
 end
 
 endmodule
