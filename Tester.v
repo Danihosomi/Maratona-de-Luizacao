@@ -4,9 +4,10 @@ parameter MAX_CYCLES = 10; // Stores the number of clock cycles we want to test
 
 reg clk;
 wire [31:0] debug;
+wire debugBit;
 // wire [31:0] instruction;
 
-CPU cpu(clk, debug);
+CPU cpu(clk, debug, debugBit);
 
 // InstructionFetch instructionFetch(
 //   .clk(clk),
@@ -43,6 +44,7 @@ integer curr_cycle = 0;
 always @(posedge clk) begin
   if (curr_cycle != MAX_CYCLES) begin
     $display(debug);
+    $display(debugBit);
     curr_cycle++;
   end
 end

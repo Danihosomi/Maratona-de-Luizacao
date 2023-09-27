@@ -3,7 +3,7 @@ module Control(
   output branch,
   output memRead,
   output memToReg,
-  output reg [1:0] aluOp,
+  output reg [2:0] aluOp,
   output memWrite,
   output aluSrc,
   output regWrite
@@ -22,12 +22,12 @@ assign regWrite = ((opcode == 'b0000011) || (opcode == 'b0010011) || (opcode == 
 
 always @(opcode) begin
   case (opcode)
-    'b0000011: aluOp = 'b00;
-    'b0100011: aluOp = 'b00;
-    'b1100011: aluOp = 'b01;
-    'b0010011: aluOp = 'b10;
-    'b0110011: aluOp = 'b10;
-    default:   aluOp = 'b11;
+    'b0000011: aluOp = 'b000;
+    'b0100011: aluOp = 'b000;
+    'b1100011: aluOp = 'b001;
+    'b0010011: aluOp = 'b110;
+    'b0110011: aluOp = 'b010;
+    default:   aluOp = 'b011;
   endcase
 end
 

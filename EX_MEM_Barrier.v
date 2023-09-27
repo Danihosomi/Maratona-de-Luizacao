@@ -27,9 +27,6 @@ always @(posedge clk) begin
   memRegWrite <= exRegWrite;
 
   if (rst) begin
-    memAluResult <= 0;
-    memMemoryWriteData <= 0;
-    memWriteRegisterIndex <= 0;
     memMemWrite <= 0;
     memMemRead <= 0;
     memMemToReg <= 0;

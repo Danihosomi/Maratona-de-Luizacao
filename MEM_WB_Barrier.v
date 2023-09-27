@@ -21,9 +21,6 @@ always @(posedge clk) begin
   wbRegWrite <= memRegWrite;
 
   if (rst) begin
-    wbMemoryData <= 0;
-    wbExecutionData <= 0;
-    wbWriteRegisterIndex <= 0;
     wbMemToReg <= 0;
     wbRegWrite <= 0;
   end
