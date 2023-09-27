@@ -13,7 +13,9 @@ module MemoryHandler (
   // Success signals to DataMemory and InstructionMemory
   output reg [31:0] dataMemoryDataOut,  // Data read to DataMemory
   output reg instructionMemorySuccess,  // InstructionMemory success signal
-  output reg [31:0] instructionMemoryDataOut  // InstructionMemory success signal
+  output reg [31:0] instructionMemoryDataOut,  // InstructionMemory success signal,
+
+  output [5:0] led
 );
 
 reg [31:0] address;
@@ -22,13 +24,25 @@ reg readEnable;
 reg [31:0] dataIn;
 reg [31:0] dataOut;
 
+// Should we create a memory bus?
+wire isMemoryTarget = address[31] == 0;
 Memory memory(
   .clk(clk),
   .address(address),
-  .writeEnable(writeEnable),
-  .readEnable(readEnable),
+  .writeEnable(isMemoryTarget && writeEnable),
+  .readEnable(isMemoryTarget && readEnable),
   .dataIn(dataIn),
   .dataOut(dataOut)
+);
+
+wire isPeripheralTarget = address[31] == 1;
+PeripheralsBlock peripherals(
+  .clk(clk),
+  .readEnable(isPeripheralTarget && readEnable),
+  .writeEnable(isPeripheralTarget && writeEnable),
+  .address(address[30:0]),
+  .dataIn(dataIn),
+  .led(led)
 );
 
 always @* begin

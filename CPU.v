@@ -1,9 +1,8 @@
 module CPU(
   input clk,
   input rst,
-  output [31:0] debug
+  output [5:0] debug
 );
-assign debug = idRHSRegisterValue;
 
 wire isPipelineStalled;
 wire instructionMemorySuccess;
@@ -18,7 +17,8 @@ MemoryHandler memoryHandler(
   .instructionMemoryAddress(pc),
   .dataMemoryDataOut(memMemoryData),
   .instructionMemorySuccess(instructionMemorySuccess),
-  .instructionMemoryDataOut(instruction)
+  .instructionMemoryDataOut(instruction),
+  .led(debug)
 );
 
 ProgramCounter programCounter(

@@ -4,7 +4,7 @@ module top
   input rst,
   output [5:0] led
 );
-wire [31:0] debug; // TODO: hook this into the led
+wire [5:0] debug; // TODO: hook this into the led
 
 CPU cpu(
   .clk(slowerClk),
