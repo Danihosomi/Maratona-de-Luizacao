@@ -15,6 +15,8 @@ module MemoryHandler (
   output reg instructionMemorySuccess,  // InstructionMemory success signal
   output reg [31:0] instructionMemoryDataOut,  // InstructionMemory success signal,
 
+  // Peripherals
+  input button,
   output [5:0] led
 );
 
@@ -22,7 +24,10 @@ reg [31:0] address;
 reg writeEnable;
 reg readEnable;
 reg [31:0] dataIn;
-reg [31:0] dataOut;
+wire [31:0] dataOut = isMemoryTarget ? memoryDataOut : peripheralDataOut;
+
+wire [31:0] memoryDataOut;
+wire [31:0] peripheralDataOut;
 
 // Should we create a memory bus?
 wire isMemoryTarget = address[31] == 0;
@@ -32,7 +37,7 @@ Memory memory(
   .writeEnable(isMemoryTarget && writeEnable),
   .readEnable(isMemoryTarget && readEnable),
   .dataIn(dataIn),
-  .dataOut(dataOut)
+  .dataOut(memoryDataOut)
 );
 
 wire isPeripheralTarget = address[31] == 1;
@@ -42,6 +47,8 @@ PeripheralsBlock peripherals(
   .writeEnable(isPeripheralTarget && writeEnable),
   .address(address[30:0]),
   .dataIn(dataIn),
+  .dataOut(peripheralDataOut),
+  .button(button),
   .led(led)
 );
 
