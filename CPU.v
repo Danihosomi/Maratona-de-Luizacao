@@ -25,8 +25,8 @@ ProgramCounter programCounter(
   .clk(clk),
   .rst(rst),
   .isStalled(isPipelineStalled),
-  .shouldGoToTarget(0), // TODO: Branching
-  .jumpTarget(0), // TODO: branching
+  .shouldGoToTarget(shouldBranch),
+  .jumpTarget(branchTarget),
   .pc(pc)
 );
 
@@ -35,18 +35,23 @@ wire [31:0] instruction;
 
 IF_ID_Barrier if_id_barrier(
   .clk(clk),
-  .rst(rst),
+  .rst(rst | shouldBranch),
   .dontUpdate(isPipelineStalled), // We must not update repeat the instruction
   .ifInstruction(instruction),
-  .idInstruction(idInstruction)
+  .ifProgramCounter(pc),
+  .idInstruction(idInstruction),
+  .idProgramCounter(idProgramCounter)
 );
 
 wire [31:0] idInstruction;
+wire [31:0] idProgramCounter;
 wire [4:0] idLHSRegisterIndex;
 wire [4:0] idRHSRegisterIndex;
+wire [2:0] idFunct3;
 
 assign idLHSRegisterIndex = idInstruction[19:15];
 assign idRHSRegisterIndex = idInstruction[24:20];
+assign idFunct3 = idInstruction[14:12];
 
 StallUnit stallUnit(
   .decodeStageLHSReadRegisterIndex(idLHSRegisterIndex),
@@ -84,19 +89,17 @@ Control control(
 );
 
 wire branch;
-wire [1:0] aluOp;
+wire [2:0] aluOp;
 wire aluSrc;
 wire memRead;
 wire memWrite;
 wire memToReg;
 wire regWrite;
-wire [7:0] controlSignals;
+wire [8:0] controlSignals;
 
 assign controlSignals[5:0] = (isPipelineStalled) ? 0 :
                         {branch, aluSrc, memRead, memWrite, memToReg, regWrite};
-assign controlSignals[7:6] = (isPipelineStalled) ? 0 : aluOp;
-
-
+assign controlSignals[8:6] = (isPipelineStalled) ? 0 : aluOp;
 
 ImmediateGeneration immediateGeneration(
   .instruction(idInstruction),
@@ -107,7 +110,8 @@ wire [31:0] idImmediateValue;
 
 ID_EX_Barrier id_ex_barrier(
   .clk(clk),
-  .rst(rst),
+  .rst(rst || shouldBranch),
+  .idProgramCounter(idProgramCounter),
   .idLHSRegisterValue(idLHSRegisterValue),
   .idRHSRegisterValue(idRHSRegisterValue),
   .idLHSRegisterIndex(idLHSRegisterIndex),
@@ -116,12 +120,14 @@ ID_EX_Barrier id_ex_barrier(
   .idImmediateValue(idImmediateValue),
   .idFunct3(idInstruction[14:12]),
   .idFunct7(idInstruction[31:25]),
-  .idAluOp(controlSignals[7:6]),
+  .idAluOp(controlSignals[8:6]),
   .idAluSrc(controlSignals[4]),
   .idMemWrite(controlSignals[2]),
   .idMemRead(controlSignals[3]),
   .idMemToReg(controlSignals[1]),
   .idRegWrite(controlSignals[0]),
+  .idBranch(controlSignals[5]),
+  .exProgramCounter(exProgramCounter),
   .exLHSRegisterValue(exLHSRegisterValue),
   .exRHSRegisterValue(exRHSRegisterValue),
   .exLHSRegisterIndex(exLHSRegisterIndex),
@@ -135,9 +141,11 @@ ID_EX_Barrier id_ex_barrier(
   .exMemWrite(exMemWrite),
   .exMemRead(exMemRead),
   .exMemToReg(exMemToReg),
-  .exRegWrite(exRegWrite)
+  .exRegWrite(exRegWrite),
+  .exBranch(exBranch)
 );
 
+wire [31:0] exProgramCounter;
 wire [31:0] exLHSRegisterValue;
 wire [31:0] exRHSRegisterValue;
 wire [4:0] exLHSRegisterIndex;
@@ -146,12 +154,13 @@ wire [4:0] exWriteRegisterIndex;
 wire [31:0] exImmediateValue;
 wire [2:0] exFunct3;
 wire [6:0] exFunct7;
-wire [1:0] exAluOp;
+wire [2:0] exAluOp;
 wire exAluSrc;
 wire exMemWrite;
 wire exMemRead;
 wire exMemToReg;
 wire exRegWrite;
+wire exBranch;
 
 // Hazard handling
 ForwardingUnit lhsForwardingUnit(
@@ -219,6 +228,16 @@ Alu alu(
 
 wire [31:0] resultALU;
 wire zero;
+
+BranchTargetCalculator branchTargetCalculator(
+  .programCounter(exProgramCounter),
+  .immediate(exImmediateValue),
+  .branchTarget(branchTarget)
+);
+
+wire [31:0] branchTarget;
+wire shouldBranch;
+assign shouldBranch = zero && exBranch;
 
 EX_MEM_Barrier ex_mem_barrier(
   .clk(clk),
