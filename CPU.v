@@ -1,6 +1,7 @@
 module CPU(
   input clk,
   input rst,
+  input buttonPeripheral,
   output [5:0] debug
 );
 
@@ -18,6 +19,7 @@ MemoryHandler memoryHandler(
   .dataMemoryDataOut(memMemoryData),
   .instructionMemorySuccess(instructionMemorySuccess),
   .instructionMemoryDataOut(instruction),
+  .button(buttonPeripheral),
   .led(debug)
 );
 
