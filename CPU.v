@@ -231,15 +231,19 @@ Alu alu(
 wire [31:0] resultALU;
 wire zero;
 
-BranchTargetCalculator branchTargetCalculator(
+BranchUnit branchUnit(
+  .clk(clk),
+  .stall(isPipelineStalled),
+  .aluZero(zero),
+  .isBranchOperation(exBranch),
   .programCounter(exProgramCounter),
   .immediate(exImmediateValue),
+  .shouldBranch(shouldBranch),
   .branchTarget(branchTarget)
 );
 
 wire [31:0] branchTarget;
 wire shouldBranch;
-assign shouldBranch = zero && exBranch;
 
 EX_MEM_Barrier ex_mem_barrier(
   .clk(clk),
