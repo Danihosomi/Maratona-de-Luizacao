@@ -7,6 +7,23 @@ Talvez explicitar aqui o que fizemos
 ### Memory-mapped I/O
 Vou tentar falar um pouquinho das escolhas de endereço dos periféricos
 
+### Branch
+Para implementar o branch, nós precisamos expandir os códigos do ALUControl, responsável por determinar em qual modo a ALU deve operar.
+Os novos códigos criados são:
+BLT:  1010
+BGE:  1011
+BLTU: 1100
+BGEU: 1101
+Em cada uma dessas operações, os operandos são comparados entre si e, caso o resultado da comparação seja verdadeiro, então o resultado da ALU é setado como zero, implicando que a saída "zero" da ALU (que sinaliza quando o resultado da ALU é zero) seja positiva, triggando então o branch.
+É importante ressaltar também que a diferenciação das instruções signed e unsigned foram feitas da seguinte forma:
+- Unsigned: a comparação foi feita normalmente
+- Signed: checamos o bit mais significativo dos operadores pra checar se estamos comparando um número negativo com um positivo. Se sim, o número positivo é maior, se não, comparamos eles normalmente.
+
+Além das modificação na ALU, foi implementada a BranchUnit, responsável por:
+- Detectar se um branch deve ser feito, a partir do sinal zero da ALU e do sinal branch do controle
+- Calcular o endereço de destino do branch, somando o valor do program counter com o imediato
+- Refazer o branch caso a pipeline esteja Stalled
+
 ### Desenvolvimento em FPGA
 Esta etapa foi marcada por diversas lutas pra fazer nosso circuito funcionar na FPGA.
 
@@ -22,3 +39,4 @@ Acima de tudo, me ensinou a ter paciência.
 
 # Contribuições
 - **Luiz Henrique**: Implementação dos periféricos e ajustes para síntese do circuito na FPGA.
+- **Larissa**: Implementação das funções de branch integradas na pipeline.
