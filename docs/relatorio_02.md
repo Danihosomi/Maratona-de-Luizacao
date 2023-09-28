@@ -10,10 +10,14 @@ Vou tentar falar um pouquinho das escolhas de endereço dos periféricos
 ### Branch
 Para implementar o branch, nós precisamos expandir os códigos do ALUControl, responsável por determinar em qual modo a ALU deve operar.
 Os novos códigos criados são:
-BLT:  1010
-BGE:  1011
-BLTU: 1100
-BGEU: 1101
+
+Function | ALUControl
+--- | ---
+BLT | 1010
+BGE | 1011
+BLTU | 1100
+BGEU | 1101
+
 Em cada uma dessas operações, os operandos são comparados entre si e, caso o resultado da comparação seja verdadeiro, então o resultado da ALU é setado como zero, implicando que a saída "zero" da ALU (que sinaliza quando o resultado da ALU é zero) seja positiva, triggando então o branch.
 É importante ressaltar também que a diferenciação das instruções signed e unsigned foram feitas da seguinte forma:
 - Unsigned: a comparação foi feita normalmente
