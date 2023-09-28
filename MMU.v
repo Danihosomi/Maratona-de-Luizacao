@@ -10,7 +10,7 @@ module MMU (
   output reg dataMemorySuccess,
   output reg [31:0] instructionMemoryDataOut,
   output reg [5:0] led,
-  output reg [5:0] button
+  output reg button
 );
 
 wire isPeripheralTarget = instructionMemoryAddress[31];
