@@ -20,15 +20,30 @@ always @* begin
       endcase
     3'b011: result = 6'b000110;
     3'b010:
-      case (func3)
-        3'b000: result = (func7[5]) ? 6'b000110 : 6'b000010; //sub or add
-        3'b110: result = 6'b000001; //or
-        3'b111: result = 6'b000000; //and
-        3'b001: result = 6'b000011; //sll
-        3'b101: result = (func7[5]) ? 6'b000111 : 6'b000100; //sra or srl
-        3'b100: result = 6'b000101; //xor
-        default: result = 6'b000010;
-      endcase
+      if (func7[0]) begin
+        case(func3)
+          3'b000: result = 6'b010000; //mul
+          3'b001: result = 6'b010001; //mulh
+          3'b010: result = 6'b010010; //mulhsu
+          3'b011: result = 6'b010011; //mulhu
+          3'b100: result = 6'b010100; //div
+          3'b101: result = 6'b010101; //divu
+          3'b110: result = 6'b010110; //rem
+          3'b111: result = 6'b010111; //remu
+          default: result = 6'b011000;
+        endcase
+      end
+      else begin
+        case (func3)
+          3'b000: result = (func7[5]) ? 6'b000110 : 6'b000010; //sub or add
+          3'b110: result = 6'b000001; //or
+          3'b111: result = 6'b000000; //and
+          3'b001: result = 6'b000011; //sll
+          3'b101: result = (func7[5]) ? 6'b000111 : 6'b000100; //sra or srl
+          3'b100: result = 6'b000101; //xor
+          default: result = 6'b000010;
+        endcase
+      end
     3'b110:
       case (func3)
         3'b000: result = 6'b000010; //addi
