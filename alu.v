@@ -1,8 +1,8 @@
 module Alu (
   input [3:0] ALUControl,
-  input [31:0] operand1,
-  input [31:0] operand2,
-  output reg [31:0] resultALU,
+  input signed [31:0] operand1,
+  input signed [31:0] operand2,
+  output reg signed [31:0] resultALU,
   output reg zero
 );
 
@@ -17,6 +17,7 @@ always @* begin
     4'b0011: resultALU = operand1 << operand2;
     4'b0100: resultALU = operand1 >> operand2;
     4'b0101: resultALU = operand1 ^ operand2;
+    4'b0111: resultALU = operand1 >>> operand2[4:0]; //usando ultimos 5 bits, vi em algumas referencias
     4'b1000: resultALU = (operand1 == operand2) ? 0 : 1; //beq
     4'b1001: resultALU = (operand1 != operand2) ? 0 : 1; //bne
     4'b1010: begin                                       //blt
@@ -49,3 +50,4 @@ endmodule
 // 0011 SLL
 // 0100 SR
 // 0110 SUB
+// 0111 SRA
