@@ -24,7 +24,7 @@ wire unused3;
 CacheL1 instructionMemoryCacheL1(
   .clk(clk),
   .writeEnable(0),
-  .readEnable(1 & instructionMemoryIsMemoryTarget),
+  .readEnable(1),
   .address(instructionMemoryAddress),
   .dataIn(0),
   .dataOut(instructionMemoryCacheDataOut),
@@ -68,8 +68,8 @@ wire dataMemoryCacheSuccess;
 
 CacheL1 dataMemoryCacheL1(
   .clk(clk),
-  .writeEnable(dataMemoryWriteEnable & dataMemoryIsMemoryTarget),
-  .readEnable(dataMemoryReadEnable & dataMemoryIsMemoryTarget),
+  .writeEnable(dataMemoryWriteEnable),
+  .readEnable(dataMemoryReadEnable),
   .address(dataMemoryAddress),
   .dataIn(dataMemoryDataIn),
   .dataOut(dataMemoryCacheDataOut),
