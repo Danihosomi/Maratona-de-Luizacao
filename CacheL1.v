@@ -126,6 +126,6 @@ module CacheL1(
   end
 
   assign dataOut = data[address[6:2]];
-  assign cacheReady = (state == READY) | readReady | invalidMemory;
+  assign cacheReady = (state == READY) | readReady;
 
 endmodule
