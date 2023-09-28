@@ -18,7 +18,12 @@ assign shouldBranch = currentShouldBranch || (pendingBranch != 0);
 assign branchTarget = currentShouldBranch ? currentBranchTarget : pendingBranch;
 
 always @(posedge clk) begin
-  pendingBranch <= (currentShouldBranch && stall) ? branchTarget : 0;
+  if (!stall) begin
+    pendingBranch <= 0;
+  end
+  else if (currentShouldBranch) begin
+    pendingBranch <= branchTarget;
+  end
 end
 
 endmodule
