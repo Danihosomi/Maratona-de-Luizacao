@@ -40,12 +40,12 @@ always @* begin
     // VINI ESSES DOIS PRIMEIROS COMANDOS ESTAVAM BATENDO COM O BEQ E O BNE
     6'b011000: resultALU = operand1 * operand2; //mul (VINI ESTÁ ALTERADO OLHE PF!!!) 
     6'b011001: resultALU = (operand1 * operand2) >> 32; //mulh (VINI ESTÁ ALTERADO OLHE PF!!!)
-    6'b001010: resultALU = (operand1 * operand2) >> 32; //mulhsu
-    6'b001011: resultALU = (operand1 * operand2) >> 32; //mulhu
-    6'b001100: resultALU = (operand1 / operand2); //div
-    6'b001101: resultALU = (operand1 / operand2); //divu
-    6'b001110: resultALU = (operand1 % operand2); //rem
-    6'b001111: resultALU = (operand1 % operand2); //remu
+    6'b011010: resultALU = (operand1 * operand2) >> 32; //mulhsu (VINI ESTÁ ALTERADO OLHE PF!!!) 
+    6'b011011: resultALU = (operand1 * operand2) >> 32; //mulhu (VINI ESTÁ ALTERADO OLHE PF!!!) 
+    6'b011100: resultALU = (operand1 / operand2); //div (VINI ESTÁ ALTERADO OLHE PF!!!) 
+    6'b011101: resultALU = (operand1 / operand2); //divu (VINI ESTÁ ALTERADO OLHE PF!!!) 
+    6'b011110: resultALU = (operand1 % operand2); //rem (VINI ESTÁ ALTERADO OLHE PF!!!) 
+    6'b011111: resultALU = (operand1 % operand2); //remu (VINI ESTÁ ALTERADO OLHE PF!!!) 
 
     6'b100000: begin // min
       if (`isNegative(operand1) && !(`isNegative(operand2))) resultALU = operand1;
