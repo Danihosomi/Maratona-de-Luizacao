@@ -61,7 +61,11 @@ Também foi tomado o cuidado de não escrever nem ler da cache memórias reserva
 
 O *cache* faz a escrita na memória ser mais lenta e a leitura, quando não há *hit*, também. Esse fato faz com que a pipeline atrase em alguns momentos de acesso à memória. Este fato faz com que seja necessário implementar mais *hazards* para congelar a pipeline enquanto espera por esse acesso.
 
-Já havia um hazard para lidar com esperas na leitura de instruções, mas nenhum para esperas na fase de leitura e escrita na memória no pipeline. O *hazard* implementado faz com que a pipeline espere essa leitura.
+Já havia um hazard para lidar com esperas na leitura de instruções, mas nenhum para esperas na fase de leitura e escrita na memória no pipeline. O *hazard* da *dataMemory* ainda não foi implementado, pois resolvemos primeiro resolver o problema do FPGA.
+
+#### Localização
+
+A *Cache* e o *MMU* encontram-se na **branch main**.
 
 ### Desenvolvimento em FPGA
 Esta etapa foi marcada por diversas lutas pra fazer nosso circuito funcionar na FPGA.
