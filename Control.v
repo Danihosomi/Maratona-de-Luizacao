@@ -29,7 +29,7 @@ assign memWrite = (opcode == 'b0100011) ? 1 : 0; // store
 assign aluSrc = ((opcode == 'b0010011) || (opcode == 'b0000011) || (opcode == 'b0100011) || (opcode == 'b1101111) || (opcode == 'b1100111) || (opcode == 'b0110111)  // store and load
       || (opcode == 'b0010111)) ? 1 : 0;
 
-assign regWrite = ((opcode == 'b0010011) || (opcode == 'b0000011) || (opcode == 'b0100011) || (opcode == 'b1101111) || (opcode == 'b1100111) || (opcode == 'b0110111) // store and load
+assign regWrite = ((opcode == 'b0010011) || (opcode == 'b0000011) || (opcode == 'b0110011) || (opcode == 'b1101111) || (opcode == 'b1100111) || (opcode == 'b0110111) // store and load
       || (opcode == 'b0010111)) ? 1 : 0;
 
 always @(opcode) begin
