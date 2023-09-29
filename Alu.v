@@ -6,7 +6,7 @@ module Alu (
   output reg zero
 );
 
-`define isNegative(A) A >= 2147483648
+`define isNegative(A) A[31] == 1
 
 always @(operand1, operand2, ALUControl) begin
   case (ALUControl)

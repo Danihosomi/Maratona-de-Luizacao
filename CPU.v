@@ -232,8 +232,6 @@ wire [31:0] resultALU;
 wire zero;
 
 BranchUnit branchUnit(
-  .clk(clk),
-  .stall(isPipelineStalled),
   .aluZero(zero),
   .isBranchOperation(exBranch),
   .programCounter(exProgramCounter),
