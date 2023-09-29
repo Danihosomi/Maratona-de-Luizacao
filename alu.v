@@ -1,10 +1,14 @@
-module Alu (
+module alu (
   input [5:0] ALUControl, // Change width to 6 bits
   input signed [31:0] operand1,
   input signed [31:0] operand2,
   output reg signed [31:0] resultALU,
   output reg zero
 );
+
+wire [63:0] mult;
+
+assign mult = operand1 * operand2;
 
 `define isNegative(A) A >= 2147483648
 
@@ -37,15 +41,14 @@ always @* begin
     6'b001100: resultALU = (operand1 < operand2) ? 0 : 1;  // 1100: BLTU
     6'b001101: resultALU = (operand1 >= operand2) ? 0 : 1; // 1101: BGEU
 
-    // VINI ESSES DOIS PRIMEIROS COMANDOS ESTAVAM BATENDO COM O BEQ E O BNE
-    6'b011000: resultALU = operand1 * operand2; //mul (VINI ESTÁ ALTERADO OLHE PF!!!) 
-    6'b011001: resultALU = (operand1 * operand2) >> 32; //mulh (VINI ESTÁ ALTERADO OLHE PF!!!)
-    6'b011010: resultALU = (operand1 * operand2) >> 32; //mulhsu (VINI ESTÁ ALTERADO OLHE PF!!!) 
-    6'b011011: resultALU = (operand1 * operand2) >> 32; //mulhu (VINI ESTÁ ALTERADO OLHE PF!!!) 
-    6'b011100: resultALU = (operand1 / operand2); //div (VINI ESTÁ ALTERADO OLHE PF!!!) 
-    6'b011101: resultALU = (operand1 / operand2); //divu (VINI ESTÁ ALTERADO OLHE PF!!!) 
-    6'b011110: resultALU = (operand1 % operand2); //rem (VINI ESTÁ ALTERADO OLHE PF!!!) 
-    6'b011111: resultALU = (operand1 % operand2); //remu (VINI ESTÁ ALTERADO OLHE PF!!!) 
+    6'b010000: resultALU = operand1 * operand2; //mul
+    6'b010001: resultALU = mult[63:32]; //mulh
+    6'b010010: resultALU = {{{32{operand1[31]}}, operand1} * {32'b0, operand2}}[63:32]; //mulhsu
+    6'b010011: resultALU = {{32'b0, operand1} * {32'b0, operand2}}[63:32]; //mulhu
+    6'b010100: resultALU = (operand1 / operand2); //div
+    6'b010101: resultALU = ({{1'b0, operand1} / {1'b0, operand2}}[31:0]); //divu
+    6'b010110: resultALU = (operand1 % operand2); //rem
+    6'b010111: resultALU = ({{1'b0, operand1} % {1'b0, operand2}}[31:0]); //remu
 
     6'b100000: begin // min
       if (`isNegative(operand1) && !(`isNegative(operand2))) resultALU = operand1;
@@ -62,7 +65,7 @@ always @* begin
 
     //6'b100100: ; // swap 
 
-    default: resultALU = operand1 + operand2;
+    default: resultALU = operand2;
   endcase
 
   if (resultALU == 0) begin
