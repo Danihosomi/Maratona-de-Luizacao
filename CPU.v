@@ -212,7 +212,7 @@ ALUControl aluControl(
   .result(aluControlInput)
 );
 
-wire [3:0] aluControlInput;
+wire [5:0] aluControlInput;
 
 wire [31:0] rhsAluInputWithImmediate; // TODO: Better naming
 assign rhsAluInputWithImmediate = (exAluSrc) ? exImmediateValue : rhsAluInput;

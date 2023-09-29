@@ -37,8 +37,9 @@ always @* begin
     6'b001100: resultALU = (operand1 < operand2) ? 0 : 1;  // 1100: BLTU
     6'b001101: resultALU = (operand1 >= operand2) ? 0 : 1; // 1101: BGEU
 
-    6'b001000: resultALU = operand1 * operand2; //mul
-    6'b001001: resultALU = (operand1 * operand2) >> 32; //mulh
+    // VINI ESSES DOIS PRIMEIROS COMANDOS ESTAVAM BATENDO COM O BEQ E O BNE
+    6'b011000: resultALU = operand1 * operand2; //mul (VINI ESTÁ ALTERADO OLHE PF!!!) 
+    6'b011001: resultALU = (operand1 * operand2) >> 32; //mulh (VINI ESTÁ ALTERADO OLHE PF!!!)
     6'b001010: resultALU = (operand1 * operand2) >> 32; //mulhsu
     6'b001011: resultALU = (operand1 * operand2) >> 32; //mulhu
     6'b001100: resultALU = (operand1 / operand2); //div
