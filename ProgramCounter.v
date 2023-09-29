@@ -15,7 +15,7 @@ always @(posedge clk) begin
     pc <= (shouldGoToTarget) ? jumpTarget : pc + 4;
   end
   else begin
-    pc <= pc;
+    pc <= (shouldGoToTarget) ? jumpTarget : pc;
   end
 
   if (rst) begin
