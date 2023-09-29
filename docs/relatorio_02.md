@@ -113,3 +113,4 @@ das mais complexas pois muito código foi reutilizado das outras operações do 
 - **Gabriel**: Implementação da Cache L1, MMU e parte da integração com a pipeline.
 - **Yan**: Continuação das instruções do conjunto I e testes de instruções.
 - **Daniel**: Implementação das intruções do conjunto A e refatoração da ALU.
+- **Vinícius**: Implementação das intruções do conjunto M e refatoração da ALU.
