@@ -24,6 +24,8 @@ Além das modificação na ALU, foi implementada a BranchUnit, responsável por:
 - Calcular o endereço de destino do branch, somando o valor do program counter com o imediato
 - Refazer o branch caso a pipeline esteja Stalled
 
+Nessa parte do projeto, o grande desafio foi entender como o branch deveria operar no pipeline e compreender os hazards de controle, que alteram o fluxo de instruções após as mesmas já terem sido lidas. Para isso, usamos como base o livro "Computer Organization and Design" e implementamos o branch de forma a assumir que o branch não foi feito e descartar instruções caso tenhamos tomado a decisão errada.
+
 ### Cache L1 e MMU
 
 #### Implementação Cache
