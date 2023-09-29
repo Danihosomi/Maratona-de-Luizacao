@@ -11,16 +11,26 @@ module Control(
   output regWrite
 );
 
+// load = 0000011
+// store = 0100011
+
 reg [6:0] opcode;
 
 assign opcode = instruction[6:0];
 
-assign branch = (opcode == 'b1100011) ? 1 : 0;
-assign memRead = (opcode == 'b0000011) ? 1 : 0;
-assign memToReg = (opcode == 'b0000011) ? 1 : 0;
-assign memWrite = (opcode == 'b0100011) ? 1 : 0;
-assign aluSrc = ((opcode == 'b0010011) || (opcode == 'b0000011) || (opcode == 'b0100011) || (opcode == 'b1101111) || (opcode == 'b1100111) || (opcode == 'b0110111) || (opcode == 'b0010111)) ? 1 : 0;
-assign regWrite = ((opcode == 'b0010011) || (opcode == 'b0000011) || (opcode == 'b0100011) || (opcode == 'b1101111) || (opcode == 'b1100111) || (opcode == 'b0110111) || (opcode == 'b0010111)) ? 1 : 0;
+assign branch = (opcode == 'b1100011) ? 1 : 0; // branch
+
+assign memRead = (opcode == 'b0000011) ? 1 : 0; // load
+
+assign memToReg = (opcode == 'b0000011) ? 1 : 0; // load 
+
+assign memWrite = (opcode == 'b0100011) ? 1 : 0; // store
+
+assign aluSrc = ((opcode == 'b0010011) || (opcode == 'b0000011) || (opcode == 'b0100011) || (opcode == 'b1101111) || (opcode == 'b1100111) || (opcode == 'b0110111)  // store and load
+      || (opcode == 'b0010111)) ? 1 : 0;
+
+assign regWrite = ((opcode == 'b0010011) || (opcode == 'b0000011) || (opcode == 'b0100011) || (opcode == 'b1101111) || (opcode == 'b1100111) || (opcode == 'b0110111) // store and load
+      || (opcode == 'b0010111)) ? 1 : 0;
 
 always @(opcode) begin
   case (opcode)

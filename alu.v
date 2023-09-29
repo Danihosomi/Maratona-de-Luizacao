@@ -46,6 +46,21 @@ always @* begin
     6'b001110: resultALU = (operand1 % operand2); //rem
     6'b001111: resultALU = (operand1 % operand2); //remu
 
+    6'b100000: begin // min
+      if (`isNegative(operand1) && !(`isNegative(operand2))) resultALU = 0;
+      else if (!(`isNegative(operand1)) && `isNegative(operand2)) resultALU = 1;
+      else resultALU = (operand1 < operand2) ? 0 : 1;
+    end 
+    6'b100001: begin // max
+      if (`isNegative(operand1) && !(`isNegative(operand2))) resultALU = 1;
+      else if (!(`isNegative(operand1)) && `isNegative(operand2)) resultALU = 0;
+      else resultALU = (operand1 >= operand2) ? 0 : 1;
+    end 
+    6'b100010: resultALU = (operand1 < operand2) ? operand1 : operand2; // minu
+    6'b100011: resultALU = (operand1 < operand2) ? operand2 : operand1; // maxu
+
+    6'b100100: ; // swap 
+
     default: resultALU = operand1 + operand2;
   endcase
 
