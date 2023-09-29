@@ -6,7 +6,7 @@ Acho que seria legal fazer isso por slide (mas podemos botar um resumo aqui)
 
 # Aprendizados
 
-- **Daniel**: Entendimento do funcionamento das instruções do tipo A, da ALU, ALUControl e do Control. Assim como um conhecimento maior sobre Verilog.
+- **Daniel**: Entendimento do funcionamento das instruções do tipo A, da ALU, ALUControl e do Control. Assim como um conhecimento maior sobre Verilog para implementação das instruções do tipo A e para modificar todo o sistema da ALU para aumentar o número de operações suportadas.
 
 
 ### Memory-mapped I/O
