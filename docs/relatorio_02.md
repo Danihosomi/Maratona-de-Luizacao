@@ -89,8 +89,24 @@ Além destas, suas respectivas versões com imediato também foram implementadas
 
 Apesar de parecer que precisaríamos mudar muita coisa, foi suficiente alterar os operandos e resultado da ALU para o tipo signed.
 
-### Intruções RISCV32A na ALU
-Nessa etapa foi implementada as instruções Atômicas do RISCV32.
+### Instruções RISCV32M na ALU
+Nessa estapa foram implementadas as instruções de multiplicação e divisão do RISCV32.
+
+Function | ALUControl
+--- | ---
+MUL | 010000
+MULH | 010001
+MULHSU | 010010
+MULHU | 010011
+DIV | 010100
+DIVU | 010101
+REM | 010110
+REMU | 010111
+
+As maiores dificuldades dessa etapa foi implementar as intruções que querem os últimos 32 bits da multiplicação e sua variação em relação aos operandos serem sinalizados ou não, além disso não conseguimos testar a velocidade dessas intruções, o que é um problema, pois esse tipo de instrução é característico por demorar bastante para ser realizada, por isso foi implementado um módulo separado para a divisão para realizar otimizações quando necessário.
+
+### Instruções RISCV32A na ALU
+Nessa etapa foram implementada as instruções Atômicas do RISCV32.
 
 Function | ALUControl
 --- | ---
