@@ -1,5 +1,5 @@
 module Alu (
-  input [3:0] ALUControl,
+  input [5:0] ALUControl, // Change width to 6 bits
   input signed [31:0] operand1,
   input signed [31:0] operand2,
   output reg signed [31:0] resultALU,
@@ -10,28 +10,33 @@ module Alu (
 
 always @* begin
   case (ALUControl)
-    4'b0010: resultALU = operand1 + operand2;
-    4'b0110: resultALU = operand1 - operand2;
-    4'b0000: resultALU = operand1 & operand2;
-    4'b0001: resultALU = operand1 | operand2;
-    4'b0011: resultALU = operand1 << operand2;
-    4'b0100: resultALU = operand1 >> operand2;
-    4'b0101: resultALU = operand1 ^ operand2;
-    4'b0111: resultALU = operand1 >>> operand2[4:0]; //usando ultimos 5 bits, vi em algumas referencias
-    4'b1000: resultALU = (operand1 == operand2) ? 0 : 1; //beq
-    4'b1001: resultALU = (operand1 != operand2) ? 0 : 1; //bne
-    4'b1010: begin                                       //blt
-      if(`isNegative(operand1) && !(`isNegative(operand2))) resultALU = 0;
-      else if(!(`isNegative(operand1)) && `isNegative(operand2)) resultALU = 1;
+    6'b000010: resultALU = operand1 + operand2;  // 0010: ADD
+    6'b000110: resultALU = operand1 - operand2;  // 0110: SUB
+    6'b000000: resultALU = operand1 & operand2;  // 0000: AND
+    6'b000001: resultALU = operand1 | operand2;  // 0001: OR
+    6'b000011: resultALU = operand1 << operand2; // 0011: SLL
+    6'b000100: resultALU = operand1 >> operand2; // 0100: SR
+    6'b000101: resultALU = operand1 ^ operand2;  // 0101: XOR
+    6'b000111: resultALU = operand1 >>> operand2[4:0]; // 0111: SRA
+
+    6'b001000: resultALU = (operand1 == operand2) ? 0 : 1; // 1000: BEQ
+    6'b001001: resultALU = (operand1 != operand2) ? 0 : 1; // 1001: BNE
+
+    6'b001010: begin // 1010: BLT
+      if (`isNegative(operand1) && !(`isNegative(operand2))) resultALU = 0;
+      else if (!(`isNegative(operand1)) && `isNegative(operand2)) resultALU = 1;
       else resultALU = (operand1 < operand2) ? 0 : 1;
     end
-    4'b1011: begin                                       //bge
-      if(`isNegative(operand1) && !(`isNegative(operand2))) resultALU = 1;
-      else if(!(`isNegative(operand1)) && `isNegative(operand2)) resultALU = 0;
+
+    6'b001011: begin // 1011: BGE
+      if (`isNegative(operand1) && !(`isNegative(operand2))) resultALU = 1;
+      else if (!(`isNegative(operand1)) && `isNegative(operand2)) resultALU = 0;
       else resultALU = (operand1 >= operand2) ? 0 : 1;
     end
-    4'b1100: resultALU = (operand1 < operand2) ? 0 : 1;  //bltu
-    4'b1101: resultALU = (operand1 >= operand2) ? 0 : 1; //bgeu
+
+    6'b001100: resultALU = (operand1 < operand2) ? 0 : 1;  // 1100: BLTU
+    6'b001101: resultALU = (operand1 >= operand2) ? 0 : 1; // 1101: BGEU
+
     default: resultALU = operand1 + operand2;
   endcase
 
@@ -43,11 +48,3 @@ always @* begin
 end
 
 endmodule
-
-// 0000 AND
-// 0001 OR
-// 0010 ADD
-// 0011 SLL
-// 0100 SR
-// 0110 SUB
-// 0111 SRA
