@@ -15,6 +15,8 @@ Os novos códigos criados são:
 
 Function | ALUControl
 --- | ---
+BEQ | 1000
+BNE | 1001
 BLT | 1010
 BGE | 1011
 BLTU | 1100
@@ -29,6 +31,8 @@ Além das modificação na ALU, foi implementada a BranchUnit, responsável por:
 - Detectar se um branch deve ser feito, a partir do sinal zero da ALU e do sinal branch do controle
 - Calcular o endereço de destino do branch, somando o valor do program counter com o imediato
 - Refazer o branch caso a pipeline esteja Stalled
+
+Os principais desafios dessa parte foram tratar instruções do tipo signed e unsigned e lidar com comportamentos não esperados, como por exemplo quando o branch é detectado e a pipeline está stalled, necessitanto guardar o branch para executar novamente.
 
 ### Cache L1 e MMU
 
