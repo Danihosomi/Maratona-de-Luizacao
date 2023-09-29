@@ -20,6 +20,8 @@ always @* begin
     if (dividend[31] == 1) begin
         tmp_dividend =  ~dividend + 1;
     end
+    
+    quocient = quocient << 1;
 
     for (integer i = 0; i < 32; i = i + 1) begin
         if (tmp_dividend - tmp_divisor >= 0) begin
@@ -28,9 +30,7 @@ always @* begin
             tmp_divisor = tmp_divisor >> 1;
         end
     end
-
-    quocient = quocient << 1;
-
+    
     remainder = tmp_dividend;
 
     if (divisor[31] ^ dividend[31]) begin
