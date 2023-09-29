@@ -1,5 +1,7 @@
 module Control(
   input [6:0] instruction,
+  input [2:0] func3,
+  input [6:0] func7,
   output branch,
   output memRead,
   output memToReg,

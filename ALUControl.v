@@ -1,8 +1,8 @@
 module ALUControl (
-  input [2:0] ALUOp,
+  input [2:0] ALUOp, // inventado
   input [2:0] func3,
   input [6:0] func7,
-  output reg [5:0] result
+  output reg [5:0] result // inventado
 );
 
 always @* begin
@@ -19,6 +19,23 @@ always @* begin
         default: result = 6'b001000;
       endcase
     3'b011: result = 6'b000110;
+    
+    3'b100: // atomic operations
+      case (func7[6:2])
+        5'b00010: result = 6'b000010; // lr (load reserved)
+        5'b00011: result = 6'b000010; // sc (store conditional)
+        5'b00001: result = 6'b000010; // swap
+        5'b00000: result = 6'b000010; // add
+        5'b00100: result = 6'b000101; // xor
+        5'b01100: result = 6'b000000; // and
+        5'b01000: result = 6'b000001; // or
+        5'b10000: result = 6'b000110; // min
+        5'b10100: result = 6'b000111; // max
+        5'b11000: result = 6'b000111; // minu
+        5'b11100: result = 6'b001000; // maxu
+        default: result = 6'b000010;
+      endcase
+
     3'b010:
       if (func7[0]) begin
         case(func3)
