@@ -77,6 +77,8 @@ wire [31:0] idRHSRegisterValue;
 
 Control control(
   .instruction(idInstruction[6:0]),
+  .func3(exFunct3),
+  .func7(exFunct7),
   .branch(branch),
   .memRead(memRead),
   .memToReg(memToReg),

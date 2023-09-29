@@ -22,17 +22,17 @@ always @* begin
     
     3'b100: // atomic operations
       case (func7[6:2])
-        5'b00010: result = 6'b000010; // lr (load reserved) (é um add) (preciso revisar)
-        5'b00011: result = 6'b000010; // sc (store conditional) (é um add) (preciso revisar)
-        5'b00000: result = 6'b000010; // add (feito)
-        5'b00100: result = 6'b000101; // xor (feito)
-        5'b01100: result = 6'b000000; // and (feito)
-        5'b01000: result = 6'b000001; // or (feito)
+        5'b00010: result = 6'b000010; // lr (load reserved) (é um add) (preciso revisar com alguem)
+        5'b00011: result = 6'b000010; // sc (store conditional) (é um add) (preciso revisar com alguem)
+        5'b00000: result = 6'b000010; // add
+        5'b00100: result = 6'b000101; // xor
+        5'b01100: result = 6'b000000; // and
+        5'b01000: result = 6'b000001; // or
         5'b10000: result = 6'b100000; // min
         5'b10100: result = 6'b100001; // max
         5'b11000: result = 6'b100010; // minu
         5'b11100: result = 6'b100011; // maxu
-        5'b00001: result = 6'b100100; // swap 
+        5'b00001: result = 6'b100100; // swap (falta)
         default: result = 6'b000010;
       endcase
 
