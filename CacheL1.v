@@ -74,9 +74,11 @@ module CacheL1(
   wire tagMatch;
   wire readReady;
   wire invalidMemory;
+  wire hasRequest;
   assign tagMatch = tag[address[6:2]] == address[10:7];
   assign hit = tagMatch & clean[address[6:2]];
-  assign invalidMemory = address[31] == 1;
+  assign invalidMemory = address[31];
+  assign cacheIdle = ~(readEnable | writeEnable);
   assign readReady = hit & readEnable;
 
   // Cache controller with machine states
@@ -126,6 +128,6 @@ module CacheL1(
   end
 
   assign dataOut = data[address[6:2]];
-  assign cacheReady = (state == READY) | readReady;
+  assign cacheReady = (state == READY) | readReady | cacheIdle;
 
 endmodule
