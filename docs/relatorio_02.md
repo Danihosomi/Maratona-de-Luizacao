@@ -2,6 +2,8 @@
 
 Talvez explicitar aqui o que fizemos
 
+Acho que seria legal fazer isso por slide (mas podemos botar um resumo aqui)
+
 # Aprendizados
 
 ### Memory-mapped I/O
@@ -87,9 +89,27 @@ Além destas, suas respectivas versões com imediato também foram implementadas
 
 Apesar de parecer que precisaríamos mudar muita coisa, foi suficiente alterar os operandos e resultado da ALU para o tipo signed.
 
+### Intruções RISCV32A na ALU
+Nessa etapa foi implementada as instruções Atômicas do RISCV32.
+
+Function | ALUControl
+--- | ---
+AMOADD.W | 000010
+AMOXOR.W | 000101
+AMOAND.W | 000000
+AMOOR.W | 000001
+AMOMIN.W | 100000
+AMOMINU.W | 100010
+AMOMAX.W | 100001
+AMOMAXU.W | 100011
+
+Os principais desafios dessa implementação foi uma adaptação da ALU para a inserção de mais instruções e a codificação dessas operações para novas instruções. Fora isso, a implementação não foi
+das mais complexas pois muito código foi reutilizado das outras operações do tipo I.
+
 
 # Contribuições
 - **Luiz Henrique**: Implementação dos periféricos e ajustes para síntese do circuito na FPGA.
 - **Larissa**: Implementação das funções de branch integradas na pipeline.
 - **Gabriel**: Implementação da Cache L1, MMU e parte da integração com a pipeline.
 - **Yan**: Continuação das instruções do conjunto I e testes de instruções.
+- **Daniel**: Implementação das intruções do conjunto A e refatoração da ALU.
