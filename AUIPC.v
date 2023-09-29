@@ -5,6 +5,6 @@ module AUIPC(
 );
   
   // The AUIPC operation: PC_out = PC_in + Imm
-  assign pc_out = pc_in + imm;
+  assign newProgramCounter = programCounter + imm;
 
 endmodule
