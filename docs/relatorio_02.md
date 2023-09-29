@@ -73,8 +73,23 @@ Finalmente, com o circuito sintetizável e correto, veio o desafio de fazer ele 
 
 Acima de tudo, me ensinou a ter paciência.
 
+### Instruções RISCV32I na ALU
+Esta etapa foi uma continuação da última fase do projeto, onde implementamos as instruções mais básicas apresentadas pelo livro. Aqui continuamos o processo, adicionando suporte da ALU para mais instruções do conjunto I.
+
+Function | ALUControl
+--- | ---
+XOR | 0101
+SLL | 0011
+SRL | 0100
+SRA | 0111
+
+Além destas, suas respectivas versões com imediato também foram implementadas e testadas. O maior desafio aqui foi perceber que todos os fios e registradores representavam, por padrão, valores não sinalizados. Para o shift aritmético isso era um problema por exemplo, uma vez que ele se tornava essencialmente igual ao shift lógico.
+
+Apesar de parecer que precisaríamos mudar muita coisa, foi suficiente alterar os operandos e resultado da ALU para o tipo signed.
+
 
 # Contribuições
 - **Luiz Henrique**: Implementação dos periféricos e ajustes para síntese do circuito na FPGA.
 - **Larissa**: Implementação das funções de branch integradas na pipeline.
 - **Gabriel**: Implementação da Cache L1, MMU e parte da integração com a pipeline.
+- **Yan**: Continuação das instruções do conjunto I e testes de instruções.
