@@ -1,7 +1,10 @@
 # Apresentação
 
 ### Memory-mapped I/O
-Vou tentar falar um pouquinho das escolhas de endereço dos periféricos
+Foram implementados o LED e o botão da placa como periféricos memory-mapped.
+Para isso, chaveamos entre periférico e memória baseado no bit mais significativo
+no nosso módulo que arbitra o uso da memória. Por fim, usamos 3 bits
+de identificação do periférico.
 
 ### Branch
 Para implementar o branch, nós precisamos expandir os códigos do ALUControl, responsável por determinar em qual modo a ALU deve operar.
@@ -113,16 +116,22 @@ das mais complexas pois muito código foi reutilizado das outras operações do 
 # Aprendizados
 
 ### Desenvolvimento em FPGA
-Esta etapa foi marcada por diversas lutas pra fazer nosso circuito funcionar na FPGA.
+Com todas os problemas que enfrentamos com a FPGA, aprendemos muito
+sobre os detalhes de se trabalhar com a FPGA. Aprendemos sobre os 
+elementos básicos da FPGA, como os tipos de FF, as RAMS, etc. Entendemos
+como encontrar essas informações, interpretá-las e agir em cima delas.
 
-(Talvez essa contextualização faça mais sentido ir na apresentação e aqui a gente foca no aprendizado só)
-O primeiro desafio enfrentado foi conseguir sintetizar a placa sem erros. Tendo que passar por diversas mensagens de erros crípticas, vou comentar como isso ensinou a depurar circuitos grandes e a identificar alguns padrões que podem ter riscos, como cases sem defaults
+Para isso, compreendemos melhor as etapas e ferramentas envolvidas na
+programação de FPGA, como a síntese e o PnR e os artefatos que elas geram. Junto com esse conhecimento, aprendemos sobre como que a ferramenta
+de síntese infere os elementos e como tentar influenciá-los através
+de padrões de códigos, atributos e argumentos para as ferramentas.
 
-Em seguida veio o desafio de entender um bug no circuito que só acontecia na FPGA enquanto que no emulador funcionava tudo certo. Vou comentar aqui sobre como isso ensinou a entender os diferentes elementos que compõe a FPGA, como acontece a inferência deles pelas ferramentas de sintese e como configurar alguns parâmetros dessas ferramentas.
+Com isso, temos mais confiança em entender como nossas mudanças afetam
+o circuito final gerado e acompanhar métricas preocupantes.
 
-Finalmente, com o circuito sintetizável e correto, veio o desafio de fazer ele caber na placa com uma frequência esperada. Vou desenvolver aqui o que eu aprendi sobre os recursos da FPGA
-
-Acima de tudo, me ensinou a ter paciência.
+Por fim, em todas as etapas de desenvolvimento com FPGA passamos por
+mensagens de erros crípticas e mal documentadas. Isso nos ensinou
+a depurar circuitos grandes e identificar padrões normalmente problemáticos.
 
 # Contribuições
 - **Luiz Henrique**: Implementação dos periféricos e ajustes para síntese do circuito na FPGA.
