@@ -18,7 +18,7 @@ always @* begin
         3'b111: result = 6'b001101; //bgeu
         default: result = 6'b001000;
       endcase
-    3'b011: result = 6'b000110;
+    3'b011: result = 6'b111111; //lui, auipc
     
     3'b100: // atomic operations
       case (func7[6:2])
