@@ -28,6 +28,39 @@ Além das modificação na ALU, foi implementada a BranchUnit, responsável por:
 - Calcular o endereço de destino do branch, somando o valor do program counter com o imediato
 - Refazer o branch caso a pipeline esteja Stalled
 
+### Cache L1 e MMU
+
+#### Implementação Cache
+
+Nesta etapa foi implementado um módulo de *cache L1* com 32 índices com os seguintes dados:
+
+- **clean**: Guarda se o dado guardado naquela posição da cache está 'limpo' (corresponde ao valor da memória)
+- **data**: Guarda o valor da memória guardado na Cache
+- **tag**: Guarda os 4 bits mais significativos da memória que foi guardada no *data*
+
+Os 5 bits menos significativos da memória são usados para definir o índice dela na cache. O padrão de cache utilizado foi uma *direct-mapped cache*.
+
+Para a implementação, também foi usada uma máquina de estados com 4 fases:
+- **IDLE**: A *cache* não está fazendo nada e espera uma requisição. Caso ela receba uma requisição de leitura que dê *hit*, marca a leitura como feita e aciona o sinal de *cacheReady* e continua no mesmo estado. Caso contrário, vai para o estado de **READ** ou **WRITE**, a depender da requisição. 
+- **READ**: A *cache* está lendo da memória. Continua no mesmo estado até receber um sinal de *memoryReady*. Daí escreve o dado lido na *cache* e vai para o estado **READY**.
+- **WRITE**: A *cache* está escrevendo na memória. Continua no mesmo estado até receber um sinal de *memoryReady*. Marca o dado da *cache* como sujo, caso o endereço esteja na *cache*, e muda para o estado **READY**. 
+- **READY**: A *cache* está pronta. Manda o sinal de *cacheReady* e volta para o estado **IDLE** no final do ciclo de *clock*.
+
+#### Implementação MMU
+
+Também foi implementado um módulo MMU (*Memory Management Unit*) para organizar melhor a memória no design do processador e facilitar a integração dos *caches* na pipeline. O MMU guarda os seguintes módulos:
+- **InstructionMemoryCacheL1**: *Cache* de leitura das instruções.
+- **DataMemoryCacheL1**: *Cache* da memória do processador.
+- **MemoryHandler**: Módulo que faz a arbitragem de quem vai poder ler e escrever na memória em cada momento. Ele também decide se a leitura/escrita deve ser feita em um periférico.
+
+Também foi tomado o cuidado de não escrever nem ler da cache memórias reservadas para periféricos (as *caches* ficam no estado IDLE nesse momento e os sinais de *success* são dados pela memória diretamente)
+
+#### Desafio na integração com o pipeline
+
+O *cache* faz a escrita na memória ser mais lenta e a leitura, quando não há *hit*, também. Esse fato faz com que a pipeline atrase em alguns momentos de acesso à memória. Este fato faz com que seja necessário implementar mais *hazards* para congelar a pipeline enquanto espera por esse acesso.
+
+Já havia um hazard para lidar com esperas na leitura de instruções, mas nenhum para esperas na fase de leitura e escrita na memória no pipeline. O *hazard* implementado faz com que a pipeline espere essa leitura.
+
 ### Desenvolvimento em FPGA
 Esta etapa foi marcada por diversas lutas pra fazer nosso circuito funcionar na FPGA.
 
@@ -44,3 +77,4 @@ Acima de tudo, me ensinou a ter paciência.
 # Contribuições
 - **Luiz Henrique**: Implementação dos periféricos e ajustes para síntese do circuito na FPGA.
 - **Larissa**: Implementação das funções de branch integradas na pipeline.
+- **Gabriel**: Implementação da Cache L1, MMU e parte da integração com a pipeline.
