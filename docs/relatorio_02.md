@@ -6,6 +6,9 @@ Acho que seria legal fazer isso por slide (mas podemos botar um resumo aqui)
 
 # Aprendizados
 
+- **Daniel**: Entendimento do funcionamento das instruções do tipo A, da ALU, ALUControl e do Control. Assim como um conhecimento maior sobre Verilog.
+
+
 ### Memory-mapped I/O
 Vou tentar falar um pouquinho das escolhas de endereço dos periféricos
 
@@ -78,6 +81,10 @@ Em seguida veio o desafio de entender um bug no circuito que só acontecia na FP
 Finalmente, com o circuito sintetizável e correto, veio o desafio de fazer ele caber na placa com uma frequência esperada. Vou desenvolver aqui o que eu aprendi sobre os recursos da FPGA
 
 Acima de tudo, me ensinou a ter paciência.
+
+### Instruções RISCV32 da ALU
+Todas as instruções implementadas nessa entrega estão na branch: feat-add-alu-instructions.
+Para questões de avaliações e implementações, por favor mudar para aquela Branch.
 
 ### Instruções RISCV32I na ALU
 Esta etapa foi uma continuação da última fase do projeto, onde implementamos as instruções mais básicas apresentadas pelo livro. Aqui continuamos o processo, adicionando suporte da ALU para mais instruções do conjunto I.
