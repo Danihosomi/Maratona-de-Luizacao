@@ -23,11 +23,11 @@ module CacheL1(
   assign memoryWriteEnable = writeEnable;
 
   // Machine states
-  parameter READY = 2'b00;
-  parameter WRITE = 2'b01;
-  parameter READ = 2'b10;
+  parameter IDLE = 2'b00;
+  parameter READY = 2'b01;
+  parameter WRITE = 2'b10;
+  parameter READ = 2'b11;
   reg [1:0] state;
-  reg validMemory;
 
   // Cache
   reg clean [31:0];
@@ -67,24 +67,29 @@ module CacheL1(
     clean[29] = 0;
     clean[30] = 0;
     clean[31] = 0;
-    state = READY;
+    state = IDLE;
   end
 
   wire hit;
-  assign hit = (tag[address[6:2]] == address[10:7]) & clean[address[6:2]];
-  assign validMemory = address[31] == 0;
+  wire tagMatch;
+  wire readReady;
+  wire invalidMemory;
+  wire cacheIdle;
+  assign tagMatch = tag[address[6:2]] == address[10:7];
+  assign hit = tagMatch & clean[address[6:2]];
+  assign invalidMemory = address[31];
+  assign cacheIdle = ~(readEnable | writeEnable);
+  assign readReady = hit & readEnable;
 
   // Cache controller with machine states
   always @(posedge clk) begin
-    cacheReady <= 0;
     case(state)
-      READY: begin
-        if (!validMemory) begin
-          state <= READY;
+      IDLE: begin
+        if (invalidMemory) begin
+          state <= IDLE;
         end
-        else if (hit && readEnable) begin
-          state <= READY;
-          cacheReady <= 1;
+        else if (readReady) begin
+          state <= IDLE;
         end
         else if (readEnable) begin
           state <= READ;
@@ -93,7 +98,7 @@ module CacheL1(
           state <= WRITE;
         end
         else begin
-          state <= READY;
+          state <= IDLE;
         end
       end
       READ: begin
@@ -101,7 +106,6 @@ module CacheL1(
           data[address[6:2]] <= memoryDataIn;
           tag[address[6:2]] <= address[10:7];
           clean[address[6:2]] <= 1;
-          cacheReady <= 1;
           state <= READY;
         end
         else begin
@@ -110,8 +114,7 @@ module CacheL1(
       end
       WRITE: begin
         if (memoryReady) begin
-          clean[address[6:2]] <= 0;
-          cacheReady <= 1;
+          clean[address[6:2]] <= (tagMatch) ? 0 : clean[address[6:2]];
           state <= READY;
         end
         else begin
@@ -119,11 +122,12 @@ module CacheL1(
         end
       end
       default: begin
-        state <= READY;
+        state <= IDLE;
       end
     endcase
   end
 
   assign dataOut = data[address[6:2]];
+  assign cacheReady = (state == READY) | readReady | cacheIdle;
 
 endmodule

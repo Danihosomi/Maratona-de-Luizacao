@@ -8,14 +8,14 @@ module Alu (
 
 `define isNegative(A) A >= 2147483648
 
-always @* begin
+always @(operand1, operand2, ALUControl) begin
   case (ALUControl)
     4'b0010: resultALU = operand1 + operand2;
     4'b0110: resultALU = operand1 - operand2;
     4'b0000: resultALU = operand1 & operand2;
     4'b0001: resultALU = operand1 | operand2;
-    4'b0011: resultALU = operand1 << operand2;
-    4'b0100: resultALU = operand1 >> operand2;
+    // 4'b0011: resultALU = operand1 << operand2[4:0];
+    // 4'b0100: resultALU = operand1 >> operand2[4:0];
     4'b0101: resultALU = operand1 ^ operand2;
     4'b1000: resultALU = (operand1 == operand2) ? 0 : 1; //beq
     4'b1001: resultALU = (operand1 != operand2) ? 0 : 1; //bne
@@ -34,11 +34,7 @@ always @* begin
     default: resultALU = operand1 + operand2;
   endcase
 
-  if (resultALU == 0) begin
-    zero = 1;
-  end else begin
-    zero = 0;
-  end
+  zero <= resultALU == 0;
 end
 
 endmodule

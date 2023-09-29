@@ -5,7 +5,8 @@ module ALUControl (
   output reg [3:0] result
 );
 
-always @* begin
+always @(ALUOp, func3, func7) begin
+  result = 4'b0010;
   case (ALUOp)
     3'b000: result = 4'b0010;
     3'b001:

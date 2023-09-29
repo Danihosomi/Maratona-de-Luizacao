@@ -1,5 +1,6 @@
 module EX_MEM_Barrier(
   input clk,
+  input rst,
   input [31:0] exAluResult,
   input [31:0] exMemoryWriteData,
   input [4:0] exWriteRegisterIndex,
@@ -24,5 +25,12 @@ always @(posedge clk) begin
   memMemRead <= exMemRead;
   memMemToReg <= exMemToReg;
   memRegWrite <= exRegWrite;
+
+  if (rst) begin
+    memMemWrite <= 0;
+    memMemRead <= 0;
+    memMemToReg <= 0;
+    memRegWrite <= 0;
+  end
 end
 endmodule

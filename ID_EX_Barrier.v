@@ -1,6 +1,6 @@
 module ID_EX_Barrier(
   input clk,
-  input flush,
+  input rst,
   input [31:0] idProgramCounter,
   input [31:0] idLHSRegisterValue,
   input [31:0] idRHSRegisterValue,
@@ -53,7 +53,7 @@ always @(posedge clk) begin
   exRegWrite <= idRegWrite;
   exBranch <= idBranch;
 
-  if (flush) begin
+  if (rst) begin
     exAluOp <= 0;
     exAluSrc <= 0;
     exMemWrite <= 0;
