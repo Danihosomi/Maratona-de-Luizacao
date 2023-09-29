@@ -60,7 +60,7 @@ always @* begin
     6'b100010: resultALU = (operand1 < operand2) ? operand1 : operand2; // minu
     6'b100011: resultALU = (operand1 < operand2) ? operand2 : operand1; // maxu
 
-    6'b100100: ; // swap 
+    //6'b100100: ; // swap 
 
     default: resultALU = operand1 + operand2;
   endcase
