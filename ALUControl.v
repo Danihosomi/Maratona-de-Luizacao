@@ -33,7 +33,7 @@ always @* begin
         5'b11000: result = 6'b100010; // minu
         5'b11100: result = 6'b100011; // maxu
         5'b00001: result = 6'b100100; // swap (falta)
-        default: result = 6'b000010;
+        default: result = 6'b000010; // default é a soma
       endcase
 
     3'b010:
