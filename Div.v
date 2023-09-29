@@ -24,10 +24,12 @@ always @* begin
     for (integer i = 0; i < 32; i = i + 1) begin
         if (tmp_dividend - tmp_divisor >= 0) begin
             tmp_dividend = tmp_dividend - tmp_divisor;
-            quocient = quocient + tmp_divisor;
+            quocient = {quocient, 1};
             tmp_divisor = tmp_divisor >> 1;
         end
     end
+
+    quocient = quocient << 1;
 
     remainder = tmp_dividend;
 
