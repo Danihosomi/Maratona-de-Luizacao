@@ -74,7 +74,7 @@ module CacheL1(
   wire tagMatch;
   wire readReady;
   wire invalidMemory;
-  wire hasRequest;
+  wire cacheIdle;
   assign tagMatch = tag[address[6:2]] == address[10:7];
   assign hit = tagMatch & clean[address[6:2]];
   assign invalidMemory = address[31];
