@@ -5,8 +5,8 @@ module CacheL1(
   input readEnable,
   input writeEnable,
   input [31:0] dataIn,
-  output reg [31:0] dataOut,
-  output reg cacheReady,
+  output [31:0] dataOut,
+  output cacheReady,
   
   // Memory wires
   input [31:0] memoryDataIn,
