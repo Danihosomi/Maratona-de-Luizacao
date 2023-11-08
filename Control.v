@@ -9,7 +9,7 @@ module Control(
   output regWrite
 );
 
-reg [6:0] opcode;
+wire [6:0] opcode;
 
 assign opcode = instruction[6:0];
 
