@@ -9,6 +9,7 @@ module PeripheralsBlock(
   // peripherals
   input button,
   output [5:0] led
+  // TODO: add led matrix wires
 );
 
   wire isLedTargeted = address[30:28] == 3'b000;
@@ -27,6 +28,15 @@ module PeripheralsBlock(
     .address(address[27:0]),
     .value(dataOut),
     .button(button)
+  );
+
+  wire isLedMatrixTargeted = address[30:28] == 3'b010;
+  LedMatrixPeripheral ledMatrixPeripheral(
+    .clk(clk),
+    .isTarget(isLedMatrixTargeted && writeEnable),
+    .address(address[27:0]),
+    .data(dataIn)
+    // TODO: add led matrix wires
   );
 
 endmodule
