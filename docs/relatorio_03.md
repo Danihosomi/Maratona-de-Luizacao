@@ -21,7 +21,32 @@ A _FreezeUnit_ e a nova _CPU_ foram implementadas na branch **feat/MMU-CPU-Integ
 
 ## Entregas Fase 3
 
-Aqui vão as entregas da fase atual
+### Implementação da Matriz de Led como periférico
+
+#### Conexão física
+
+Aqui a Lari explica como foi fazer a conexão física da placa com o led e ajustar os fios no _top_.
+
+#### Modo de Uso
+
+Para escrever na matriz, é necessário fazer uma chamada de escrita para um endereço de memória, de acordo com a seguinte tabela:
+
+| Endereço   | Descrição                                                                                           |
+| ---------- | --------------------------------------------------------------------------------------------------- |
+| 0xA0000000 | Os 8 primeiros bits do registrador dado são usados para sinalizar as **colunas** da matriz em ordem |
+| 0xA0000001 | Os 8 primeiros bits do registrador dado são usados para sinalizar as **linhas** da matriz em ordem  |
+
+Onde o bit menos significativo sinaliza a linha/coluna menos significativa.
+
+Por exemplo, o seguinte código em RISCV
+
+```assembly
+addi x1, x0, 0b10101111
+lui x2, 0xA0000
+sw x1, 0(x2)
+```
+
+ativa as colunas 8, 6, 4, 3, 2, 1 da Matriz.
 
 # Aprendizados
 
