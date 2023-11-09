@@ -6,10 +6,11 @@ module CPU(
 );
 
 wire isPipelineStalled;
+wire isPipelineFrozen;
 wire instructionMemorySuccess;
+wire dataMemorySuccess;
 
-// Copilot completou aqui. Parece tudo certo
-MemoryHandler memoryHandler(
+MMU mmu(
   .clk(clk),
   .dataMemoryWriteEnable(memMemWrite),
   .dataMemoryReadEnable(memMemRead),
@@ -17,16 +18,22 @@ MemoryHandler memoryHandler(
   .dataMemoryDataIn(memMemoryWriteData),
   .instructionMemoryAddress(pc),
   .dataMemoryDataOut(memMemoryData),
+  .dataMemorySuccess(dataMemorySuccess),
   .instructionMemorySuccess(instructionMemorySuccess),
   .instructionMemoryDataOut(instruction),
   .button(buttonPeripheral),
   .led(debug)
 );
 
+FreezeUnit freezeUnit(
+  .isDataMemoryBlocked(~dataMemorySuccess),
+  .isPipelineFrozen(isPipelineFrozen)
+);
+
 ProgramCounter programCounter(
   .clk(clk),
   .rst(rst),
-  .isStalled(isPipelineStalled),
+  .isStalled(isPipelineStalled | isPipelineFrozen),
   .shouldGoToTarget(shouldBranch),
   .jumpTarget(branchTarget),
   .pc(pc)
@@ -38,7 +45,7 @@ wire [31:0] instruction;
 IF_ID_Barrier if_id_barrier(
   .clk(clk),
   .rst(rst | shouldBranch),
-  .dontUpdate(isPipelineStalled), // We must not update repeat the instruction
+  .dontUpdate(isPipelineStalled | isPipelineFrozen), // We must not update repeat the instruction
   .ifInstruction(instruction),
   .ifProgramCounter(pc),
   .idInstruction(idInstruction),
@@ -113,6 +120,7 @@ wire [31:0] idImmediateValue;
 ID_EX_Barrier id_ex_barrier(
   .clk(clk),
   .rst(rst || shouldBranch),
+  .dontUpdate(isPipelineFrozen),
   .idProgramCounter(idProgramCounter),
   .idLHSRegisterValue(idLHSRegisterValue),
   .idRHSRegisterValue(idRHSRegisterValue),
@@ -246,6 +254,7 @@ wire shouldBranch;
 EX_MEM_Barrier ex_mem_barrier(
   .clk(clk),
   .rst(rst),
+  .dontUpdate(isPipelineFrozen),
   .exAluResult(resultALU),
   .exMemoryWriteData(rhsAluInput),
   .exWriteRegisterIndex(exWriteRegisterIndex),
@@ -275,6 +284,7 @@ wire [31:0] memMemoryData;
 MEM_WB_Barrier mem_wb_barrier(
   .clk(clk),
   .rst(rst),
+  .dontUpdate(isPipelineFrozen),
   .memMemoryData(memMemoryData),
   .memExecutionData(memAluResult),
   .memWriteRegisterIndex(memWriteRegisterIndex),
