@@ -1,8 +1,12 @@
 module CPU(
   input clk,
   input rst,
+
+  // Peripherals
   input buttonPeripheral,
-  output [5:0] debug
+  output [5:0] debug,
+  output [7:0] ledMatrixRow,
+  output [7:0] ledMatrixColumn
 );
 
 wire isPipelineStalled;
@@ -22,7 +26,9 @@ MMU mmu(
   .instructionMemorySuccess(instructionMemorySuccess),
   .instructionMemoryDataOut(instruction),
   .button(buttonPeripheral),
-  .led(debug)
+  .led(debug),
+  .ledMatrixRow(ledMatrixRow),
+  .ledMatrixColumn(ledMatrixColumn)
 );
 
 FreezeUnit freezeUnit(

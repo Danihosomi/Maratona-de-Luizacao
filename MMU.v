@@ -9,8 +9,12 @@ module MMU (
   output instructionMemorySuccess,
   output dataMemorySuccess,
   output [31:0] instructionMemoryDataOut,
+
+  // Peripherals
   output reg [5:0] led,
-  input button
+  input button,
+  output [7:0] ledMatrixRow,
+  output [7:0] ledMatrixColumn
 );
 
 wire instructionMemoryIsPeripheralTarget = instructionMemoryAddress[31];
@@ -55,7 +59,9 @@ MemoryHandler memoryHandler(
   .instructionMemorySuccess(instructionMemoryMemoryReady),
   .instructionMemoryDataOut(instructionMemoryMemoryToCacheData),
   .led(led),
-  .button(button)
+  .button(button),
+  .ledMatrixRow(ledMatrixRow),
+  .ledMatrixColumn(ledMatrixColumn)
 );
 
 wire [31:0] dataMemoryCacheToMemoryData;
