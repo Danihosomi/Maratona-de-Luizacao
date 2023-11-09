@@ -6,7 +6,7 @@ module ALUControl (
 );
 
 always @(ALUOp, func3, func7) begin
-  result = 4'b0010;
+  result = 6'b000010;
   case (ALUOp)
     3'b000: result = 6'b000010;
     3'b001:

@@ -1,4 +1,4 @@
-module alu (
+module Alu (
   input [5:0] ALUControl, // Change width to 6 bits
   input signed [31:0] operand1,
   input signed [31:0] operand2,
@@ -7,8 +7,13 @@ module alu (
 );
 
 wire [63:0] mult;
+wire [63:0] mulhsu;
+wire [63:0] mulhu;
 
 assign mult = operand1 * operand2;
+assign mulhsu = {{32'b0, operand1} * {32'b0, operand2}};
+assign mulhu = {{32'b0, operand1} * {32'b0, operand2}};
+
 
 `define isNegative(A) A[31] == 1
 
@@ -43,14 +48,14 @@ always @(operand1, operand2, ALUControl) begin
     6'b001100: resultALU = (operand1 < operand2) ? 0 : 1;  // 1100: BLTU
     6'b001101: resultALU = (operand1 >= operand2) ? 0 : 1; // 1101: BGEU
 
-    6'b010000: resultALU = operand1 * operand2; //mul
+    6'b010000: resultALU = mult[31:0]; //mul
     6'b010001: resultALU = mult[63:32]; //mulh
-    6'b010010: resultALU = {{{32{operand1[31]}}, operand1} * {32'b0, operand2}}[63:32]; //mulhsu
-    6'b010011: resultALU = {{32'b0, operand1} * {32'b0, operand2}}[63:32]; //mulhu
+    6'b010010: resultALU = mulhsu[63:32]; //mulhsu
+    6'b010011: resultALU = mulhu[63:32]; //mulhu
     6'b010100: resultALU = (operand1 / operand2); //div
-    6'b010101: resultALU = ({{1'b0, operand1} / {1'b0, operand2}}[31:0]); //divu
+    //6'b010101: resultALU = {{1'b0, operand1} / {1'b0, operand2}}; //divu
     6'b010110: resultALU = (operand1 % operand2); //rem
-    6'b010111: resultALU = ({{1'b0, operand1} % {1'b0, operand2}}[31:0]); //remu
+    //6'b010111: resultALU = {{1'b0, operand1} % {1'b0, operand2}}; //remu
 
     6'b100000: begin // min
       if (`isNegative(operand1) && !(`isNegative(operand2))) resultALU = operand1;

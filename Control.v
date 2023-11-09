@@ -14,7 +14,7 @@ module Control(
 // load = 0000011
 // store = 0100011
 
-reg [6:0] opcode;
+wire [6:0] opcode;
 
 assign opcode = instruction[6:0];
 

@@ -9,7 +9,7 @@ module MMU (
   output instructionMemorySuccess,
   output dataMemorySuccess,
   output [31:0] instructionMemoryDataOut,
-  output reg [5:0] led,
+  output [5:0] led,
   input button
 );
 
