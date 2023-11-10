@@ -7,8 +7,8 @@ module Memory (
   output reg [31:0] dataOut
 );
 
-reg [31:0] ramData;
-reg [31:0] romData;
+wire [31:0] ramData;
+wire [31:0] romData;
 
 ROMMemory MemoryROM(
   .address(address),
