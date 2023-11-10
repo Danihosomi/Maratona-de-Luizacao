@@ -77,7 +77,8 @@ always @(targetInstruction) begin
         end
 
         3'b001: begin // C.JAL
-          notImplemented <= 1;
+          reg [31:0] immediate = { {21{compactInstruction[12]}}, compactInstruction[8], compactInstruction[10:9], compactInstruction[6], compactInstruction[7], compactInstruction[2], compactInstruction[11], compactInstruction[5:3], 1'b0 }; // signed
+          expandedInstruction <= { immediate[20], immediate[10:1], immediate[11], immediate[19:12], 5'b00001, 7'b1101111 };
         end
 
         3'b010: begin // C.LI
@@ -86,8 +87,10 @@ always @(targetInstruction) begin
         end
 
         3'b011: begin
-          if (wideRsLeft == 2) begin // C.ADDI16SP
-            notImplemented <= 1;
+          if (wideRsLeft == 2) begin // C.ADDI16SP  
+            // TODO: Review
+            reg [31:0] immediate = { {23{compactInstruction[12]}}, compactInstruction[4:3], compactInstruction[5], compactInstruction[2], compactInstruction[6], 4'b0000 }; // signed
+            expandedInstruction <= { immediate[11:0], 5'b00010, 3'b000, 5'b00010, 7'b0010011 };
           end
           else begin // C.LUI
             reg [31:0] immediate = { {15{compactInstruction[12]}}, compactInstruction[6:2], {12{1'b0}} }; // signed
@@ -141,7 +144,8 @@ always @(targetInstruction) begin
         end
 
         3'b101: begin // C.J
-          notImplemented <= 1;
+          reg [31:0] immediate = { {21{compactInstruction[12]}}, compactInstruction[8], compactInstruction[10:9], compactInstruction[6], compactInstruction[7], compactInstruction[2], compactInstruction[11], compactInstruction[5:3], 1'b0 }; // signed
+          expandedInstruction <= { immediate[20], immediate[10:1], immediate[11], immediate[19:12], 5'b00000, 7'b1101111 };
         end
 
         3'b110: begin // C.BEQZ
@@ -150,7 +154,8 @@ always @(targetInstruction) begin
         end
 
         3'b111: begin // C.BNEZ
-          notImplemented <= 1;
+          reg [31:0] immediate = { {24{compactInstruction[12]}}, compactInstruction[6:5], compactInstruction[2], compactInstruction[11:10], compactInstruction[4:3], 1'b0 }; // signed
+          expandedInstruction <= { immediate[12], immediate[10:5], 5'b00000, expandedRsLeft, 3'b001, immediate[4:1], immediate[11], 7'b1100011 };
         end
       endcase
     end
