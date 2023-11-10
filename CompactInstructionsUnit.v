@@ -59,7 +59,7 @@ always @(targetInstruction) begin
         3'b101: shouldIgnoreInstruction <= 1; // C.FSD / C.SQ
 
         3'b110: begin // C.SW
-          reg [31:0] immediate = { {25{1'b0}}, compactInstruction[5], compactInstruction[12:10], compactInstruction[6], 2'b00 };
+          reg [31:0] immediate = { {25{1'b0}}, compactInstruction[5], compactInstruction[12:10], compactInstruction[6], 2'b00 }; // unsigned
           expandedInstruction <= { immediate[11:5], expandedRsRight, expandedRsLeft, 3'b010, immediate[4:0], 7'b0100011 };
         end
 
@@ -72,7 +72,7 @@ always @(targetInstruction) begin
       case(func3)
         3'b000: begin // C.NOP / C.ADDI
           reg [31:0] immediate = { {27{compactInstruction[12]}}, compactInstruction[6:2] }; // signed
-            expandedInstruction <= { immediate[11:0], wideRsLeft, 3'b000, wideRsLeft, 7'b0010011 };
+          expandedInstruction <= { immediate[11:0], wideRsLeft, 3'b000, wideRsLeft, 7'b0010011 };
         end
 
         3'b001: begin // C.JAL
@@ -103,8 +103,8 @@ always @(targetInstruction) begin
             end
 
             2'b10: begin // C.ANDI
-              reg [11:0] andImm <= {000000,(compactInstruction[12]),(compactInstruction[6:2])};
-              expandedInstruction <= { andImm, expandedRs1, 3'b111, expandedRs1, 7'b0010011 };
+              reg [11:0] andImm = { {7{compactInstruction[12]}}, compactInstruction[6:2] }; // signed
+              expandedInstruction <= { andImm, expandedRsLeft, 3'b111, expandedRsLeft, 7'b0010011 };
             end
 
             2'b11: begin 
