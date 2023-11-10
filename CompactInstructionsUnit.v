@@ -145,8 +145,8 @@ always @(targetInstruction) begin
         end
 
         3'b110: begin // C.BEQZ
-          // reg [31:0] immediate = { {27{compactInstruction[12]}}, compactInstruction[2], compactInstruction[11:10], compactInstruction[4:3], 1'b0 }; // signed
-          // expandedInstruction <= { immediate[12], immediate[10:5], 5'b00000, expandedRsLeft, 3'b000, immediate[4:1], immediate[11], 7'b1100011 };
+          reg [31:0] immediate = { {24{compactInstruction[12]}}, compactInstruction[6:5], compactInstruction[2], compactInstruction[11:10], compactInstruction[4:3], 1'b0 }; // signed
+          expandedInstruction <= { immediate[12], immediate[10:5], 5'b00000, expandedRsLeft, 3'b000, immediate[4:1], immediate[11], 7'b1100011 };
         end
 
         3'b111: begin // C.BNEZ
