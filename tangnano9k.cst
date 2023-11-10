@@ -1,3 +1,35 @@
+IO_LOC  "matrixCol[7]" 70;
+
+IO_LOC  "matrixCol[6]" 71;
+
+IO_LOC  "matrixCol[5]" 75;
+
+IO_LOC  "matrixCol[4]" 57;
+
+IO_LOC  "matrixCol[3]" 76;
+
+IO_LOC  "matrixCol[2]" 55;
+
+IO_LOC  "matrixCol[1]" 54;
+
+IO_LOC  "matrixCol[0]" 73;
+
+IO_LOC  "matrixRow[7]" 56;
+
+IO_LOC  "matrixRow[6]" 53;
+
+IO_LOC  "matrixRow[5]" 68;
+
+IO_LOC  "matrixRow[4]" 51;
+
+IO_LOC  "matrixRow[3]" 74;
+
+IO_LOC  "matrixRow[2]" 69;
+
+IO_LOC  "matrixRow[1]" 72;
+
+IO_LOC  "matrixRow[0]" 77;
+
 IO_LOC  "clk" 52;
 IO_PORT "clk" IO_TYPE=LVCMOS33 PULL_MODE=UP;
 

@@ -5,20 +5,19 @@ module top
 
   // Peripheral
   input button,
-  output [5:0] led
-  // TODO: add led matrix wires
+  output [5:0] led,
+  output [7:0] matrixRow,
+  output [7:0] matrixCol
 );
 wire [5:0] debug;
-wire [7:0] ledMatrixRow;
-wire [7:0] ledMatrixColumn;
 
 CPU cpu(
   .clk(slowerClk),
   .rst(~rst),
   .buttonPeripheral(~button),
   .debug(debug),
-  .ledMatrixRow(ledMatrixRow),
-  .ledMatrixColumn(ledMatrixColumn)
+  .ledMatrixRow(matrixRow),
+  .ledMatrixColumn(matrixCol)
 );
 
 localparam WAIT_TIME = 13500000;
