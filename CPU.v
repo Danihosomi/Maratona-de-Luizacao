@@ -139,6 +139,7 @@ ID_EX_Barrier id_ex_barrier(
   .idMemToReg(controlSignals[1]),
   .idRegWrite(controlSignals[0]),
   .idBranch(controlSignals[5]),
+  .idInstruction(idInstruction),
   .exProgramCounter(exProgramCounter),
   .exLHSRegisterValue(exLHSRegisterValue),
   .exRHSRegisterValue(exRHSRegisterValue),
@@ -154,7 +155,8 @@ ID_EX_Barrier id_ex_barrier(
   .exMemRead(exMemRead),
   .exMemToReg(exMemToReg),
   .exRegWrite(exRegWrite),
-  .exBranch(exBranch)
+  .exBranch(exBranch),
+  .exInstruction(exInstruction)
 );
 
 wire [31:0] exProgramCounter;
@@ -167,6 +169,7 @@ wire [31:0] exImmediateValue;
 wire [2:0] exFunct3;
 wire [6:0] exFunct7;
 wire [2:0] exAluOp;
+wire [31:0] exInstruction;
 wire exAluSrc;
 wire exMemWrite;
 wire exMemRead;
@@ -202,10 +205,12 @@ _MUX4 mux4_lhsAluInputSelect(
   .secondData(writeBackData),
   .thirdData(memAluResult),
   .fourthData(32'h00000000),
-  .outputData(lhsAluInput)
+  .outputData(lhsAluInputBeforeAUIPC)
 );
 
+wire [31:0] lhsAluInputBeforeAUIPC;
 wire [31:0] lhsAluInput;
+assign lhsAluInput = (exInstruction[6:0] == 7'b0010111) ? exProgramCounter : lhsAluInputBeforeAUIPC;
 
 _MUX4 mux4_rhsAluInputSelect(
   .dataSelector(rhsAluInputSelect),
