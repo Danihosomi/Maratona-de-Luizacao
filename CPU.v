@@ -88,6 +88,8 @@ wire [31:0] idRHSRegisterValue;
 
 Control control(
   .instruction(idInstruction[6:0]),
+  .func3(exFunct3),
+  .func7(exFunct7),
   .branch(branch),
   .memRead(memRead),
   .memToReg(memToReg),
@@ -223,7 +225,7 @@ ALUControl aluControl(
   .result(aluControlInput)
 );
 
-wire [3:0] aluControlInput;
+wire [5:0] aluControlInput;
 
 wire [31:0] rhsAluInputWithImmediate; // TODO: Better naming
 assign rhsAluInputWithImmediate = (exAluSrc) ? exImmediateValue : rhsAluInput;
