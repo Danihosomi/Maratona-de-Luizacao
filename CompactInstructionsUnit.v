@@ -16,7 +16,9 @@ wire [4:0] wideRs2 = compactInstruction[6:2];
 
 wire [2:0] compactRs1 = compactInstruction[9:7];
 wire [2:0] compactRs2 = compactInstruction[4:2];
-wire [2:0] compactRsd = compactInstruction[4:2];
+
+wire [4:0] expandedRs1 = { 2'b01, compactRs1 };
+wire [4:0] expandedRs2 = { 2'b01, compactRs2 };
 
 wire [5:0] ciImmediate = { compactInstruction[12], compactInstruction[6:2] };
 wire [5:0] cssImmediate = compactInstruction[12:7];
@@ -129,9 +131,9 @@ always @(targetInstruction) begin
                   notImplemented <= 1;
                 end
 
-                3'b100: shouldIgnoreInstruction <= 1; // C.SUBW
+                3'b100: shouldIgnoreInstruction <= 1; // C.SUBW // TODO: Review
 
-                3'b101: shouldIgnoreInstruction <= 1; // C.ADDW
+                3'b101: shouldIgnoreInstruction <= 1; // C.ADDW // TODO: Review
 
                 3'b110: isIllegalInstruction <= 1; // Reserved
 
