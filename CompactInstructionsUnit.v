@@ -75,7 +75,7 @@ always @(targetInstruction) begin
             expandedInstruction <= { 32'b00000000000000000000000000010011 };
           end
           else begin // C.ADDI
-            reg [31:0] immediate = { {26{1'b0}}, compactInstruction[12], compactInstruction[6:2] };
+            reg [31:0] immediate = { {26{compactInstruction[12]}}, compactInstruction[12], compactInstruction[6:2] };
             expandedInstruction <= { immediate[11:0], wideRsLeft, 3'b000, wideRsLeft, 7'b0010011 };
           end
         end
