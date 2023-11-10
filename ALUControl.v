@@ -19,7 +19,7 @@ always @(ALUOp, func3, func7) begin
         3'b111: result = 6'b001101; //bgeu
         default: result = 6'b001000;
       endcase
-    3'b011: result = 6'b111111; //lui, auipc
+    3'b011: result = 6'b000010; //lui, auipc
     
     3'b100: // atomic operations
       case (func7[6:2])
@@ -59,6 +59,8 @@ always @(ALUOp, func3, func7) begin
           3'b001: result = 6'b000011; //sll
           3'b101: result = (func7[5]) ? 6'b000111 : 6'b000100; //sra or srl
           3'b100: result = 6'b000101; //xor
+          3'b010: result = 6'b100101; //slt
+          3'b011: result = 6'b100110; //sltu
           default: result = 6'b000010;
         endcase
       end
@@ -70,6 +72,8 @@ always @(ALUOp, func3, func7) begin
         3'b001: result = 6'b000011; //slli
         3'b101: result = (func7[5]) ? 6'b000111 : 6'b000100; //srai or srli
         3'b100: result = 6'b000101; //xori
+        3'b010: result = 6'b100101; //slti
+        3'b011: result = 6'b100110; //sltiu
         default: result = 6'b000010;
       endcase
     default: result = 6'b000010;
@@ -86,3 +90,5 @@ endmodule
 // 000101 XOR
 // 000110 SUB
 // 000111 SRA
+// 001000 BEQ
+// 001001 BNE
