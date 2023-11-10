@@ -101,11 +101,13 @@ always @(targetInstruction) begin
         3'b100: begin
           case(compactInstruction[11:10])
             2'b00: begin // C.SRLI
-              notImplemented <= 1;
+              reg [31:0] immediate = { {26{1'b0}}, compactInstruction[12], compactInstruction[6:2] }; // unsigned
+              expandedInstruction <= { 7'b0000000, immediate[4:0], expandedRsLeft, 3'b101, expandedRsLeft, 7'b0010011 };
             end
 
             2'b01: begin // C.SRAI
-              notImplemented <= 1;
+              reg [31:0] immediate = { {26{1'b0}}, compactInstruction[12], compactInstruction[6:2] }; // unsigned
+              expandedInstruction <= { 7'b0100000, immediate[4:0], expandedRsLeft, 3'b101, expandedRsLeft, 7'b0010011 };
             end
 
             2'b10: begin // C.ANDI
