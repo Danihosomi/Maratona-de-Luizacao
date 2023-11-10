@@ -32,6 +32,7 @@ assign aluSrc = ((opcode == 'b0010011) || (opcode == 'b0000011) || (opcode == 'b
 assign regWrite = ((opcode == 'b0010011) || (opcode == 'b0000011) || (opcode == 'b0110011) || (opcode == 'b1101111) || (opcode == 'b1100111) || (opcode == 'b0110111) 
       || (opcode == 'b0010111) || (func7[6:2]==00010 && opcode=='b0101111) || (func7[6:2]==00011 && opcode=='b0101111)) ? 1 : 0; // store && load && lr.w && sc.w
 
+
 always @(opcode) begin
   case (opcode)
     'b0000011, // LOAD

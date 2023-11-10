@@ -1,4 +1,5 @@
 module Memory (
+  input clk,
   input [31:0] address,
   input writeEnable,
   input readEnable,
@@ -6,8 +7,8 @@ module Memory (
   output reg [31:0] dataOut
 );
 
-reg [31:0] ramData;
-reg [31:0] romData;
+wire [31:0] ramData;
+wire [31:0] romData;
 
 ROMMemory MemoryROM(
   .address(address),
@@ -15,6 +16,7 @@ ROMMemory MemoryROM(
 );
 
 RAM MemoryRAM(
+  .clk(clk),
   .writeEnable(writeEnable & address[10]),
   .readEnable(readEnable & address[10]),
   .address(address),

@@ -16,7 +16,7 @@ with open(args.srcPath, 'rb') as machineCode:
     compiledMemory.append(f'        {instructionAddress}: data = 32\'h{endiannessCorrectedInstruction.hex()};\n')
     instructionAddress += 1
 
-
+compiledMemory.append(f'        default: data = 32\'h0;\n')
 
 with open(args.memoryPath, 'r+') as memoryFile:
   memoryFileContent = memoryFile.readlines()

@@ -10,10 +10,12 @@ wire [63:0] mult;
 
 assign mult = operand1 * operand2;
 
-`define isNegative(A) A >= 2147483648
+`define isNegative(A) A[31] == 1
 
-always @* begin
+
+always @(operand1, operand2, ALUControl) begin
   case (ALUControl)
+
     6'b000010: resultALU = operand1 + operand2;  // 0010: ADD
     6'b000110: resultALU = operand1 - operand2;  // 0110: SUB
     6'b000000: resultALU = operand1 & operand2;  // 0000: AND
@@ -68,11 +70,7 @@ always @* begin
     default: resultALU = operand2;
   endcase
 
-  if (resultALU == 0) begin
-    zero = 1;
-  end else begin
-    zero = 0;
-  end
+  zero <= resultALU == 0;
 end
 
 endmodule

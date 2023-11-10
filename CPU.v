@@ -1,30 +1,39 @@
 module CPU(
   input clk,
-  output [31:0] debug,
-  output debugBit
+  input rst,
+  input buttonPeripheral,
+  output [5:0] debug
 );
 
-assign debug = exImmediateValue;
-assign debugBit = zero;
-
 wire isPipelineStalled;
+wire isPipelineFrozen;
 wire instructionMemorySuccess;
+wire dataMemorySuccess;
 
-// Copilot completou aqui. Parece tudo certo
-MemoryHandler memoryHandler(
+MMU mmu(
+  .clk(clk),
   .dataMemoryWriteEnable(memMemWrite),
   .dataMemoryReadEnable(memMemRead),
   .dataMemoryAddress(memAluResult),
   .dataMemoryDataIn(memMemoryWriteData),
   .instructionMemoryAddress(pc),
   .dataMemoryDataOut(memMemoryData),
+  .dataMemorySuccess(dataMemorySuccess),
   .instructionMemorySuccess(instructionMemorySuccess),
-  .instructionMemoryDataOut(instruction)
+  .instructionMemoryDataOut(instruction),
+  .button(buttonPeripheral),
+  .led(debug)
+);
+
+FreezeUnit freezeUnit(
+  .isDataMemoryBlocked(~dataMemorySuccess),
+  .isPipelineFrozen(isPipelineFrozen)
 );
 
 ProgramCounter programCounter(
   .clk(clk),
-  .isStalled(isPipelineStalled | ~instructionMemorySuccess),
+  .rst(rst),
+  .isStalled(isPipelineStalled | isPipelineFrozen),
   .shouldGoToTarget(shouldBranch),
   .jumpTarget(branchTarget),
   .pc(pc)
@@ -35,8 +44,8 @@ wire [31:0] instruction;
 
 IF_ID_Barrier if_id_barrier(
   .clk(clk),
-  .dontUpdate(isPipelineStalled), // We must not update repeat the instruction
-  .flush(shouldBranch),
+  .rst(rst | shouldBranch),
+  .dontUpdate(isPipelineStalled | isPipelineFrozen), // We must not update repeat the instruction
   .ifInstruction(instruction),
   .ifProgramCounter(pc),
   .idInstruction(idInstruction),
@@ -58,11 +67,13 @@ StallUnit stallUnit(
   .decodeStageRHSReadRegisterIndex(idRHSRegisterIndex),
   .executionStageWriteRegisterIndex(exWriteRegisterIndex),
   .isExecutionStageMemoryReadOperation(exMemRead),
+  .isInstructionMemoryBlocked(~instructionMemorySuccess),
   .isPipelineStalled(isPipelineStalled)
 );
 
 RegisterFile registerFile(
   .clk(clk),
+  .rst(rst),
   .source1RegisterIndex(idLHSRegisterIndex),
   .source2RegisterIndex(idRHSRegisterIndex),
   .writeRegisterIndex(wbWriteRegisterIndex),
@@ -97,8 +108,9 @@ wire memToReg;
 wire regWrite;
 wire [8:0] controlSignals;
 
-assign controlSignals = (isPipelineStalled) ? 0 :
-  {branch, aluOp, aluSrc, memRead, memWrite, memToReg, regWrite};
+assign controlSignals[5:0] = (isPipelineStalled) ? 0 :
+                        {branch, aluSrc, memRead, memWrite, memToReg, regWrite};
+assign controlSignals[8:6] = (isPipelineStalled) ? 0 : aluOp;
 
 ImmediateGeneration immediateGeneration(
   .instruction(idInstruction),
@@ -109,7 +121,8 @@ wire [31:0] idImmediateValue;
 
 ID_EX_Barrier id_ex_barrier(
   .clk(clk),
-  .flush(shouldBranch),
+  .rst(rst || shouldBranch),
+  .dontUpdate(isPipelineFrozen),
   .idProgramCounter(idProgramCounter),
   .idLHSRegisterValue(idLHSRegisterValue),
   .idRHSRegisterValue(idRHSRegisterValue),
@@ -119,13 +132,13 @@ ID_EX_Barrier id_ex_barrier(
   .idImmediateValue(idImmediateValue),
   .idFunct3(idInstruction[14:12]),
   .idFunct7(idInstruction[31:25]),
-  .idAluOp(controlSignals[7:5]),
+  .idAluOp(controlSignals[8:6]),
   .idAluSrc(controlSignals[4]),
   .idMemWrite(controlSignals[2]),
   .idMemRead(controlSignals[3]),
   .idMemToReg(controlSignals[1]),
   .idRegWrite(controlSignals[0]),
-  .idBranch(controlSignals[8]),
+  .idBranch(controlSignals[5]),
   .exProgramCounter(exProgramCounter),
   .exLHSRegisterValue(exLHSRegisterValue),
   .exRHSRegisterValue(exRHSRegisterValue),
@@ -228,18 +241,22 @@ Alu alu(
 wire [31:0] resultALU;
 wire zero;
 
-BranchTargetCalculator branchTargetCalculator(
+BranchUnit branchUnit(
+  .aluZero(zero),
+  .isBranchOperation(exBranch),
   .programCounter(exProgramCounter),
   .immediate(exImmediateValue),
+  .shouldBranch(shouldBranch),
   .branchTarget(branchTarget)
 );
 
 wire [31:0] branchTarget;
 wire shouldBranch;
-assign shouldBranch = zero && exBranch;
 
 EX_MEM_Barrier ex_mem_barrier(
   .clk(clk),
+  .rst(rst),
+  .dontUpdate(isPipelineFrozen),
   .exAluResult(resultALU),
   .exMemoryWriteData(rhsAluInput),
   .exWriteRegisterIndex(exWriteRegisterIndex),
@@ -264,18 +281,12 @@ wire memMemRead;
 wire memMemToReg;
 wire memRegWrite;
 
-// DataMemory dataMemory(
-//   .memWrite(memMemWrite),
-//   .memRead(memMemRead),
-//   .address(memAluResult),
-//   .writeData(memMemoryWriteData),
-//   .readData(memMemoryData)
-// );
-
 wire [31:0] memMemoryData;
 
 MEM_WB_Barrier mem_wb_barrier(
   .clk(clk),
+  .rst(rst),
+  .dontUpdate(isPipelineFrozen),
   .memMemoryData(memMemoryData),
   .memExecutionData(memAluResult),
   .memWriteRegisterIndex(memWriteRegisterIndex),
