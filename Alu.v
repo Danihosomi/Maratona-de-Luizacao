@@ -52,9 +52,9 @@ always @(operand1, operand2, ALUControl) begin
     6'b010001: resultALU = mult[63:32]; //mulh
     6'b010010: resultALU = mulhsu[63:32]; //mulhsu
     6'b010011: resultALU = mulhu[63:32]; //mulhu
-    6'b010100: resultALU = (operand1 / operand2); //div
+    //6'b010100: resultALU = (operand1 / operand2); //div
     //6'b010101: resultALU = {{1'b0, operand1} / {1'b0, operand2}}; //divu
-    6'b010110: resultALU = (operand1 % operand2); //rem
+    //6'b010110: resultALU = (operand1 % operand2); //rem
     //6'b010111: resultALU = {{1'b0, operand1} % {1'b0, operand2}}; //remu
 
     6'b100000: begin // min

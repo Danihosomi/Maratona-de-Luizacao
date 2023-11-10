@@ -17,7 +17,9 @@ module MemoryHandler (
 
   // Peripherals
   input button,
-  output [5:0] led
+  output [5:0] led,
+  output [7:0] ledMatrixRow,
+  output [7:0] ledMatrixColumn
 );
 
 reg [31:0] address;
@@ -49,7 +51,9 @@ PeripheralsBlock peripherals(
   .dataIn(dataIn),
   .dataOut(peripheralDataOut),
   .button(button),
-  .led(led)
+  .led(led),
+  .ledMatrixRow(ledMatrixRow),
+  .ledMatrixColumn(ledMatrixColumn)
 );
 
 always @* begin
