@@ -70,14 +70,9 @@ always @(targetInstruction) begin
 
     2'b01: begin
       case(func3)
-        3'b000: begin
-          if (compactInstruction == 1) begin // Nop
-            expandedInstruction <= { 32'b00000000000000000000000000010011 };
-          end
-          else begin // C.ADDI
-            reg [31:0] immediate = { {26{compactInstruction[12]}}, compactInstruction[12], compactInstruction[6:2] };
+        3'b000: begin // C.NOP / C.ADDI
+          reg [31:0] immediate = { {27{compactInstruction[12]}}, compactInstruction[6:2] }; // signed
             expandedInstruction <= { immediate[11:0], wideRsLeft, 3'b000, wideRsLeft, 7'b0010011 };
-          end
         end
 
         3'b001: begin // C.JAL
