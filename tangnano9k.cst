@@ -8,19 +8,19 @@ IO_LOC  "matrixCol[4]" 57;
 
 IO_LOC  "matrixCol[3]" 76;
 
-IO_LOC  "matrixCol[2]" 55;
+IO_LOC  "matrixCol[2]" 51;
 
-IO_LOC  "matrixCol[1]" 54;
+IO_LOC  "matrixCol[1]" 42;
 
 IO_LOC  "matrixCol[0]" 73;
 
-IO_LOC  "matrixRow[7]" 56;
+IO_LOC  "matrixRow[7]" 53;
 
-IO_LOC  "matrixRow[6]" 53;
+IO_LOC  "matrixRow[6]" 41;
 
 IO_LOC  "matrixRow[5]" 68;
 
-IO_LOC  "matrixRow[4]" 51;
+IO_LOC  "matrixRow[4]" 35;
 
 IO_LOC  "matrixRow[3]" 74;
 
