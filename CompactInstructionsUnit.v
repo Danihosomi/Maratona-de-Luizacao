@@ -48,7 +48,8 @@ always @(targetInstruction) begin
         3'b001: shouldIgnoreInstruction <= 1; // C.FLD / C.LQ
 
         3'b010: begin // C.LW
-          notImplemented <= 1;
+          reg [31:0] immediate = { {25{1'b0}}, compactInstruction[5], compactInstruction[12:10], compactInstruction[6], 2'b00 };
+          expandedInstruction <= { immediate[11:0], expandedRs1, 3'b010, expandedRs2, 7'b0000011 };
         end
 
         3'b011: shouldIgnoreInstruction <= 1; // C.FLW / C.LD
@@ -58,7 +59,8 @@ always @(targetInstruction) begin
         3'b101: shouldIgnoreInstruction <= 1; // C.FSD / C.SQ
 
         3'b110: begin // C.SW
-          notImplemented <= 1;
+          reg [31:0] immediate = { {25{1'b0}}, compactInstruction[5], compactInstruction[12:10], compactInstruction[6], 2'b00 };
+          expandedInstruction <= { immediate[11:5], expandedRs2, expandedRs1, 3'b010, immediate[4:0], 7'b0100011 };
         end
 
         3'b111: shouldIgnoreInstruction <= 1; // C.FSW / C.SD
