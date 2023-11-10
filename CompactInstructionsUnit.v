@@ -20,11 +20,6 @@ wire [2:0] compactRs2 = compactInstruction[4:2];
 wire [4:0] expandedRs1 = { 2'b01, compactRs1 };
 wire [4:0] expandedRs2 = { 2'b01, compactRs2 };
 
-wire [5:0] ciImmediate = { compactInstruction[12], compactInstruction[6:2] };
-wire [5:0] cssImmediate = compactInstruction[12:7];
-wire [7:0] wideImmediate = compactInstruction[12:5];
-wire [4:0] loadStoreImmediate = { compactInstruction[12:10], compactInstruction[6:5] };
-
 reg isIllegalInstruction;
 reg shouldIgnoreInstruction;
 reg notImplemented;
