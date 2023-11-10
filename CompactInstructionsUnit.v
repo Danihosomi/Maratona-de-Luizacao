@@ -41,7 +41,8 @@ always @(targetInstruction) begin
             isIllegalInstruction <= 1;
           end
           else begin // C.ADDI4SPN
-            notImplemented <= 1;
+            reg [31:0] immediate = { {22{1'b0}}, compactInstruction[10:7], compactInstruction[12:11], compactInstruction[5], compactInstruction[6], 2'b00 }; // unsigned
+            expandedInstruction <= { immediate[11:0], 5'b00010, 3'b000, expandedRsRight, 7'b0010011 };
           end
         end
 
@@ -80,7 +81,8 @@ always @(targetInstruction) begin
         end
 
         3'b010: begin // C.LI
-          notImplemented <= 1;
+          reg [31:0] immediate = { {27{compactInstruction[12]}}, compactInstruction[6:2] }; // signed
+          expandedInstruction <= { immediate[11:0], 5'b00000, 3'b000, wideRsLeft, 7'b0010011 };
         end
 
         3'b011: begin
@@ -88,7 +90,8 @@ always @(targetInstruction) begin
             notImplemented <= 1;
           end
           else begin // C.LUI
-            notImplemented <= 1;
+            reg [31:0] immediate = { {15{compactInstruction[12]}}, compactInstruction[6:2], {12{1'b0}} }; // signed
+            expandedInstruction <= { immediate[31:12], wideRsLeft, 7'b0110111 };
           end
         end
 
@@ -142,7 +145,8 @@ always @(targetInstruction) begin
         end
 
         3'b110: begin // C.BEQZ
-          notImplemented <= 1;
+          // reg [31:0] immediate = { {27{compactInstruction[12]}}, compactInstruction[2], compactInstruction[11:10], compactInstruction[4:3], 1'b0 }; // signed
+          // expandedInstruction <= { immediate[12], immediate[10:5], 5'b00000, expandedRsLeft, 3'b000, immediate[4:1], immediate[11], 7'b1100011 };
         end
 
         3'b111: begin // C.BNEZ
