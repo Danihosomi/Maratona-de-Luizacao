@@ -110,25 +110,26 @@ always @(targetInstruction) begin
             end
 
             2'b10: begin // C.ANDI
-              notImplemented <= 1;
+              reg [11:0] andImm <= {000000,(compactInstruction[12]),(compactInstruction[6:2])};
+              expandedInstruction <= { andImm, expandedRs1, 3'b111, expandedRs1, 7'b0010011 };
             end
 
             2'b11: begin 
               case({func4, compactInstruction[6:5]})
                 3'b000: begin // C.SUB
-                  notImplemented <= 1;
+                  expandedInstruction <= { 7'b0100000, expandedRs2, expandedRs1, 3'b000, expandedRs1, 7'b0110011 };
                 end
 
                 3'b001: begin // C.XOR
-                  notImplemented <= 1;
+                  expandedInstruction <= { 7'b0000000, expandedRs2, expandedRs1, 3'b100, expandedRs1, 7'b0110011 };
                 end
 
                 3'b010: begin // C.OR
-                  notImplemented <= 1;
+                  expandedInstruction <= { 7'b0000000, expandedRs2, expandedRs1, 3'b110, expandedRs1, 7'b0110011 };
                 end
 
                 3'b011: begin // C.AND
-                  notImplemented <= 1;
+                  expandedInstruction <= { 7'b0000000, expandedRs2, expandedRs1, 3'b111, expandedRs1, 7'b0110011 };
                 end
 
                 3'b100: shouldIgnoreInstruction <= 1; // C.SUBW // TODO: Review
