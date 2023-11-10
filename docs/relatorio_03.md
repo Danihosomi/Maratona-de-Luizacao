@@ -19,6 +19,19 @@ Vale lembrar que o valor do fio _DataMemorySuccess_ é:
 
 A _FreezeUnit_ e a nova _CPU_ foram implementadas na branch **feat/MMU-CPU-Integration**.
 
+### Instruções I e M
+
+Na entrega passada realizamos a implementação de diversas instruções RV32I e RV32M que estavam na branch **feat-add-alu-instructions** mas essas alterações precisavam ser integradas na branch principal. Todas as instruções foram revisadas e testadas. Algumas ainda precisavam ser implementadas ou corrigidas.
+
+Instruções do tipo I implementadas nesta etapa 
+Function | ALUControl
+--- | ---
+STL, STLI | 100101
+SLTU, SLTIU | 100110
+AUIPC | Soma
+
+A instrução AUIPC foi implementada com um condicional no próprio módulo da CPU, para utilizar pc como um dos operandos da ALU.
+
 ## Entregas Fase 3
 
 Aqui vão as entregas da fase atual
