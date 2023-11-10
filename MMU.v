@@ -11,7 +11,7 @@ module MMU (
   output [31:0] instructionMemoryDataOut,
 
   // Peripherals
-  output reg [5:0] led,
+  output [5:0] led,
   input button,
   output [7:0] ledMatrixRow,
   output [7:0] ledMatrixColumn
