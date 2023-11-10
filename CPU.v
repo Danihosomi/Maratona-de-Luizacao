@@ -27,6 +27,7 @@ ProgramCounter programCounter(
   .clk(clk),
   .rst(rst),
   .isStalled(isPipelineStalled),
+  .isCompactInstruction(instruction != 0 && instruction[1:0] != 2'b11),
   .shouldGoToTarget(shouldBranch),
   .jumpTarget(branchTarget),
   .pc(pc)
@@ -41,8 +42,15 @@ IF_ID_Barrier if_id_barrier(
   .dontUpdate(isPipelineStalled), // We must not update repeat the instruction
   .ifInstruction(instruction),
   .ifProgramCounter(pc),
-  .idInstruction(idInstruction),
+  .idInstruction(idInstructionPreDecompression),
   .idProgramCounter(idProgramCounter)
+);
+
+wire [31:0] idInstructionPreDecompression;
+
+CompactInstructionsUnit compactInstructionUnit(
+  .targetInstruction(idInstructionPreDecompression),
+  .resultInstruction(idInstruction)
 );
 
 wire [31:0] idInstruction;
