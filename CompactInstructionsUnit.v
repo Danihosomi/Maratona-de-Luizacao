@@ -165,14 +165,17 @@ always @(targetInstruction) begin
 
     2'b10: begin
       case(func3)
+        //  
         3'b000: begin // C.SLLI
-          notImplemented <= 1;
+          reg [5:0] immediate = { compactInstruction[12], compactInstruction[6:2] }; // unsigned
+          expandedInstruction <= { 7'b0000000, immediate[4:0], wideRsLeft, 3'b001, wideRsLeft, 7'b0010011 };
         end
 
         3'b001: shouldIgnoreInstruction <= 1; // C.FLDSP / C.LQSP
 
         3'b010: begin // C.LWSP
-          notImplemented <= 1;
+          reg [11:0] immediate = { 4'b0000, compactInstruction[3:2], compactInstruction[12], compactInstruction[6:4], 2'b00 }; // unsigned
+          expandedInstruction <= { immediate[11:0], 5'b00010, 3'b010, wideRsLeft, 7'b0000011 };
         end
 
         3'b011: shouldIgnoreInstruction <= 1; // C.FLWSP / C.LDSP
@@ -180,19 +183,19 @@ always @(targetInstruction) begin
         3'b100: begin
           if (func4 == 0) begin
             if (wideRsRight == 0) begin // C.JR
-              notImplemented <= 1;
+              expandedInstruction <= { 12'b000000000000, wideRsLeft, 3'b000, 5'b00000, 7'b1100111 };
             end
             else begin // C.MV
-              notImplemented <= 1;
+              expandedInstruction <= { 7'b0000000, wideRsRight, 5'b00000, 3'b000, wideRsLeft, 7'b0110011 };
             end
           end
           else begin
             if (wideRsRight == 0) begin
               if (wideRsLeft == 0) begin // C.EBREAK
-                notImplemented <= 1;
+                expandedInstruction <= { 12'b000000000001, 5'b00000, 3'b000, 5'b00000, 7'b1110011 };
               end
               else begin // C.JALR
-                notImplemented <= 1;
+                expandedInstruction <= { 12'b000000000000, wideRsLeft, 3'b000, 5'b00001, 7'b1100111 };
               end
             end
             else begin // C.ADD
@@ -204,7 +207,8 @@ always @(targetInstruction) begin
         3'b101: shouldIgnoreInstruction <= 1; // C.FSDSP / C.SQSP
 
         3'b110: begin // C.SWSP
-          notImplemented <= 1;
+          reg [11:0] immediate = { 4'b0000, compactInstruction[8:7], compactInstruction[12:9], 2'b00 }; // unsigned
+          expandedInstruction <= { immediate[11:5], wideRsRight, 5'b00010, 3'b010, immediate[4:0], 7'b0100011 };
         end
 
         3'b111: shouldIgnoreInstruction <= 1; // C.FSWSP / C.SDSP
