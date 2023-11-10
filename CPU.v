@@ -80,9 +80,11 @@ RegisterFile registerFile(
   .writeRegisterData(writeBackData),
   .shouldWrite(wbRegWrite),
   .source1RegisterData(idLHSRegisterValue),
-  .source2RegisterData(idRHSRegisterValue)
+  .source2RegisterData(idRHSRegisterValue),
+  .shouldSwap(swapWire)
 );
 
+wire swapWire;
 wire [31:0] idLHSRegisterValue;
 wire [31:0] idRHSRegisterValue;
 
@@ -96,7 +98,8 @@ Control control(
   .aluOp(aluOp),
   .memWrite(memWrite),
   .aluSrc(aluSrc),
-  .regWrite(regWrite)
+  .regWrite(regWrite),
+  .swapSignal(swapWire)
 );
 
 wire branch;

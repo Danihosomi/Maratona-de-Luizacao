@@ -6,6 +6,7 @@ module RegisterFile(
   input [4:0] writeRegisterIndex,
   input [31:0] writeRegisterData,
   input shouldWrite,
+  input shouldSwap,
   output [31:0] source1RegisterData,
   output [31:0] source2RegisterData
 );
@@ -26,6 +27,10 @@ always @(negedge clk) begin
 
   if (shouldWrite == 1 && (writeRegisterIndex != 0)) begin
     registers[writeRegisterIndex] <= writeRegisterData;
+  end
+  if(shouldSwap) begin 
+    registers[source1RegisterIndex] <= source2RegisterData;
+    registers[source2RegisterIndex] <= source1RegisterData;
   end
 end
 
