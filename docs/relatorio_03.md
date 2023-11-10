@@ -32,6 +32,6 @@ Aprendizados vão aqui
 - **Luiz Henrique**:
 - **Larissa**:
 - **Gabriel**: Integração da MMU com a CPU.
-- **Yan**:
+- **Yan**: Revisão de instruções já implementadas, merge da branch de instruções e implementação de novas instruções (set less e AUIPC)
 - **Daniel**:
 - **Vinícius**:
