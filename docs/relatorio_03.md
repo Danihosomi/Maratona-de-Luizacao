@@ -32,6 +32,10 @@ AUIPC | Soma
 
 A instrução AUIPC foi implementada com um condicional no próprio módulo da CPU, para utilizar pc como um dos operandos da ALU.
 
+### Instruções A
+
+Realizamos a implementação da instrução swap diretamente no módulo register file. O código está na branch **feat/type-a-instructions** 
+
 ## Entregas Fase 3
 
 Aqui vão as entregas da fase atual
@@ -46,5 +50,5 @@ Aprendizados vão aqui
 - **Larissa**:
 - **Gabriel**: Integração da MMU com a CPU.
 - **Yan**: Revisão de instruções já implementadas, merge da branch de instruções e implementação de novas instruções (set less e AUIPC)
-- **Daniel**:
-- **Vinícius**:
+- **Daniel**: Merge da branch de instruções e implementação de novas instruções do tipo A e tipo C.
+- **Vinícius**: Revisão de instruções já implementadas, além do merge da branch de instruções.
