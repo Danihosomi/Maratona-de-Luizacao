@@ -11,17 +11,14 @@ wire [1:0] opCode = compactInstruction[1:0];
 wire [2:0] func3 = compactInstruction[15:13];
 wire func4 = compactInstruction[12];
 
-wire [4:0] wideRs1 = compactInstruction[11:7];
-wire [4:0] wideRs2 = compactInstruction[6:2];
+wire [4:0] wideRsLeft = compactInstruction[11:7];
+wire [4:0] wideRsRight = compactInstruction[6:2];
 
-wire [2:0] compactRs1 = compactInstruction[9:7];
-wire [2:0] compactRs2 = compactInstruction[4:2];
-wire [2:0] compactRsd = compactInstruction[4:2];
+wire [2:0] compactRsLeft = compactInstruction[9:7];
+wire [2:0] compactRsRight = compactInstruction[4:2];
 
-wire [5:0] ciImmediate = { compactInstruction[12], compactInstruction[6:2] };
-wire [5:0] cssImmediate = compactInstruction[12:7];
-wire [7:0] wideImmediate = compactInstruction[12:5];
-wire [4:0] loadStoreImmediate = { compactInstruction[12:10], compactInstruction[6:5] };
+wire [4:0] expandedRsLeft = { 2'b01, compactRsLeft };
+wire [4:0] expandedRsRight = { 2'b01, compactRsRight };
 
 reg isIllegalInstruction;
 reg shouldIgnoreInstruction;
@@ -51,7 +48,8 @@ always @(targetInstruction) begin
         3'b001: shouldIgnoreInstruction <= 1; // C.FLD / C.LQ
 
         3'b010: begin // C.LW
-          notImplemented <= 1;
+          reg [31:0] immediate = { {25{1'b0}}, compactInstruction[5], compactInstruction[12:10], compactInstruction[6], 2'b00 };
+          expandedInstruction <= { immediate[11:0], expandedRsLeft, 3'b010, expandedRsRight, 7'b0000011 };
         end
 
         3'b011: shouldIgnoreInstruction <= 1; // C.FLW / C.LD
@@ -61,7 +59,8 @@ always @(targetInstruction) begin
         3'b101: shouldIgnoreInstruction <= 1; // C.FSD / C.SQ
 
         3'b110: begin // C.SW
-          notImplemented <= 1;
+          reg [31:0] immediate = { {25{1'b0}}, compactInstruction[5], compactInstruction[12:10], compactInstruction[6], 2'b00 }; // unsigned
+          expandedInstruction <= { immediate[11:5], expandedRsRight, expandedRsLeft, 3'b010, immediate[4:0], 7'b0100011 };
         end
 
         3'b111: shouldIgnoreInstruction <= 1; // C.FSW / C.SD
@@ -71,13 +70,9 @@ always @(targetInstruction) begin
 
     2'b01: begin
       case(func3)
-        3'b000: begin
-          if (compactInstruction == 1) begin // Nop
-            notImplemented <= 1;
-          end
-          else begin // C.ADDI
-            notImplemented <= 1;
-          end
+        3'b000: begin // C.NOP / C.ADDI
+          reg [31:0] immediate = { {27{compactInstruction[12]}}, compactInstruction[6:2] }; // signed
+          expandedInstruction <= { immediate[11:0], wideRsLeft, 3'b000, wideRsLeft, 7'b0010011 };
         end
 
         3'b001: begin // C.JAL
@@ -89,7 +84,7 @@ always @(targetInstruction) begin
         end
 
         3'b011: begin
-          if (wideRs1 == 2) begin // C.ADDI16SP
+          if (wideRsLeft == 2) begin // C.ADDI16SP
             notImplemented <= 1;
           end
           else begin // C.LUI
@@ -108,30 +103,31 @@ always @(targetInstruction) begin
             end
 
             2'b10: begin // C.ANDI
-              notImplemented <= 1;
+              reg [11:0] andImm = { {7{compactInstruction[12]}}, compactInstruction[6:2] }; // signed
+              expandedInstruction <= { andImm, expandedRsLeft, 3'b111, expandedRsLeft, 7'b0010011 };
             end
 
             2'b11: begin 
               case({func4, compactInstruction[6:5]})
                 3'b000: begin // C.SUB
-                  notImplemented <= 1;
+                  expandedInstruction <= { 7'b0100000, expandedRsRight, expandedRsLeft, 3'b000, expandedRsLeft, 7'b0110011 };
                 end
 
                 3'b001: begin // C.XOR
-                  notImplemented <= 1;
+                  expandedInstruction <= { 7'b0000000, expandedRsRight, expandedRsLeft, 3'b100, expandedRsLeft, 7'b0110011 };
                 end
 
                 3'b010: begin // C.OR
-                  notImplemented <= 1;
+                  expandedInstruction <= { 7'b0000000, expandedRsRight, expandedRsLeft, 3'b110, expandedRsLeft, 7'b0110011 };
                 end
 
                 3'b011: begin // C.AND
-                  notImplemented <= 1;
+                  expandedInstruction <= { 7'b0000000, expandedRsRight, expandedRsLeft, 3'b111, expandedRsLeft, 7'b0110011 };
                 end
 
-                3'b100: shouldIgnoreInstruction <= 1; // C.SUBW
+                3'b100: shouldIgnoreInstruction <= 1; // C.SUBW // TODO: Review
 
-                3'b101: shouldIgnoreInstruction <= 1; // C.ADDW
+                3'b101: shouldIgnoreInstruction <= 1; // C.ADDW // TODO: Review
 
                 3'b110: isIllegalInstruction <= 1; // Reserved
 
@@ -172,7 +168,7 @@ always @(targetInstruction) begin
 
         3'b100: begin
           if (func4 == 0) begin
-            if (wideRs2 == 0) begin // C.JR
+            if (wideRsRight == 0) begin // C.JR
               notImplemented <= 1;
             end
             else begin // C.MV
@@ -180,8 +176,8 @@ always @(targetInstruction) begin
             end
           end
           else begin
-            if (wideRs2 == 0) begin
-              if (wideRs1 == 0) begin // C.EBREAK
+            if (wideRsRight == 0) begin
+              if (wideRsLeft == 0) begin // C.EBREAK
                 notImplemented <= 1;
               end
               else begin // C.JALR
@@ -189,7 +185,7 @@ always @(targetInstruction) begin
               end
             end
             else begin // C.ADD
-              expandedInstruction <= { 7'b0000000, wideRs2, wideRs1, 3'b000, wideRs1, 7'b0110011 };
+              expandedInstruction <= { 7'b0000000, wideRsRight, wideRsLeft, 3'b000, wideRsLeft, 7'b0110011 };
             end
           end
         end
