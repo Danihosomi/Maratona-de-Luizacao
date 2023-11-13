@@ -42,7 +42,15 @@ Realizamos a implementação da instrução swap diretamente no módulo register
 
 #### Conexão física
 
-Aqui a Lari explica como foi fazer a conexão física da placa com o led e ajustar os fios no _top_.
+A implementação do periférico se deu através de uma protoboard. Para entender melhor como fazer sua conexão com a FPGA foi necessário tanto estudar
+a esquemática do periferico quanto dos pinos da FPGA.
+
+Com isso em mente e as resistências necessárias calculadas, os pinos de conexão com a protoboard da FPGA foram soldados e conectados aos pinos da 
+matriz de LED.
+
+Entendendo seu funcionamento, foi possível mapear esses pinos no arquivo de 
+constraints e testar o circuito.
+[comment]: # (Lari completa aqui)
 
 #### Modo de Uso
 
@@ -65,14 +73,24 @@ sw x1, 0(x2)
 
 ativa as colunas 8, 6, 4, 3, 2, 1 da Matriz.
 
+### Instruções do tipo C
+
+Inicialmente foi necessário adicionar suporte para o program counter pular de 2
+em 2 bytes em vez de 4 em 4 bytes no caso de detcção de uma instrução compacta.
+
+Em seguida, atualizamos nossa toolchain de compilação para suportar essas instruções compactas.
+
+Finalmente, introduzimos o módulo `CompactInstructionsUnit` para fazer a descompactação dessas instruções. Esse procedimento
+foi bem manual, reproduzindo as tabelas providas pelo manual do RISC-V, descompactando uma a uma separadamente.
+
 # Aprendizados
 
 Aprendizados vão aqui
 
 # Contribuições
 
-- **Luiz Henrique**:
-- **Larissa**:
+- **Luiz Henrique**: Suporte para implementação de instruções do tipo C e implementação delas
+- **Larissa**: Desenvolvimento do circuito do periférico e implementação de instruções do tipo C
 - **Gabriel**: Integração da MMU com a CPU.
 - **Yan**: Revisão de instruções já implementadas, merge da branch de instruções e implementação de novas instruções (set less e AUIPC)
 - **Daniel**: Merge da branch de instruções e implementação de novas instruções do tipo A e tipo C.
