@@ -5,11 +5,11 @@ module MMU (
   input [31:0] dataMemoryAddress,
   input [31:0] dataMemoryDataIn,
   input [31:0] instructionMemoryAddress,
-  output reg [31:0] dataMemoryDataOut,
-  output reg instructionMemorySuccess,
-  output reg dataMemorySuccess,
-  output reg [31:0] instructionMemoryDataOut,
-  output reg [5:0] led,
+  output [31:0] dataMemoryDataOut,
+  output instructionMemorySuccess,
+  output dataMemorySuccess,
+  output [31:0] instructionMemoryDataOut,
+  output [5:0] led,
   input button
 );
 

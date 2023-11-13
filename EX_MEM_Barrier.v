@@ -1,6 +1,7 @@
 module EX_MEM_Barrier(
   input clk,
   input rst,
+  input dontUpdate,
   input [31:0] exAluResult,
   input [31:0] exMemoryWriteData,
   input [4:0] exWriteRegisterIndex,
@@ -18,13 +19,15 @@ module EX_MEM_Barrier(
 );
 
 always @(posedge clk) begin
-  memAluResult <= exAluResult;
-  memMemoryWriteData <= exMemoryWriteData;
-  memWriteRegisterIndex <= exWriteRegisterIndex;
-  memMemWrite <= exMemWrite;
-  memMemRead <= exMemRead;
-  memMemToReg <= exMemToReg;
-  memRegWrite <= exRegWrite;
+  if (dontUpdate == 0) begin
+    memAluResult <= exAluResult;
+    memMemoryWriteData <= exMemoryWriteData;
+    memWriteRegisterIndex <= exWriteRegisterIndex;
+    memMemWrite <= exMemWrite;
+    memMemRead <= exMemRead;
+    memMemToReg <= exMemToReg;
+    memRegWrite <= exRegWrite;
+  end
 
   if (rst) begin
     memMemWrite <= 0;
