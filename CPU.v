@@ -1,8 +1,12 @@
 module CPU(
   input clk,
   input rst,
+
+  // Peripherals
   input buttonPeripheral,
-  output [5:0] debug
+  output [5:0] debug,
+  output [7:0] ledMatrixRow,
+  output [7:0] ledMatrixColumn
 );
 
 wire isPipelineStalled;
@@ -22,7 +26,9 @@ MMU mmu(
   .instructionMemorySuccess(instructionMemorySuccess),
   .instructionMemoryDataOut(instruction),
   .button(buttonPeripheral),
-  .led(debug)
+  .led(debug),
+  .ledMatrixRow(ledMatrixRow),
+  .ledMatrixColumn(ledMatrixColumn)
 );
 
 FreezeUnit freezeUnit(
@@ -104,6 +110,7 @@ Control control(
   .aluOp(aluOp),
   .memWrite(memWrite),
   .aluSrc(aluSrc),
+  .pcToAlu(pcToAlu),
   .regWrite(regWrite)
 );
 
@@ -114,11 +121,13 @@ wire memRead;
 wire memWrite;
 wire memToReg;
 wire regWrite;
-wire [8:0] controlSignals;
+wire pcToAlu;
+wire [9:0] controlSignals;
 
 assign controlSignals[5:0] = (isPipelineStalled) ? 0 :
                         {branch, aluSrc, memRead, memWrite, memToReg, regWrite};
 assign controlSignals[8:6] = (isPipelineStalled) ? 0 : aluOp;
+assign controlSignals[9] = (isPipelineStalled) ? 0 : pcToAlu;
 
 ImmediateGeneration immediateGeneration(
   .instruction(idInstruction),
@@ -146,6 +155,7 @@ ID_EX_Barrier id_ex_barrier(
   .idMemRead(controlSignals[3]),
   .idMemToReg(controlSignals[1]),
   .idRegWrite(controlSignals[0]),
+  .idPcToAlu(controlSignals[9]),
   .idBranch(controlSignals[5]),
   .exProgramCounter(exProgramCounter),
   .exLHSRegisterValue(exLHSRegisterValue),
@@ -162,6 +172,7 @@ ID_EX_Barrier id_ex_barrier(
   .exMemRead(exMemRead),
   .exMemToReg(exMemToReg),
   .exRegWrite(exRegWrite),
+  .exPcToAlu(exPcToAlu),
   .exBranch(exBranch)
 );
 
@@ -180,6 +191,7 @@ wire exMemWrite;
 wire exMemRead;
 wire exMemToReg;
 wire exRegWrite;
+wire exPcToAlu;
 wire exBranch;
 
 // Hazard handling
@@ -210,10 +222,12 @@ _MUX4 mux4_lhsAluInputSelect(
   .secondData(writeBackData),
   .thirdData(memAluResult),
   .fourthData(32'h00000000),
-  .outputData(lhsAluInput)
+  .outputData(lhsAluInputBeforeAUIPC)
 );
 
+wire [31:0] lhsAluInputBeforeAUIPC;
 wire [31:0] lhsAluInput;
+assign lhsAluInput = exPcToAlu ? exProgramCounter : lhsAluInputBeforeAUIPC;
 
 _MUX4 mux4_rhsAluInputSelect(
   .dataSelector(rhsAluInputSelect),
