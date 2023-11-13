@@ -1,12 +1,11 @@
 #include <stdlib.h>
-#include <iostream>
 #include <verilated.h>
 #include <verilated_vcd_c.h>
 #include "../obj_dir/VCPU.h"
 
 #define str(x) #x".vcd"
 
-#define MAX_SIM_TIME 50
+#define MAX_SIM_TIME 1000
 vluint64_t sim_time = 0;
 
 void runSimulation() {

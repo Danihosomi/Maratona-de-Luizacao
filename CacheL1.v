@@ -5,8 +5,8 @@ module CacheL1(
   input readEnable,
   input writeEnable,
   input [31:0] dataIn,
-  output reg [31:0] dataOut,
-  output reg cacheReady,
+  output [31:0] dataOut,
+  output cacheReady,
   
   // Memory wires
   input [31:0] memoryDataIn,
@@ -76,7 +76,7 @@ module CacheL1(
   wire invalidMemory;
   wire cacheIdle;
   assign tagMatch = tag[address[6:2]] == address[10:7];
-  assign hit = tagMatch & clean[address[6:2]];
+  assign hit = tagMatch & clean[address[6:2]] & address[1] == 0;
   assign invalidMemory = address[31];
   assign cacheIdle = ~(readEnable | writeEnable);
   assign readReady = hit & readEnable;
@@ -103,9 +103,11 @@ module CacheL1(
       end
       READ: begin
         if (memoryReady) begin
-          data[address[6:2]] <= memoryDataIn;
-          tag[address[6:2]] <= address[10:7];
-          clean[address[6:2]] <= 1;
+          if (address[1] == 0) begin
+            data[address[6:2]] <= memoryDataIn;
+            tag[address[6:2]] <= address[10:7];
+            clean[address[6:2]] <= 1;
+          end
           state <= READY;
         end
         else begin
@@ -127,7 +129,7 @@ module CacheL1(
     endcase
   end
 
-  assign dataOut = data[address[6:2]];
+  assign dataOut = address[1] == 0 ? data[address[6:2]] : memoryDataIn;
   assign cacheReady = (state == READY) | readReady | cacheIdle;
 
 endmodule

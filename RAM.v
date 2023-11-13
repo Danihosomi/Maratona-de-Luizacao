@@ -4,7 +4,7 @@ module RAM(
   input readEnable,
   input [31:0] address,
   input [31:0] dataIn,
-  output reg [31:0] dataOut
+  output [31:0] dataOut
 );
 reg [31:0] memory [31:0];
 
