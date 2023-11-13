@@ -2,6 +2,7 @@ module ProgramCounter(
   input clk,
   input rst,
   input isStalled,
+  input isCompactInstruction,
   input shouldGoToTarget,
   input [31:0] jumpTarget,
   output reg [31:0] pc
@@ -12,7 +13,12 @@ end
 
 always @(posedge clk) begin
   if (!isStalled) begin
-    pc <= (shouldGoToTarget) ? jumpTarget : pc + 4;
+    if (isCompactInstruction) begin
+      pc <= (shouldGoToTarget) ? jumpTarget : pc + 2;
+    end
+    else begin
+      pc <= (shouldGoToTarget) ? jumpTarget : pc + 4;
+    end
   end
   else begin
     pc <= (shouldGoToTarget) ? jumpTarget : pc;
