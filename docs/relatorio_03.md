@@ -48,9 +48,9 @@ a esquemática do periferico quanto dos pinos da FPGA.
 Com isso em mente e as resistências necessárias calculadas, os pinos de conexão com a protoboard da FPGA foram soldados e conectados aos pinos da 
 matriz de LED.
 
-Entendendo seu funcionamento, foi possível mapear esses pinos no arquivo de 
-constraints e testar o circuito.
-[comment]: # (Lari completa aqui)
+Foram usados pinos da FPGA com saída de 3.3 V e resistências de 1 K ohms em série com cada uma das linhas da matriz.
+
+Entendendo seu funcionamento, foi possível mapear esses pinos no arquivo de constraints e testar o circuito.
 
 #### Modo de Uso
 
