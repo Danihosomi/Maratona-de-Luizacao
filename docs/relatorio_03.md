@@ -59,7 +59,7 @@ Para escrever na matriz, é necessário fazer uma chamada de escrita para um end
 | Endereço   | Descrição                                                                                           |
 | ---------- | --------------------------------------------------------------------------------------------------- |
 | 0xA0000000 | Os 8 primeiros bits do registrador dado são usados para sinalizar as **colunas** da matriz em ordem |
-| 0xA0000001 | Os 8 primeiros bits do registrador dado são usados para sinalizar as **linhas** da matriz em ordem  |
+| 0xA0000004 | Os 8 primeiros bits do registrador dado são usados para sinalizar as **linhas** da matriz em ordem  |
 
 Onde o bit menos significativo sinaliza a linha/coluna menos significativa.
 
@@ -91,7 +91,7 @@ Aprendizados vão aqui
 
 - **Luiz Henrique**: Suporte para implementação de instruções do tipo C e implementação delas
 - **Larissa**: Desenvolvimento do circuito do periférico e implementação de instruções do tipo C
-- **Gabriel**: Integração da MMU com a CPU.
+- **Gabriel**: Integração da MMU com a CPU. E auxílio na implementação do periférico.
 - **Yan**: Revisão de instruções já implementadas, merge da branch de instruções e implementação de novas instruções (set less e AUIPC)
 - **Daniel**: Merge da branch de instruções e implementação de novas instruções do tipo A e tipo C.
 - **Vinícius**: Revisão de instruções já implementadas, além do merge da branch de instruções.
