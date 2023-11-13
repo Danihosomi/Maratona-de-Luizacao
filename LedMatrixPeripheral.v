@@ -13,7 +13,7 @@ always @(negedge clk) begin
       ledMatrixColumn <= data[7:0];
   end
 
-  if (isTarget && address == 1) begin
+  if (isTarget && address == 4) begin
     ledMatrixRow <= data[7:0];
   end
 end

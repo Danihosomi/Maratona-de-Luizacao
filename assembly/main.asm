@@ -2,7 +2,7 @@ lui x2, 0xA0000
 addi x1, x0, 0b00000000
 sw x1, 0(x2)
 add x1, x0, x0
-addi x2, x2, 1
+addi x2, x2, 4
 sw x1, 0(x2)
 start:
 add x4, x3, x0
