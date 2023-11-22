@@ -24,10 +24,10 @@ rom.hex: install firmware/$(TARGET_SOURCE)
 	test -d temp || mkdir temp;
 
 	if [[ "$(suffix ${TARGET_SOURCE})" == ".c" ]]; then \
-        sh scripts/firmware/compile_firmware_c.sh $(TARGET_SOURCE); \
-    else \
-        sh scripts/firmware/compile_firmware_asm.sh $(TARGET_SOURCE); \
-    fi
+		sh scripts/firmware/compile_firmware_c.sh $(TARGET_SOURCE); \
+	else \
+		sh scripts/firmware/compile_firmware_asm.sh $(TARGET_SOURCE); \
+	fi
 
 python-dependencies-folder := scripts/venv/include
 install: $(python-dependencies-folder)
