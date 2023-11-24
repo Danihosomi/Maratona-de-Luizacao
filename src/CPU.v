@@ -106,6 +106,7 @@ Control control(
   .func3(exFunct3),
   .func7(exFunct7),
   .branch(branch),
+  .jump(jump),
   .memRead(memRead),
   .memToReg(memToReg),
   .aluOp(aluOp),
@@ -116,6 +117,7 @@ Control control(
 );
 
 wire branch;
+wire jump;
 wire [2:0] aluOp;
 wire aluSrc;
 wire memRead;
@@ -123,12 +125,12 @@ wire memWrite;
 wire memToReg;
 wire regWrite;
 wire pcToAlu;
-wire [9:0] controlSignals;
+wire [10:0] controlSignals;
 
 assign controlSignals[5:0] = (isPipelineStalled) ? 0 :
                         {branch, aluSrc, memRead, memWrite, memToReg, regWrite};
 assign controlSignals[8:6] = (isPipelineStalled) ? 0 : aluOp;
-assign controlSignals[9] = (isPipelineStalled) ? 0 : pcToAlu;
+assign controlSignals[10:9] = (isPipelineStalled) ? 0 : {jump, pcToAlu};
 
 ImmediateGeneration immediateGeneration(
   .instruction(idInstruction),
@@ -157,6 +159,7 @@ ID_EX_Barrier id_ex_barrier(
   .idMemToReg(controlSignals[1]),
   .idRegWrite(controlSignals[0]),
   .idPcToAlu(controlSignals[9]),
+  .idJump(controlSignals[10]),
   .idBranch(controlSignals[5]),
   .exProgramCounter(exProgramCounter),
   .exLHSRegisterValue(exLHSRegisterValue),
@@ -174,6 +177,7 @@ ID_EX_Barrier id_ex_barrier(
   .exMemToReg(exMemToReg),
   .exRegWrite(exRegWrite),
   .exPcToAlu(exPcToAlu),
+  .exJump(exJump),
   .exBranch(exBranch)
 );
 
@@ -193,6 +197,7 @@ wire exMemRead;
 wire exMemToReg;
 wire exRegWrite;
 wire exPcToAlu;
+wire exJump;
 wire exBranch;
 
 // Hazard handling
@@ -267,8 +272,10 @@ wire zero;
 BranchUnit branchUnit(
   .aluZero(zero),
   .isBranchOperation(exBranch),
+  .jump(exJump),
   .programCounter(exProgramCounter),
   .immediate(exImmediateValue),
+  .aluResult(resultALU),
   .shouldBranch(shouldBranch),
   .branchTarget(branchTarget)
 );

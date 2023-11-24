@@ -18,6 +18,7 @@ module ID_EX_Barrier(
   input idMemToReg,
   input idRegWrite,
   input idPcToAlu,
+  input idJump,
   input idBranch,
   output reg [31:0] exProgramCounter,
   output reg [31:0] exLHSRegisterValue,
@@ -35,6 +36,7 @@ module ID_EX_Barrier(
   output reg exMemToReg,
   output reg exRegWrite,
   output reg exPcToAlu,
+  output reg exJump,
   output reg exBranch
 );
 
@@ -56,6 +58,7 @@ always @(posedge clk) begin
     exMemToReg <= idMemToReg;
     exRegWrite <= idRegWrite;
     exPcToAlu <= idPcToAlu;
+    exJump <= idJump;
     exBranch <= idBranch;
   end
 
@@ -66,6 +69,7 @@ always @(posedge clk) begin
     exMemRead <= 0;
     exMemToReg <= 0;
     exRegWrite <= 0;
+    exJump <= 0;
     exBranch <= 0;
   end
 end
