@@ -22,6 +22,6 @@ with open(args.srcPath, 'rb') as machineCode:
 
 compiledMemory.append(f'00000000\n')
 
-with open('rom.hex', 'w') as memoryFile:
+with open(args.memoryPath, 'w') as memoryFile:
   for line in compiledMemory:
     memoryFile.write(line)

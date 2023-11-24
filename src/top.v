@@ -20,7 +20,7 @@ CPU cpu(
   .ledMatrixColumn(matrixCol)
 );
 
-localparam WAIT_TIME = 13500000;
+localparam WAIT_TIME = 1350000;
 reg slowerClk = 0;
 reg [25:0] clockCounter = 0;
 
