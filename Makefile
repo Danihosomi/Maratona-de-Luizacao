@@ -1,4 +1,4 @@
-all: compile-firmware build run
+all: test
 
 T?=CPU
 test: ./output/V$(T).vcd
