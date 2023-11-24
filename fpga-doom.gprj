@@ -1,0 +1,43 @@
+<?xml version="1" encoding="UTF-8"?>
+<!DOCTYPE gowin-fpga-project>
+<Project>
+    <Template>FPGA</Template>
+    <Version>5</Version>
+    <Device name="GW1NR-9C" pn="GW1NR-LV9QN88PC6/I5">gw1nr9c-004</Device>
+    <FileList>
+        <File path="src/ALUControl.v" type="file.verilog" enable="1"/>
+        <File path="src/Alu.v" type="file.verilog" enable="1"/>
+        <File path="src/BranchUnit.v" type="file.verilog" enable="1"/>
+        <File path="src/ButtonPeripheral.v" type="file.verilog" enable="1"/>
+        <File path="src/CPU.v" type="file.verilog" enable="1"/>
+        <File path="src/CacheL1.v" type="file.verilog" enable="1"/>
+        <File path="src/CompactInstructionsUnit.v" type="file.verilog" enable="1"/>
+        <File path="src/Control.v" type="file.verilog" enable="1"/>
+        <File path="src/DataMemory.v" type="file.verilog" enable="1"/>
+        <File path="src/Div.v" type="file.verilog" enable="1"/>
+        <File path="src/EX_MEM_Barrier.v" type="file.verilog" enable="1"/>
+        <File path="src/ForwardingUnit.v" type="file.verilog" enable="1"/>
+        <File path="src/FreezeUnit.v" type="file.verilog" enable="1"/>
+        <File path="src/ID_EX_Barrier.v" type="file.verilog" enable="1"/>
+        <File path="src/IF_ID_Barrier.v" type="file.verilog" enable="1"/>
+        <File path="src/ImmediateGeneration.v" type="file.verilog" enable="1"/>
+        <File path="src/InstructionMemory.v" type="file.verilog" enable="1"/>
+        <File path="src/LedMatrixPeripheral.v" type="file.verilog" enable="1"/>
+        <File path="src/LedPeripheral.v" type="file.verilog" enable="1"/>
+        <File path="src/MEM_WB_Barrier.v" type="file.verilog" enable="1"/>
+        <File path="src/MMU.v" type="file.verilog" enable="1"/>
+        <File path="src/Memory.v" type="file.verilog" enable="1"/>
+        <File path="src/MemoryHandler.v" type="file.verilog" enable="1"/>
+        <File path="src/PeripheralsBlock.v" type="file.verilog" enable="1"/>
+        <File path="src/ProgramCounter.v" type="file.verilog" enable="1"/>
+        <File path="src/RAM.v" type="file.verilog" enable="1"/>
+        <File path="src/ROMMemory.v" type="file.verilog" enable="1"/>
+        <File path="src/RegisterFile.v" type="file.verilog" enable="1"/>
+        <File path="src/StallUnit.v" type="file.verilog" enable="1"/>
+        <File path="src/_MUX4.v" type="file.verilog" enable="1"/>
+        <File path="src/mux.v" type="file.verilog" enable="1"/>
+        <File path="src/top.v" type="file.verilog" enable="1"/>
+        <File path="src/fpga-doom.cst" type="file.cst" enable="1"/>
+        <File path="src/rom.hex" type="file.other" enable="1"/>
+    </FileList>
+</Project>

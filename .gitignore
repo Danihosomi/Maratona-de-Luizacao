@@ -5,3 +5,4 @@ scripts/venv/*
 temp/*
 output/*
 .nvim/*
+impl/*
