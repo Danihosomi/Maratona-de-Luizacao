@@ -129,10 +129,10 @@ wire memWrite;
 wire memToReg;
 wire regWrite;
 wire pcToAlu;
-wire [12:0] controlSignals;
 wire byteLoad;
 wire halfLoad;
 wire unsignedLoad;
+wire [12:0] controlSignals;
 
 assign controlSignals[5:0] = (isPipelineStalled) ? 0 :
                         {branch, aluSrc, memRead, memWrite, memToReg, regWrite};
