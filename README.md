@@ -1,11 +1,12 @@
 # Dependencies
 Our toolchain is mostly based around `Make`, so you will want to have it
-installed. For now, the only to this is if you wish to program it to the FPGA, 
-in which case you should use the Gowin IDE directly on Windows or Linux
+installed. For now, the only exception to this is if you wish to program it to the 
+FPGA, in which case you should use the Gowin IDE directly on Windows or Linux
 
 ## Firmware
 For compiling the firmware from c code you will need to have the risc-v toolchain
-installed. For MacOS you cand find instructions [here](https://github.com/riscv-software-src/homebrew-riscv), though please note I couldn't install it on
+installed. For MacOS you cand find instructions 
+[here](https://github.com/riscv-software-src/homebrew-riscv), though please note I couldn't install it on
 MacOS Monterey and updated to MacOS Ventura, in which case it installs from
 precompilled binaries.
 
