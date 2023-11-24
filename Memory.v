@@ -10,6 +10,8 @@ module Memory (
 wire [31:0] ramData;
 wire [31:0] romData;
 
+wire isRom = address[31:10] == 0;
+
 ROMMemory MemoryROM(
   .address(address),
   .data(romData)
@@ -17,8 +19,8 @@ ROMMemory MemoryROM(
 
 RAM MemoryRAM(
   .clk(clk),
-  .writeEnable(writeEnable & address[10]),
-  .readEnable(readEnable & address[10]),
+  .writeEnable(writeEnable & !isRom),
+  .readEnable(readEnable & !isRom),
   .address(address),
   .dataIn(dataIn),
   .dataOut(ramData)
@@ -27,12 +29,12 @@ RAM MemoryRAM(
 always @* begin
   dataOut = 0;
   // ROM
-  if (readEnable == 1 && address[10] == 0) begin
+  if (readEnable == 1 && isRom) begin
     dataOut = romData;
   end
 
   // RAM
-  if (readEnable == 1 && address[10] == 1) begin
+  if (readEnable == 1 && !isRom) begin
     dataOut = ramData;
   end
 end

@@ -6,11 +6,11 @@ build: *.v
 run:
 	./obj_dir/VTester
 
-.PHONY: test
 test: ./output/V$(T).vcd
 
-./output/V%.vcd: ./obj_dir/V%
+./output/V%.vcd: ./obj_dir/V% rom.hex
 	test -d output || mkdir output;
+	cp rom.hex output/rom.hex
 	cd output; ../$<
 
 ./obj_dir/V%: %.v tests/%_TestBench.cpp *.v
@@ -19,15 +19,15 @@ test: ./output/V$(T).vcd
 ./obj_dir/V%: %.v
 	verilator --trace -cc $<
 
-TARGET_ASSEMBLY_FILE?="main.asm"
-compile-firmware: install
-	( \
-       . scripts/venv/bin/activate; \
-	   test -d temp || mkdir temp; \
-	   bronzebeard --include assembly/ --output temp/firmware.data assembly/$(TARGET_ASSEMBLY_FILE); \
-       python3 scripts/compile_firmware.py --src temp/firmware.data --dest ROMMemory.v \
-    )
+TARGET_SOURCE?=main.c
+rom.hex: install firmware/$(TARGET_SOURCE)
+	test -d temp || mkdir temp;
 
+	if [[ "$(suffix ${TARGET_SOURCE})" == ".c" ]]; then \
+		sh scripts/firmware/compile_firmware_c.sh $(TARGET_SOURCE); \
+	else \
+		sh scripts/firmware/compile_firmware_asm.sh $(TARGET_SOURCE); \
+	fi
 
 python-dependencies-folder := scripts/venv/include
 install: $(python-dependencies-folder)
@@ -43,4 +43,4 @@ clean:
 	rm -rf obj_dir
 	rm -rf output
 
-.PHONY: install clean compile-firmware
+.PHONY: install clean test
