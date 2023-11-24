@@ -20,6 +20,9 @@ MMU mmu(
   .dataMemoryReadEnable(memMemRead),
   .dataMemoryAddress(memAluResult),
   .dataMemoryDataIn(memMemoryWriteData),
+  .dataMemoryReadByte(memByteLoad),
+  .dataMemoryReadHalf(memHalfLoad),
+  .dataMemoryReadUnsigned(memUnsignedLoad),
   .instructionMemoryAddress(pc),
   .dataMemoryDataOut(memMemoryData),
   .dataMemorySuccess(dataMemorySuccess),
@@ -112,7 +115,10 @@ Control control(
   .memWrite(memWrite),
   .aluSrc(aluSrc),
   .pcToAlu(pcToAlu),
-  .regWrite(regWrite)
+  .regWrite(regWrite),
+  .byteLoad(byteLoad),
+  .halfLoad(halfLoad),
+  .unsignedLoad(unsignedLoad)
 );
 
 wire branch;
@@ -123,12 +129,16 @@ wire memWrite;
 wire memToReg;
 wire regWrite;
 wire pcToAlu;
-wire [9:0] controlSignals;
+wire [12:0] controlSignals;
+wire byteLoad;
+wire halfLoad;
+wire unsignedLoad;
 
 assign controlSignals[5:0] = (isPipelineStalled) ? 0 :
                         {branch, aluSrc, memRead, memWrite, memToReg, regWrite};
 assign controlSignals[8:6] = (isPipelineStalled) ? 0 : aluOp;
 assign controlSignals[9] = (isPipelineStalled) ? 0 : pcToAlu;
+assign controlSignals[12:10] = (isPipelineStalled) ? 0 : {byteLoad, halfLoad, unsignedLoad};
 
 ImmediateGeneration immediateGeneration(
   .instruction(idInstruction),
@@ -158,6 +168,9 @@ ID_EX_Barrier id_ex_barrier(
   .idRegWrite(controlSignals[0]),
   .idPcToAlu(controlSignals[9]),
   .idBranch(controlSignals[5]),
+  .idByteLoad(controlSignals[12]),
+  .idHalfLoad(controlSignals[11]),
+  .idUnsignedLoad(controlSignals[10]),
   .exProgramCounter(exProgramCounter),
   .exLHSRegisterValue(exLHSRegisterValue),
   .exRHSRegisterValue(exRHSRegisterValue),
@@ -174,7 +187,10 @@ ID_EX_Barrier id_ex_barrier(
   .exMemToReg(exMemToReg),
   .exRegWrite(exRegWrite),
   .exPcToAlu(exPcToAlu),
-  .exBranch(exBranch)
+  .exBranch(exBranch),
+  .exByteLoad(exByteLoad),
+  .exHalfLoad(exHalfLoad),
+  .exUnsignedLoad(exUnsignedLoad)
 );
 
 wire [31:0] exProgramCounter;
@@ -194,6 +210,9 @@ wire exMemToReg;
 wire exRegWrite;
 wire exPcToAlu;
 wire exBranch;
+wire exByteLoad;
+wire exHalfLoad;
+wire exUnsignedLoad;
 
 // Hazard handling
 ForwardingUnit lhsForwardingUnit(
@@ -287,13 +306,19 @@ EX_MEM_Barrier ex_mem_barrier(
   .exMemRead(exMemRead),
   .exMemToReg(exMemToReg),
   .exRegWrite(exRegWrite),
+  .exByteLoad(exByteLoad),
+  .exHalfLoad(exHalfLoad),
+  .exUnsignedLoad(exUnsignedLoad),
   .memAluResult(memAluResult),
   .memMemoryWriteData(memMemoryWriteData),
   .memWriteRegisterIndex(memWriteRegisterIndex),
   .memMemWrite(memMemWrite),
   .memMemRead(memMemRead),
   .memMemToReg(memMemToReg),
-  .memRegWrite(memRegWrite)
+  .memRegWrite(memRegWrite),
+  .memByteLoad(memByteLoad),
+  .memHalfLoad(memHalfLoad),
+  .memUnsignedLoad(memUnsignedLoad)
 );
 
 wire [31:0] memAluResult;
@@ -303,6 +328,9 @@ wire memMemWrite;
 wire memMemRead;
 wire memMemToReg;
 wire memRegWrite;
+wire memByteLoad;
+wire memHalfLoad;
+wire memUnsignedLoad;
 
 wire [31:0] memMemoryData;
 

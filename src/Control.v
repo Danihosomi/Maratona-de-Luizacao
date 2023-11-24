@@ -3,13 +3,18 @@ module Control(
   input [2:0] func3,
   input [6:0] func7,
   output branch,
-  output memRead,
-  output memToReg,
   output reg [2:0] aluOp,
   output memWrite,
   output aluSrc,
   output pcToAlu,
-  output regWrite
+  output regWrite,
+
+  // Load wires
+  output memRead,
+  output memToReg,
+  output byteLoad,
+  output halfLoad,
+  output unsignedLoad
 );
 
 // load = 0000011
@@ -34,6 +39,17 @@ assign regWrite = ((opcode == 'b0010011) || (opcode == 'b0000011) || (opcode == 
       || (opcode == 'b0010111) || (func7[6:2]==00010 && opcode=='b0101111) || (func7[6:2]==00011 && opcode=='b0101111)) ? 1 : 0; // store && load && lr.w && sc.w
 
 assign pcToAlu = opcode == 'b0010111 ? 1 : 0; // auipc
+
+// Load wires
+parameter LoadByteFunc3 = 'b000;
+parameter LoadHalfFunc3 = 'b001;
+parameter LoadByteUFunc3 = 'b100;
+parameter LoadHalfUFunc3 = 'b101;
+
+assign byteLoad = (func3 == LoadByteFunc3 || func3 == LoadByteUFunc3) ? 1 : 0;
+assign halfLoad = (func3 == LoadHalfFunc3 || func3 == LoadHalfUFunc3) ? 1 : 0;
+assign unsignedLoad = (func3 == LoadByteUFunc3 || func3 == LoadHalfUFunc3) ? 1 : 0;
+
 
 always @(opcode) begin
   case (opcode)
