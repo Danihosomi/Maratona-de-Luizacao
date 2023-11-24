@@ -41,14 +41,14 @@ assign regWrite = ((opcode == 'b0010011) || (opcode == 'b0000011) || (opcode == 
 assign pcToAlu = opcode == 'b0010111 ? 1 : 0; // auipc
 
 // Load wires
-parameter LoadByteFunc3 = 'b000;
-parameter LoadHalfFunc3 = 'b001;
-parameter LoadByteUFunc3 = 'b100;
-parameter LoadHalfUFunc3 = 'b101;
+parameter LOAD_BYTE_FUNC3 = 'b000;
+parameter LOAD_HALF_FUNC3 = 'b001;
+parameter LOAD_BYTE_UNSIGNED_FUNC3 = 'b100;
+parameter LOAD_HALF_UNSIGNED_FUNC3 = 'b101;
 
-assign byteLoad = (func3 == LoadByteFunc3 || func3 == LoadByteUFunc3) ? 1 : 0;
-assign halfLoad = (func3 == LoadHalfFunc3 || func3 == LoadHalfUFunc3) ? 1 : 0;
-assign unsignedLoad = (func3 == LoadByteUFunc3 || func3 == LoadHalfUFunc3) ? 1 : 0;
+assign byteLoad = (func3 == LOAD_BYTE_FUNC3 || func3 == LOAD_BYTE_UNSIGNED_FUNC3) ? 1 : 0;
+assign halfLoad = (func3 == LOAD_HALF_FUNC3 || func3 == LOAD_HALF_UNSIGNED_FUNC3) ? 1 : 0;
+assign unsignedLoad = (func3 == LOAD_BYTE_UNSIGNED_FUNC3 || func3 == LOAD_HALF_UNSIGNED_FUNC3) ? 1 : 0;
 
 
 always @(opcode) begin
