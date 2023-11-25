@@ -44,8 +44,8 @@ always @(opcode) begin
     'b0100011: aluOp = 'b000; // STORE
     'b1100011: aluOp = 'b001; // BRANCH
     'b0110011: aluOp = 'b010; // OP
-    'b1101111, aluOp = 'b011; // JAL
-    'b1100111, aluOp = 'b011; // JALR
+    'b1101111,                // JAL
+    'b1100111,                // JALR
     'b0110111, // LUI
     'b0010111: aluOp = 'b011; // AUIPC
     'b0101111: aluOp = 'b100; // AMO
