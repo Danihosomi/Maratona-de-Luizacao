@@ -111,6 +111,7 @@ Control control(
   .func3(idFunct3),
   .func7(idFunct7),
   .branch(branch),
+  .jump(jump),
   .memRead(memRead),
   .memToReg(memToReg),
   .aluOp(aluOp),
@@ -124,6 +125,7 @@ Control control(
 );
 
 wire branch;
+wire jump;
 wire [2:0] aluOp;
 wire aluSrc;
 wire memRead;
@@ -134,13 +136,14 @@ wire pcToAlu;
 wire byteLoad;
 wire halfLoad;
 wire unsignedLoad;
-wire [12:0] controlSignals;
+wire [13:0] controlSignals;
 
 assign controlSignals[5:0] = (isPipelineStalled) ? 0 :
                         {branch, aluSrc, memRead, memWrite, memToReg, regWrite};
 assign controlSignals[8:6] = (isPipelineStalled) ? 0 : aluOp;
 assign controlSignals[9] = (isPipelineStalled) ? 0 : pcToAlu;
-assign controlSignals[12:10] = (isPipelineStalled) ? 0 : {byteLoad, halfLoad, unsignedLoad};
+assign controlSignals[10] = (isPipelineStalled) ? 0 : jump;
+assign controlSignals[13:11] = (isPipelineStalled) ? 0 : {byteLoad, halfLoad, unsignedLoad};
 
 ImmediateGeneration immediateGeneration(
   .instruction(idInstruction),
@@ -169,10 +172,11 @@ ID_EX_Barrier id_ex_barrier(
   .idMemToReg(controlSignals[1]),
   .idRegWrite(controlSignals[0]),
   .idPcToAlu(controlSignals[9]),
+  .idJump(controlSignals[10]),
   .idBranch(controlSignals[5]),
-  .idByteLoad(controlSignals[12]),
-  .idHalfLoad(controlSignals[11]),
-  .idUnsignedLoad(controlSignals[10]),
+  .idByteLoad(controlSignals[13]),
+  .idHalfLoad(controlSignals[12]),
+  .idUnsignedLoad(controlSignals[11]),
   .exProgramCounter(exProgramCounter),
   .exLHSRegisterValue(exLHSRegisterValue),
   .exRHSRegisterValue(exRHSRegisterValue),
@@ -189,6 +193,7 @@ ID_EX_Barrier id_ex_barrier(
   .exMemToReg(exMemToReg),
   .exRegWrite(exRegWrite),
   .exPcToAlu(exPcToAlu),
+  .exJump(exJump),
   .exBranch(exBranch),
   .exByteLoad(exByteLoad),
   .exHalfLoad(exHalfLoad),
@@ -211,6 +216,7 @@ wire exMemRead;
 wire exMemToReg;
 wire exRegWrite;
 wire exPcToAlu;
+wire exJump;
 wire exBranch;
 wire exByteLoad;
 wire exHalfLoad;
@@ -288,8 +294,10 @@ wire zero;
 BranchUnit branchUnit(
   .aluZero(zero),
   .isBranchOperation(exBranch),
+  .jump(exJump),
   .programCounter(exProgramCounter),
   .immediate(exImmediateValue),
+  .aluResult(resultALU),
   .shouldBranch(shouldBranch),
   .branchTarget(branchTarget)
 );

@@ -49,6 +49,7 @@ module CacheL1(
   reg clean [31:0];
   reg [3:0] tag [31:0];
   reg [31:0] data [31:0];
+  integer startBit;
 
   initial begin
     clean[0] = 0;
@@ -100,6 +101,12 @@ module CacheL1(
 
   // Cache controller with machine states
   always @(posedge clk) begin
+    startBit <=
+    (address[1:0] == 2'b00) ? 0 :
+    (address[1:0] == 2'b01) ? 8 :
+    (address[1:0] == 2'b10) ? 16 :
+    24;
+
     case(state)
       IDLE: begin
         if (invalidMemory) begin
@@ -152,17 +159,11 @@ module CacheL1(
   end
 
   wire [63:0] bigCacheData;
-  integer startBit;
   wire [31:0] signedData;
   wire [31:0] unsignedData;
 
   assign bigCacheData = {data[nextAddress[6:2]], data[address[6:2]]};
 
-  assign startBit =
-    (address[1:0] == 2'b00) ? 0 :
-    (address[1:0] == 2'b01) ? 8 :
-    (address[1:0] == 2'b10) ? 16 :
-    24;
 
   assign unsignedData =
     (byteRead) ? {24'b0, bigCacheData[startBit +: 8]} :

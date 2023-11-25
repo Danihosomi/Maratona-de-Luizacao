@@ -2,25 +2,31 @@
 int main (void) __attribute__ ((section (".text.entrypoint")));
 
 int* LED_ADDRESS = (int*) (0b1000 << 28);
+const int LINE_WIDTH = 6;
 
 void display_led(int);
 
 int main() {
-  for (int i = 0; i < 4; i++) {
-    *LED_ADDRESS = i;
+  int position = 0;
+  int speed = 16;
+  int direction = 1;
+
+  while(position < 1000000000) {
+    if (direction == 1) {
+      position = position + speed;
+    } else if (direction == -1) {
+      position = position - speed;
+    }
+
+    int unscaledPostion = position >> 24;
+    *LED_ADDRESS = 1 << unscaledPostion;
+
+    if (direction == 1 && unscaledPostion >= LINE_WIDTH) {
+      direction = -1;
+    } else if (direction == -1 && unscaledPostion <= 0) {
+      direction = 1;
+    }
   }
 
-  while (1) {}
-  
   return 0;
-}
-
-// *** DRIVERS ***
-void display_led(int number) {
-  *LED_ADDRESS = number;
-}
-
-void _start() {
-  // __asm__("lui sp, 0xfffff");
-  main();
 }
