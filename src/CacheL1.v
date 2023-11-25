@@ -45,6 +45,9 @@ module CacheL1(
   parameter READ = 2'b11;
   reg [1:0] state;
 
+  wire [31:0] inFlightAddress = (state == IDLE) ? address : savedAddress;
+  reg [31:0] savedAddress;
+
   // Cache
   reg clean [31:0];
   reg [3:0] tag [31:0];
@@ -107,55 +110,61 @@ module CacheL1(
     (address[1:0] == 2'b10) ? 16 :
     24;
 
-    case(state)
-      IDLE: begin
-        if (invalidMemory) begin
-          state <= IDLE;
-        end
-        else if (readReady) begin
-          state <= IDLE;
-        end
-        else if (readEnable) begin
-          state <= READ;
-        end
-        else if (writeEnable) begin
-          state <= WRITE;
-        end
-        else begin
-          state <= IDLE;
-        end
-      end
-      READ: begin
-        if (memoryReady) begin
-          data[readAddress[6:2]] <= memoryDataIn;
-          tag[readAddress[6:2]] <= readAddress[10:7];
-          clean[readAddress[6:2]] <= 1;
-          if (needNextAddress == 1 & readNextAddress == 0) begin
-            readNextAddress <= 1;
+    if (state != IDLE && inFlightAddress != address) begin
+      state <= IDLE;
+    end
+    else begin
+      case(state)
+        IDLE: begin
+          savedAddress = address;
+          if (invalidMemory) begin
+            state <= IDLE;
+          end
+          else if (readReady) begin
+            state <= IDLE;
+          end
+          else if (readEnable) begin
             state <= READ;
           end
+          else if (writeEnable) begin
+            state <= WRITE;
+          end
           else begin
-            readNextAddress <= 0;
-            state <= READY;
+            state <= IDLE;
           end
         end
-        else begin
-          state <= READ;
+        READ: begin
+          if (memoryReady) begin
+            data[readAddress[6:2]] <= memoryDataIn;
+            tag[readAddress[6:2]] <= readAddress[10:7];
+            clean[readAddress[6:2]] <= 1;
+            if (needNextAddress == 1 & readNextAddress == 0) begin
+              readNextAddress <= 1;
+              state <= READ;
+            end
+            else begin
+              readNextAddress <= 0;
+              state <= READY;
+            end
+          end
+          else begin
+            state <= READ;
+          end
         end
-      end
-      WRITE: begin
-        if (memoryReady) begin
-          clean[writeAddress[6:2]] <= (tagMatch) ? 0 : clean[writeAddress[6:2]];
-          state <= READY;
+        WRITE: begin
+          if (memoryReady) begin
+            clean[writeAddress[6:2]] <= (tagMatch) ? 0 : clean[writeAddress[6:2]];
+            state <= READY;
+          end
+          else begin
+            state <= WRITE;
+          end
         end
-        else begin
-          state <= WRITE;
+        default: begin
+          state <= IDLE;
         end
-      end
-      default: begin
-        state <= IDLE;
-      end
-    endcase
+      endcase
+    end
   end
 
   wire [63:0] bigCacheData;
@@ -178,6 +187,7 @@ module CacheL1(
     0;
 
   assign dataOut = unsignedRead ? unsignedData : signedData;
-  assign cacheReady = (state == READY) | readReady | cacheIdle;
+  // assign cacheReady = ((state == READY) | readReady | cacheIdle);
+  assign cacheReady = ((state == READY) | readReady | cacheIdle) && inFlightAddress == address;
 
 endmodule
