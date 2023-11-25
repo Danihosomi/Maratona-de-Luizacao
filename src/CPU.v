@@ -75,10 +75,12 @@ wire [31:0] idProgramCounter;
 wire [4:0] idLHSRegisterIndex;
 wire [4:0] idRHSRegisterIndex;
 wire [2:0] idFunct3;
+wire [6:0] idFunct7;
 
 assign idLHSRegisterIndex = idInstruction[19:15];
 assign idRHSRegisterIndex = idInstruction[24:20];
 assign idFunct3 = idInstruction[14:12];
+assign idFunct7 = idInstruction[31:25];
 
 StallUnit stallUnit(
   .decodeStageLHSReadRegisterIndex(idLHSRegisterIndex),
@@ -106,8 +108,8 @@ wire [31:0] idRHSRegisterValue;
 
 Control control(
   .instruction(idInstruction[6:0]),
-  .func3(exFunct3),
-  .func7(exFunct7),
+  .func3(idFunct3),
+  .func7(idFunct7),
   .branch(branch),
   .memRead(memRead),
   .memToReg(memToReg),
@@ -158,8 +160,8 @@ ID_EX_Barrier id_ex_barrier(
   .idRHSRegisterIndex(idRHSRegisterIndex),
   .idWriteRegisterIndex(idInstruction[11:7]),
   .idImmediateValue(idImmediateValue),
-  .idFunct3(idInstruction[14:12]),
-  .idFunct7(idInstruction[31:25]),
+  .idFunct3(idFunct3),
+  .idFunct7(idFunct7),
   .idAluOp(controlSignals[8:6]),
   .idAluSrc(controlSignals[4]),
   .idMemWrite(controlSignals[2]),

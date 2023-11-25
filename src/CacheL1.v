@@ -34,7 +34,7 @@ module CacheL1(
 
   // Wires passing throught cache
   assign memoryDataOut = dataIn;
-  assign memoryAddress = readEnable? readAddress : writeAddress;
+  assign memoryAddress = readEnable ? readAddress : writeAddress;
   assign memoryReadEnable = readEnable;
   assign memoryWriteEnable = writeEnable;
 
@@ -92,9 +92,9 @@ module CacheL1(
   wire readReady;
   wire invalidMemory;
   wire cacheIdle;
-  assign tagMatch = tag[readAddress[6:2]] == readAddress[10:7];
-  assign hit = tagMatch & clean[readAddress[6:2]];
-  assign invalidMemory = readAddress[31];
+  assign tagMatch = tag[memoryAddress[6:2]] == memoryAddress[10:7];
+  assign hit = tagMatch & clean[memoryAddress[6:2]];
+  assign invalidMemory = memoryAddress[31];
   assign cacheIdle = ~(readEnable | writeEnable);
   assign readReady = hit & readEnable & ~needNextAddress;
 
