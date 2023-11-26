@@ -10,7 +10,7 @@ struct Bar {
 };
 
 int main() {
-  int speed = 1;
+  int speed = 800;
   int direction = 1;
 
   struct Bar bar = {
@@ -19,7 +19,7 @@ int main() {
   };
 
   while(1) {
-    int unscaledPostion = bar.position >> 0;
+    int unscaledPostion = bar.position >> 24;
 
     int encodedBar = 0;
     for (int i = 0; i < bar.size; i++) {
