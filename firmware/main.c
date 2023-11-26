@@ -19,14 +19,13 @@ int main() {
       direction = -1;
     } else if (direction == -1 && unscaledPostion <= 0) {
       direction = 1;
-      unscaledPostion = 0;
+      position = 0;
     }
 
     if (direction == 1) {
       position = position + 200;
     } else if (direction == -1) {
       position = position - 200;
-      position = 0;
     }
   }
 
