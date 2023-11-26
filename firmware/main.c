@@ -8,16 +8,10 @@ void display_led(int);
 
 int main() {
   int position = 0;
-  int speed = 16;
+  // int speed = 1;
   int direction = 1;
 
   while(position < 1000000000) {
-    if (direction == 1) {
-      position = position + speed;
-    } else if (direction == -1) {
-      position = position - speed;
-    }
-
     int unscaledPostion = position >> 24;
     *LED_ADDRESS = 1 << unscaledPostion;
 
@@ -25,6 +19,13 @@ int main() {
       direction = -1;
     } else if (direction == -1 && unscaledPostion <= 0) {
       direction = 1;
+      unscaledPostion = 0;
+    }
+
+    if (direction == 1) {
+      position = position + 16;
+    } else if (direction == -1) {
+      position = position - 16;
     }
   }
 

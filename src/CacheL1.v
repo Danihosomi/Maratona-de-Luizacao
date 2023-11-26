@@ -52,7 +52,7 @@ module CacheL1(
   reg clean [31:0];
   reg [3:0] tag [31:0];
   reg [31:0] data [31:0];
-  integer startBit;
+  reg [5:0] startBit;
 
   initial begin
     clean[0] = 0;
@@ -102,14 +102,16 @@ module CacheL1(
   assign cacheIdle = ~(readEnable | writeEnable);
   assign readReady = hit & readEnable & ~needNextAddress;
 
+  always @* begin
+    startBit =
+      (address[1:0] == 2'b00) ? 0 :
+      (address[1:0] == 2'b01) ? 8 :
+      (address[1:0] == 2'b10) ? 16 :
+      24;
+  end
+
   // Cache controller with machine states
   always @(posedge clk) begin
-    startBit <=
-    (address[1:0] == 2'b00) ? 0 :
-    (address[1:0] == 2'b01) ? 8 :
-    (address[1:0] == 2'b10) ? 16 :
-    24;
-
     if (state != IDLE && inFlightAddress != address) begin
       state <= IDLE;
     end
