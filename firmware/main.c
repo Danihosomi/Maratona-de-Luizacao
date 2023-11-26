@@ -4,30 +4,46 @@ int main (void) __attribute__ ((section (".text.entrypoint")));
 int* LED_ADDRESS = (int*) (0b1000 << 28);
 const int LINE_WIDTH = 6;
 
-void display_led(int);
+struct Bar {
+  int position;
+  int size;
+};
 
 int main() {
-  int position = 0;
-  int speed = 800;
+  int speed = 1;
   int direction = 1;
 
-  while(1) {
-    int unscaledPostion = position >> 24;
-    *LED_ADDRESS = 1 << unscaledPostion;
+  struct Bar bar = {
+    .position = 0,
+    .size = 2
+  };
 
-    if (direction == 1 && unscaledPostion >= LINE_WIDTH) {
+  while(1) {
+    int unscaledPostion = bar.position >> 0;
+
+    int encodedBar = 0;
+    for (int i = 0; i < bar.size; i++) {
+      encodedBar += 1 << (unscaledPostion + i);
+    }
+    *LED_ADDRESS = encodedBar;
+
+    if (direction == 1 && unscaledPostion >= LINE_WIDTH - bar.size) {
       direction = -1;
-    } else if (direction == -1 && unscaledPostion <= 0) {
+    } else if (direction == -1 && unscaledPostion <= bar.size - 1) {
       direction = 1;
-      position = 0;
+      bar.position = 0;
     }
 
     if (direction == 1) {
-      position = position + speed;
+      bar.position += speed;
     } else if (direction == -1) {
-      position = position - speed;
+      bar.position -= speed;
     }
   }
 
   return 0;
+}
+
+void draw_bar(int unscaledPosition) {
+  *LED_ADDRESS = 1 << unscaledPosition;
 }
