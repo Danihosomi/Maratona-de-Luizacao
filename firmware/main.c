@@ -11,7 +11,7 @@ int main() {
   // int speed = 1;
   int direction = 1;
 
-  while(position < 1000000000) {
+  while(1) {
     int unscaledPostion = position >> 24;
     *LED_ADDRESS = 1 << unscaledPostion;
 
@@ -23,9 +23,10 @@ int main() {
     }
 
     if (direction == 1) {
-      position = position + 96;
+      position = position + 200;
     } else if (direction == -1) {
-      position = position - 96;
+      position = position - 200;
+      position = 0;
     }
   }
 
