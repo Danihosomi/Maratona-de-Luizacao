@@ -27,9 +27,9 @@ int main() {
     }
     *LED_ADDRESS = encodedBar;
 
-    if (direction == 1 && unscaledPostion >= LINE_WIDTH - bar.size) {
+    if (direction == 1 && unscaledPostion > LINE_WIDTH - bar.size) {
       direction = -1;
-    } else if (direction == -1 && unscaledPostion <= bar.size - 1) {
+    } else if (direction == -1 && unscaledPostion < bar.size) {
       direction = 1;
       bar.position = 0;
     }
