@@ -23,9 +23,9 @@ int main() {
     }
 
     if (direction == 1) {
-      position = position + 16;
+      position = position + 96;
     } else if (direction == -1) {
-      position = position - 16;
+      position = position - 96;
     }
   }
 
