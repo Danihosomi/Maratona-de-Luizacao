@@ -8,7 +8,7 @@ void display_led(int);
 
 int main() {
   int position = 0;
-  // int speed = 1;
+  int speed = 800;
   int direction = 1;
 
   while(1) {
@@ -23,9 +23,9 @@ int main() {
     }
 
     if (direction == 1) {
-      position = position + 800;
+      position = position + speed;
     } else if (direction == -1) {
-      position = position - 800;
+      position = position - speed;
     }
   }
 
