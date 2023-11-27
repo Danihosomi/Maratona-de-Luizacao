@@ -90,16 +90,20 @@ module CacheL1(
     readNextAddress = 0;
   end
 
-  wire hit;
   wire tagMatch;
+  wire hit;
+  wire nextAddressTagMatch;
+  wire nextAddressHit;
   wire readReady;
   wire invalidMemory;
   wire cacheIdle;
   assign tagMatch = tag[memoryAddress[6:2]] == memoryAddress[10:7];
   assign hit = tagMatch & clean[memoryAddress[6:2]];
-  assign invalidMemory = memoryAddress[31];
+  assign nextAddressTagMatch = tag[nextAddress[6:2]] == nextAddress[10:7];
+  assign nextAddressHit = nextAddressTagMatch & clean[nextAddress[6:2]];
+  assign invalidMemory = address[31];
   assign cacheIdle = ~(readEnable | writeEnable);
-  assign readReady = hit & readEnable & ~needNextAddress;
+  assign readReady = hit & readEnable & (~needNextAddress | nextAddressHit);
 
   // Cache controller with machine states
   always @(posedge clk) begin
@@ -117,6 +121,7 @@ module CacheL1(
             state <= IDLE;
           end
           else if (readEnable) begin
+            readNextAddress <= hit;
             state <= READ;
           end
           else if (writeEnable) begin
@@ -128,10 +133,10 @@ module CacheL1(
         end
         READ: begin
           if (memoryReady) begin
-            data[readAddress[6:2]] <= memoryDataIn;
-            tag[readAddress[6:2]] <= readAddress[10:7];
-            clean[readAddress[6:2]] <= 1;
-            if (needNextAddress == 1 & readNextAddress == 0) begin
+            data[memoryAddress[6:2]] <= memoryDataIn;
+            tag[memoryAddress[6:2]] <= memoryAddress[10:7];
+            clean[memoryAddress[6:2]] <= 1;
+            if (needNextAddress & ~readNextAddress & ~nextAddressHit) begin
               readNextAddress <= 1;
               state <= READ;
             end
@@ -146,7 +151,7 @@ module CacheL1(
         end
         WRITE: begin
           if (memoryReady) begin
-            clean[writeAddress[6:2]] <= (tagMatch) ? 0 : clean[writeAddress[6:2]];
+            clean[memoryAddress[6:2]] <= (tagMatch) ? 0 : clean[memoryAddress[6:2]];
             state <= READY;
           end
           else begin
