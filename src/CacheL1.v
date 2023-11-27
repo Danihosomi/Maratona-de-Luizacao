@@ -152,17 +152,20 @@ module CacheL1(
   end
 
   wire [63:0] bigCacheData;
-  integer startBit;
   wire [31:0] signedData;
   wire [31:0] unsignedData;
 
   assign bigCacheData = {data[nextAddress[6:2]], data[address[6:2]]};
 
-  assign startBit =
+  reg [5:0] startBit;
+  
+  always @* begin
+    startBit =
     (address[1:0] == 2'b00) ? 0 :
     (address[1:0] == 2'b01) ? 8 :
     (address[1:0] == 2'b10) ? 16 :
     24;
+  end
 
   assign unsignedData =
     (byteRead) ? {24'b0, bigCacheData[startBit +: 8]} :
