@@ -9,13 +9,19 @@ module EX_MEM_Barrier(
   input exMemRead,
   input exMemToReg,
   input exRegWrite,
+  input exByteLoad,
+  input exHalfLoad,
+  input exUnsignedLoad,
   output reg [31:0] memAluResult,
   output reg [31:0] memMemoryWriteData,
   output reg [4:0] memWriteRegisterIndex,
   output reg memMemWrite,
   output reg memMemRead,
   output reg memMemToReg,
-  output reg memRegWrite
+  output reg memRegWrite,
+  output reg memByteLoad,
+  output reg memHalfLoad,
+  output reg memUnsignedLoad
 );
 
 always @(posedge clk) begin
@@ -27,6 +33,9 @@ always @(posedge clk) begin
     memMemRead <= exMemRead;
     memMemToReg <= exMemToReg;
     memRegWrite <= exRegWrite;
+    memByteLoad <= exByteLoad;
+    memHalfLoad <= exHalfLoad;
+    memUnsignedLoad <= exUnsignedLoad;
   end
 
   if (rst) begin
@@ -34,6 +43,9 @@ always @(posedge clk) begin
     memMemRead <= 0;
     memMemToReg <= 0;
     memRegWrite <= 0;
+    memByteLoad <= 0;
+    memHalfLoad <= 0;
+    memUnsignedLoad <= 0;
   end
 end
 endmodule
