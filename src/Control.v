@@ -46,9 +46,9 @@ parameter LOAD_HALF_FUNC3 = 'b001;
 parameter LOAD_BYTE_UNSIGNED_FUNC3 = 'b100;
 parameter LOAD_HALF_UNSIGNED_FUNC3 = 'b101;
 
-assign byteLoad = (func3 == LOAD_BYTE_FUNC3 || func3 == LOAD_BYTE_UNSIGNED_FUNC3) ? 1 : 0;
-assign halfLoad = (func3 == LOAD_HALF_FUNC3 || func3 == LOAD_HALF_UNSIGNED_FUNC3) ? 1 : 0;
-assign unsignedLoad = (func3 == LOAD_BYTE_UNSIGNED_FUNC3 || func3 == LOAD_HALF_UNSIGNED_FUNC3) ? 1 : 0;
+assign byteLoad = (func3 == LOAD_BYTE_FUNC3 || func3 == LOAD_BYTE_UNSIGNED_FUNC3);
+assign halfLoad = (func3 == LOAD_HALF_FUNC3 || func3 == LOAD_HALF_UNSIGNED_FUNC3);
+assign unsignedLoad = (func3 == LOAD_BYTE_UNSIGNED_FUNC3 || func3 == LOAD_HALF_UNSIGNED_FUNC3);
 
 
 always @(opcode) begin
