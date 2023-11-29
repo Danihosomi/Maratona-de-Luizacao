@@ -33,7 +33,7 @@ assign memToReg = ((opcode == 'b0000011) || (func7[6:2]==00010 && opcode=='b0101
 
 assign memWrite = ((opcode == 'b0100011) || (func7[6:2]==00011 && opcode=='b0101111)) ? 1 : 0; // store && sc.w
 
-assign aluSrc = ((opcode == 'b0010011) || (opcode == 'b0000011) || (opcode == 'b0100011) || (opcode == 'b1101111) || (opcode == 'b1100111) || (opcode == 'b0110111)  // store and load
+assign aluSrc = ((opcode == 'b0010011) || (opcode == 'b0000011) || (opcode == 'b0100011) || (opcode == 'b0110111)  // store and load
       || (opcode == 'b0010111)) ? 1 : 0;
 
 assign regWrite = ((opcode == 'b0010011) || (opcode == 'b0000011) || (opcode == 'b0110011) || (opcode == 'b1101111) || (opcode == 'b1100111) || (opcode == 'b0110111) 
