@@ -5,28 +5,44 @@ int main (void) __attribute__ ((section (".text.entrypoint")));
 
 int* LED_ADDRESS = (int*) (0b1000 << 28);
 int* MATRIX_ADDRESS = (int*) (0b1010 << 28);
-int matrix[8][8];
 
 void display_led(int);
 void displayMatrix(int matrix[8][8]);
 
 int main() {
+  int matrix[8][8];
 
-  while(1) {
-    // for (int i = 0; i < 8; i++) {
-    //   *LED_ADDRESS = i;
-    // }
-    *LED_ADDRESS = 5;
-    *MATRIX_ADDRESS = 255;
+  *LED_ADDRESS = 4;
+
+  for(int i=0;i<8;i++) {
+    for(int j=0;j<8;j++) {
+      matrix[i][j] = ((i+j) % 2) ? 1 : 0;
+    }
   }
 
-  // for(int i=0;i<8;i++) {
-  //   for(int j=0;j<8;j++) {
-  //     matrix[i][j] = ((i+j) % 2) ? 1 : 0;
-  //   }
-  // }
+  int x=0;
+  while(x<10) {
+    for(int i = 0; i < 8; i++) {
+      for(int j = 0; j < 8; j++) {
+        if(matrix[i][j]) {
+          int value = 0;
 
-  // while(1) {
+          setBit(value, i);
+
+          for(int k=0; k < 8; k++) {
+            if(k == j) continue;
+            setBit(value, k + 8);
+          }
+
+          *MATRIX_ADDRESS = value;
+          for(int k=0; k < 10; k++);
+        }
+      }
+    }
+    *MATRIX_ADDRESS = 0;
+  }
+
+  // while(x<10) {
   //   displayMatrix(matrix);
   // }
 
@@ -34,27 +50,34 @@ int main() {
 }
 
 // *** DRIVERS ***
-void display_led(int number) {
-  *LED_ADDRESS = number;
-}
+// void display_led(int number) {
+//   *LED_ADDRESS = number;
+// }
 
-void displayCell(int i, int j) {
-  int value = 0;
-  setBit(value, i);
-  setBit(value, j + 8);
-  *MATRIX_ADDRESS = value;
-}
+// void displayCell(int i, int j) {
+//   int value = 0;
 
-void displayMatrix(int matrix[8][8]) {
-  for(int i = 0; i < 8; i++) {
-    for(int j = 0; j < 8; j++) {
-      if(matrix[i][j]) {
-        displayCell(i, j);
-      }
-    }
-  }
-  *MATRIX_ADDRESS = 0;
-}
+//   setBit(value, i);
+
+//   for(int k=0; k < 8; k++) {
+//     if(k == j) continue;
+//     setBit(value, k + 8);
+//   }
+
+//   *MATRIX_ADDRESS = value;
+// }
+
+// void displayMatrix(int matrix[8][8]) {
+//   for(int i = 0; i < 8; i++) {
+//     for(int j = 0; j < 8; j++) {
+//       if(matrix[i][j]) {
+//         displayCell(i, j);
+//         for(int k=0; k < 10; k++);
+//       }
+//     }
+//   }
+//   *MATRIX_ADDRESS = 0;
+// }
 
 void _start() {
   // __asm__("lui sp, 0xfffff");
