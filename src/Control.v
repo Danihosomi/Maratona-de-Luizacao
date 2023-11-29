@@ -4,6 +4,7 @@ module Control(
   input [6:0] func7,
   output branch,
   output jump,
+  output jumpRegister,
   output memRead,
   output memToReg,
   output reg [2:0] aluOp,
@@ -24,6 +25,8 @@ assign branch = ((opcode == 'b1100011)) ? 1 : 0; // branch
 
 assign jump = ((opcode == 'b1101111) || (opcode == 'b1100111)) ? 1 : 0; // jal && jalr
 
+assign jumpRegister = (opcode == 'b1100111) ? 1 : 0; // jalr
+
 assign memRead = ((opcode == 'b0000011) || (func7[6:2]==00010 && opcode=='b0101111)) ? 1 : 0; // load && lr.w
 
 assign memToReg = ((opcode == 'b0000011) || (func7[6:2]==00010 && opcode=='b0101111)) ? 1 : 0; // load && lr.w
@@ -36,7 +39,7 @@ assign aluSrc = ((opcode == 'b0010011) || (opcode == 'b0000011) || (opcode == 'b
 assign regWrite = ((opcode == 'b0010011) || (opcode == 'b0000011) || (opcode == 'b0110011) || (opcode == 'b1101111) || (opcode == 'b1100111) || (opcode == 'b0110111) 
       || (opcode == 'b0010111) || (func7[6:2]==00010 && opcode=='b0101111) || (func7[6:2]==00011 && opcode=='b0101111)) ? 1 : 0; // store && load && lr.w && sc.w
 
-assign pcToAlu = ((opcode == 'b0010111) || (opcode == 'b1101111)) ? 1 : 0; // auipc && jal
+assign pcToAlu = ((opcode == 'b0010111) || (opcode == 'b1101111) || (opcode == 'b1100111)) ? 1 : 0; // auipc && jal && jalr
 
 always @(opcode) begin
   case (opcode)

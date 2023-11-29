@@ -107,6 +107,7 @@ Control control(
   .func7(exFunct7),
   .branch(branch),
   .jump(jump),
+  .jumpRegister(jumpRegister),
   .memRead(memRead),
   .memToReg(memToReg),
   .aluOp(aluOp),
@@ -118,6 +119,7 @@ Control control(
 
 wire branch;
 wire jump;
+wire jumpRegister;
 wire [2:0] aluOp;
 wire aluSrc;
 wire memRead;
@@ -125,12 +127,12 @@ wire memWrite;
 wire memToReg;
 wire regWrite;
 wire pcToAlu;
-wire [10:0] controlSignals;
+wire [11:0] controlSignals;
 
 assign controlSignals[5:0] = (isPipelineStalled) ? 0 :
                         {branch, aluSrc, memRead, memWrite, memToReg, regWrite};
 assign controlSignals[8:6] = (isPipelineStalled) ? 0 : aluOp;
-assign controlSignals[10:9] = (isPipelineStalled) ? 0 : {jump, pcToAlu};
+assign controlSignals[11:9] = (isPipelineStalled) ? 0 : {jumpRegister,jump, pcToAlu};
 
 ImmediateGeneration immediateGeneration(
   .instruction(idInstruction),
@@ -160,6 +162,7 @@ ID_EX_Barrier id_ex_barrier(
   .idRegWrite(controlSignals[0]),
   .idPcToAlu(controlSignals[9]),
   .idJump(controlSignals[10]),
+  .idJumpRegister(controlSignals[11]),
   .idBranch(controlSignals[5]),
   .exProgramCounter(exProgramCounter),
   .exLHSRegisterValue(exLHSRegisterValue),
@@ -178,6 +181,7 @@ ID_EX_Barrier id_ex_barrier(
   .exRegWrite(exRegWrite),
   .exPcToAlu(exPcToAlu),
   .exJump(exJump),
+  .exJumpRegister(exJumpRegister),
   .exBranch(exBranch)
 );
 
@@ -198,6 +202,7 @@ wire exMemToReg;
 wire exRegWrite;
 wire exPcToAlu;
 wire exJump;
+wire exJumpRegister;
 wire exBranch;
 
 // Hazard handling
@@ -246,6 +251,9 @@ _MUX4 mux4_rhsAluInputSelect(
 
 wire [31:0] rhsAluInput;
 
+wire [31:0] rhsAluInputJump;
+assign rhsAluInputJump = exJump ? 32'h00000004 : rhsAluInput;
+
 ALUControl aluControl(
   .ALUOp(exAluOp),
   .func3(exFunct3),
@@ -256,7 +264,7 @@ ALUControl aluControl(
 wire [5:0] aluControlInput;
 
 wire [31:0] rhsAluInputWithImmediate; // TODO: Better naming
-assign rhsAluInputWithImmediate = (exAluSrc) ? exImmediateValue : rhsAluInput;
+assign rhsAluInputWithImmediate = (exAluSrc) ? exImmediateValue : rhsAluInputJump;
 
 Alu alu(
   .ALUControl(aluControlInput),
@@ -269,13 +277,15 @@ Alu alu(
 wire [31:0] resultALU;
 wire zero;
 
+wire [31:0] branchBaseValue;
+assign branchBaseValue = (exJumpRegister) ? exRHSRegisterValue : exProgramCounter;
+
 BranchUnit branchUnit(
   .aluZero(zero),
   .isBranchOperation(exBranch),
   .jump(exJump),
-  .programCounter(exProgramCounter),
+  .baseValue(branchBaseValue),
   .immediate(exImmediateValue),
-  .aluResult(resultALU),
   .shouldBranch(shouldBranch),
   .branchTarget(branchTarget)
 );
