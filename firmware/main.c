@@ -9,6 +9,8 @@ int main() {
   for (int i = 0; i < 4; i++) {
     *LED_ADDRESS = i;
   }
+
+  
   return 0;
 }
 
