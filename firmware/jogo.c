@@ -2,6 +2,7 @@
 #include <conio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <time.h>
 
 int jogo[505][505], score, lenghtBarra = 8, lBarra=8, H = 1, dir=1, vel = 1;
 
@@ -39,8 +40,8 @@ void printMatriz(){
     fflush(stdout);
 }
 
-void wait(double speed){
-   sleep(1);
+void wait(int speed){
+   usleep(100000*speed);
 }
 
 int main(){
@@ -75,7 +76,7 @@ int main(){
             }
         }
 
-        vel = score/4;
+        vel = 5-(score/8);
     }
 
     printf("Parabens seu score final foi: %d\n", score);
