@@ -2,6 +2,9 @@ module MMU (
   input clk,
   input dataMemoryWriteEnable,
   input dataMemoryReadEnable,
+  input dataMemoryReadByte,
+  input dataMemoryReadHalf,
+  input dataMemoryReadUnsigned,
   input [31:0] dataMemoryAddress,
   input [31:0] dataMemoryDataIn,
   input [31:0] instructionMemoryAddress,
@@ -27,6 +30,9 @@ wire unused3;
 
 CacheL1 instructionMemoryCacheL1(
   .clk(clk),
+  .byteRead(0),
+  .halfRead(0),
+  .unsignedRead(0),
   .writeEnable(0),
   .readEnable(1),
   .address(instructionMemoryAddress),
@@ -74,6 +80,9 @@ wire dataMemoryCacheSuccess;
 
 CacheL1 dataMemoryCacheL1(
   .clk(clk),
+  .byteRead(dataMemoryReadByte),
+  .halfRead(dataMemoryReadHalf),
+  .unsignedRead(dataMemoryReadUnsigned),
   .writeEnable(dataMemoryWriteEnable),
   .readEnable(dataMemoryReadEnable),
   .address(dataMemoryAddress),

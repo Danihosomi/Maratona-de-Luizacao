@@ -20,6 +20,9 @@ MMU mmu(
   .dataMemoryReadEnable(memMemRead),
   .dataMemoryAddress(memAluResult),
   .dataMemoryDataIn(memMemoryWriteData),
+  .dataMemoryReadByte(memByteLoad),
+  .dataMemoryReadHalf(memHalfLoad),
+  .dataMemoryReadUnsigned(memUnsignedLoad),
   .instructionMemoryAddress(pc),
   .dataMemoryDataOut(memMemoryData),
   .dataMemorySuccess(dataMemorySuccess),
@@ -72,10 +75,12 @@ wire [31:0] idProgramCounter;
 wire [4:0] idLHSRegisterIndex;
 wire [4:0] idRHSRegisterIndex;
 wire [2:0] idFunct3;
+wire [6:0] idFunct7;
 
 assign idLHSRegisterIndex = idInstruction[19:15];
 assign idRHSRegisterIndex = idInstruction[24:20];
 assign idFunct3 = idInstruction[14:12];
+assign idFunct7 = idInstruction[31:25];
 
 StallUnit stallUnit(
   .decodeStageLHSReadRegisterIndex(idLHSRegisterIndex),
@@ -103,8 +108,8 @@ wire [31:0] idRHSRegisterValue;
 
 Control control(
   .instruction(idInstruction[6:0]),
-  .func3(exFunct3),
-  .func7(exFunct7),
+  .func3(idFunct3),
+  .func7(idFunct7),
   .branch(branch),
   .memRead(memRead),
   .memToReg(memToReg),
@@ -112,7 +117,10 @@ Control control(
   .memWrite(memWrite),
   .aluSrc(aluSrc),
   .pcToAlu(pcToAlu),
-  .regWrite(regWrite)
+  .regWrite(regWrite),
+  .byteLoad(byteLoad),
+  .halfLoad(halfLoad),
+  .unsignedLoad(unsignedLoad)
 );
 
 wire branch;
@@ -123,12 +131,16 @@ wire memWrite;
 wire memToReg;
 wire regWrite;
 wire pcToAlu;
-wire [9:0] controlSignals;
+wire byteLoad;
+wire halfLoad;
+wire unsignedLoad;
+wire [12:0] controlSignals;
 
 assign controlSignals[5:0] = (isPipelineStalled) ? 0 :
                         {branch, aluSrc, memRead, memWrite, memToReg, regWrite};
 assign controlSignals[8:6] = (isPipelineStalled) ? 0 : aluOp;
 assign controlSignals[9] = (isPipelineStalled) ? 0 : pcToAlu;
+assign controlSignals[12:10] = (isPipelineStalled) ? 0 : {byteLoad, halfLoad, unsignedLoad};
 
 ImmediateGeneration immediateGeneration(
   .instruction(idInstruction),
@@ -148,8 +160,8 @@ ID_EX_Barrier id_ex_barrier(
   .idRHSRegisterIndex(idRHSRegisterIndex),
   .idWriteRegisterIndex(idInstruction[11:7]),
   .idImmediateValue(idImmediateValue),
-  .idFunct3(idInstruction[14:12]),
-  .idFunct7(idInstruction[31:25]),
+  .idFunct3(idFunct3),
+  .idFunct7(idFunct7),
   .idAluOp(controlSignals[8:6]),
   .idAluSrc(controlSignals[4]),
   .idMemWrite(controlSignals[2]),
@@ -158,6 +170,9 @@ ID_EX_Barrier id_ex_barrier(
   .idRegWrite(controlSignals[0]),
   .idPcToAlu(controlSignals[9]),
   .idBranch(controlSignals[5]),
+  .idByteLoad(controlSignals[12]),
+  .idHalfLoad(controlSignals[11]),
+  .idUnsignedLoad(controlSignals[10]),
   .exProgramCounter(exProgramCounter),
   .exLHSRegisterValue(exLHSRegisterValue),
   .exRHSRegisterValue(exRHSRegisterValue),
@@ -174,7 +189,10 @@ ID_EX_Barrier id_ex_barrier(
   .exMemToReg(exMemToReg),
   .exRegWrite(exRegWrite),
   .exPcToAlu(exPcToAlu),
-  .exBranch(exBranch)
+  .exBranch(exBranch),
+  .exByteLoad(exByteLoad),
+  .exHalfLoad(exHalfLoad),
+  .exUnsignedLoad(exUnsignedLoad)
 );
 
 wire [31:0] exProgramCounter;
@@ -194,6 +212,9 @@ wire exMemToReg;
 wire exRegWrite;
 wire exPcToAlu;
 wire exBranch;
+wire exByteLoad;
+wire exHalfLoad;
+wire exUnsignedLoad;
 
 // Hazard handling
 ForwardingUnit lhsForwardingUnit(
@@ -287,13 +308,19 @@ EX_MEM_Barrier ex_mem_barrier(
   .exMemRead(exMemRead),
   .exMemToReg(exMemToReg),
   .exRegWrite(exRegWrite),
+  .exByteLoad(exByteLoad),
+  .exHalfLoad(exHalfLoad),
+  .exUnsignedLoad(exUnsignedLoad),
   .memAluResult(memAluResult),
   .memMemoryWriteData(memMemoryWriteData),
   .memWriteRegisterIndex(memWriteRegisterIndex),
   .memMemWrite(memMemWrite),
   .memMemRead(memMemRead),
   .memMemToReg(memMemToReg),
-  .memRegWrite(memRegWrite)
+  .memRegWrite(memRegWrite),
+  .memByteLoad(memByteLoad),
+  .memHalfLoad(memHalfLoad),
+  .memUnsignedLoad(memUnsignedLoad)
 );
 
 wire [31:0] memAluResult;
@@ -303,6 +330,9 @@ wire memMemWrite;
 wire memMemRead;
 wire memMemToReg;
 wire memRegWrite;
+wire memByteLoad;
+wire memHalfLoad;
+wire memUnsignedLoad;
 
 wire [31:0] memMemoryData;
 
