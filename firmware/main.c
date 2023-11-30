@@ -9,46 +9,6 @@ int* MATRIX_ADDRESS = (int*) (0b1010 << 28);
 void display_led(int);
 void displayMatrix(int matrix[8][8]);
 
-// int main() {
-//   int matrix[8][8];
-
-//   *LED_ADDRESS = 4;
-
-//   for(int i=0;i<8;i++) {
-//     for(int j=0;j<8;j++) {
-//       matrix[i][j] = ((i+j) % 2) ? 1 : 0;
-//     }
-//   }
-
-//   int x=0;
-//   while(x<10) {
-//     for(int i = 0; i < 8; i++) {
-//       for(int j = 0; j < 8; j++) {
-//         if(matrix[i][j]) {
-//           int value = 0;
-
-//           setBit(value, i);
-
-//           for(int k=0; k < 8; k++) {
-//             if(k == j) continue;
-//             setBit(value, k + 8);
-//           }
-
-//           *MATRIX_ADDRESS = value;
-//           for(int k=0; k < 10; k++);
-//         }
-//       }
-//     }
-//     *MATRIX_ADDRESS = 0;
-//   }
-
-//   // while(x<10) {
-//   //   displayMatrix(matrix);
-//   // }
-
-//   return 0;
-// }
-
 // const int LINE_WIDTH = 6;
 // const int SCALE_FACTOR = 24;
 
