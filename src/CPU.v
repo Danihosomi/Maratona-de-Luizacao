@@ -299,7 +299,7 @@ wire [31:0] resultALU;
 wire zero;
 
 wire [31:0] branchBaseValue;
-assign branchBaseValue = (exJumpRegister) ? exRHSRegisterValue : exProgramCounter;
+assign branchBaseValue = (exJumpRegister) ? exLHSRegisterValue : exProgramCounter;
 
 BranchUnit branchUnit(
   .aluZero(zero),
