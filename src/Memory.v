@@ -10,7 +10,8 @@ module Memory (
 wire [31:0] ramData;
 wire [31:0] romData;
 
-wire isRom = address[31:10] == 0;
+// If rom size is changed, please update it
+wire isRom = address[31:11] == 0;
 
 ROMMemory MemoryROM(
   .address(address),

@@ -49,8 +49,9 @@ module CacheL1(
   reg [31:0] savedAddress;
 
   // Cache
+  // If memory size is changed, please update it
   reg clean [31:0];
-  reg [3:0] tag [31:0];
+  reg [4:0] tag [31:0];
   reg [31:0] data [31:0];
 
   initial begin
@@ -95,7 +96,7 @@ module CacheL1(
   wire readReady;
   wire invalidMemory;
   wire cacheIdle;
-  assign tagMatch = tag[memoryAddress[6:2]] == memoryAddress[10:7];
+  assign tagMatch = tag[memoryAddress[6:2]] == memoryAddress[11:7];
   assign hit = tagMatch & clean[memoryAddress[6:2]];
   assign invalidMemory = memoryAddress[31];
   assign cacheIdle = ~(readEnable | writeEnable);
@@ -129,7 +130,7 @@ module CacheL1(
         READ: begin
           if (memoryReady) begin
             data[readAddress[6:2]] <= memoryDataIn;
-            tag[readAddress[6:2]] <= readAddress[10:7];
+            tag[readAddress[6:2]] <= readAddress[11:7];
             clean[readAddress[6:2]] <= 1;
             if (needNextAddress == 1 & readNextAddress == 0) begin
               readNextAddress <= 1;
