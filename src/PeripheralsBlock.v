@@ -35,7 +35,6 @@ module PeripheralsBlock(
   LedMatrixPeripheral ledMatrixPeripheral(
     .clk(clk),
     .isTarget(isLedMatrixTargeted && writeEnable),
-    .address(address[27:0]),
     .data(dataIn),
     .ledMatrixRow(ledMatrixRow),
     .ledMatrixColumn(ledMatrixColumn)

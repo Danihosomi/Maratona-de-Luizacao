@@ -12,7 +12,7 @@ end
 
 always @* begin
   if (address == 0 ) begin
-    data = 32'h3ffff137; // Initializing the stack pointer
+    data = 32'h7fc00113; // Initializing the stack pointer
   end
   else begin
     data = rom[address[9:2]];
