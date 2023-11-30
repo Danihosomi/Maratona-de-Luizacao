@@ -1,71 +1,157 @@
 // This, along with -ffunction-sections, ensures _start will be the entrypoint of our firmware
 int main (void) __attribute__ ((section (".text.entrypoint")));
-
+#define max(a,b) (a>b) ? a : b
+#define abs(a) (a>0) ? a : -a
 // DRIVERS Interface
+struct Input {
+  int holding;
+  int pressed;
+  int released;
+};
+
+typedef struct Input Input;
+
 void display_led(int);
+void display_cell(int i, int j);
+int read_button();
 void display_matrix(int matrix[8][8]);
 Input read_input(Input*);
 
 const int LINE_WIDTH = 8;
 const int SCALE_FACTOR = 24;
+const int TARGET = (int)1e8;
 
 struct Bar {
   int position;
   int size;
-  int speed;
+  int target;
+  int counter;
   int height;
+  int isLeft;
 };
 
-void draw_bar(struct Bar);
-void update_bar(struct Bar*);
+void draw_bar(struct Bar,int grid[8][8]);
+void update_bar(struct Bar*,int grid[8][8]);
+int insideBound(int idx);
+struct Bar fixate_bar(struct Bar bar,struct Bar lastBar,int grid[8][8]);
 
 int main() {
   struct Bar bar = {
-    .position = -8,
+    .position = 0,
     .size = 8,
-    .speed = 800,
-    .height = 0
+    .target = TARGET,
+    .counter = 0,
+    .height = 0,
+    .isLeft = 0,
   };
 
   struct Bar lastBar = {
     .position = 0,
     .size = 8,
-    .speed = 0,
+    .target = TARGET,
+    .counter = 0,
     .height = -1,
+    .isLeft = 0,
+  };
+
+  Input inputBuffer = {
+    .holding = 0,
+    .pressed = 0,
+    .released = 0
   };
 
   int grid[8][8];
-
-  while(1) {
-    draw_bar(bar);
-    update_bar(&bar);
-  }
+  for(int i=0;i<8;i++) for(int j=0;j<8;j++) grid[i][j] = 0;
+  draw_bar(bar,grid);
   
+  while(1) { // aqui o jogo acontece
+
+    display_matrix(grid);
+    inputBuffer = read_input(&inputBuffer);
+
+    if(inputBuffer.pressed){
+      
+      lastBar = fixate_bar(bar,lastBar,grid);
+
+      if(lastBar.size == 0) break; // jogo termina
+
+      bar.position = 0;
+      bar.size = lastBar.size;
+      bar.target = TARGET;
+      bar.counter = 0;
+      bar.height = lastBar.height + 1;
+      bar.isLeft = 0;
+    }
+
+    else{ 
+      update_bar(&bar,grid);  
+    }
+  }
+
+  //display_score();
+
   return 0;
 }
 
-// void draw_bar(struct Bar bar) {
-//   int unscaledPosition = bar.position >> SCALE_FACTOR;
+struct Bar fixate_bar(struct Bar bar,struct Bar lastBar,int grid[8][8]){
+  struct Bar novaBar = {
+    .position = max(bar.position,lastBar.position),
+    .size = max(0,bar.size - abs(bar.position-lastBar.position)),
+    .target = TARGET,
+    .counter = 0,
+    .height = bar.height,
+    .isLeft = 0,
+  };
 
-//   int encodedBar = 0;
-//   for (int i = 0; i < bar.size; i++) {
-//     encodedBar += 1 << (unscaledPosition + i);
-//   }
-//   *LED_ADDRESS = encodedBar;
-// }
+  draw_bar(novaBar,grid);
 
-// void update_bar(struct Bar* bar) {
-//   int unscaledPosition = bar->position >> SCALE_FACTOR;
+  return novaBar;
+}
 
-//   if (bar->speed > 0 && unscaledPosition >= LINE_WIDTH - bar->size) {
-//     bar->speed = -bar->speed;
-//   } else if (bar->speed < 0 && unscaledPosition < bar->size) {
-//     bar->speed = -bar->speed;
-//     bar->position = -1;
-//   }
 
-//   bar->position += bar->speed;
-// }
+int insideBound(int idx){
+  return idx>=0 && idx<LINE_WIDTH;
+}
+
+void draw_bar(struct Bar bar,int grid[8][8]) {
+
+  for(int i = 0; i < LINE_WIDTH; i++){
+    grid[bar.height][i] = 0;
+  }
+
+  for(int i = bar.position; i < bar.position+bar.size; i++){
+    if(insideBound(i)){
+      grid[bar.height][i] = 1;
+    }
+  }
+
+}
+
+void update_bar(struct Bar* bar,int grid[8][8]) {
+  bar->counter++;
+  
+  if(bar->counter == bar->target){
+    bar->counter = 0;
+    
+    if(bar->isLeft){
+      bar->position--;
+      
+      if(bar->position == -LINE_WIDTH){ 
+        bar->isLeft = 0;
+      }
+    }
+    
+    else{
+      bar->position++;
+
+      if(bar->position == LINE_WIDTH){
+        bar->isLeft = 1;
+      }
+    } 
+
+    draw_bar(*bar,grid);
+  }
+}
 
 // *** DRIVERS ***
 
@@ -99,7 +185,7 @@ void display_matrix(int matrix[8][8]) {
   for(int i = 0; i < 8; i++) {
     for(int j = 0; j < 8; j++) {
       if(matrix[i][j]) {
-        displayCell(i, j);
+        display_cell(i, j);
         for(int k=0; k < 10; k++);
       }
     }
@@ -108,14 +194,6 @@ void display_matrix(int matrix[8][8]) {
 }
 
 // Button
-
-struct Input {
-  int holding;
-  int pressed;
-  int released;
-};
-
-typedef struct Input Input;
 
 Input read_input(Input* inputBuffer) {
   Input input = {
