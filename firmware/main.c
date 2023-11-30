@@ -1,50 +1,50 @@
 // This, along with -ffunction-sections, ensures _start will be the entrypoint of our firmware
 int main (void) __attribute__ ((section (".text.entrypoint")));
 
-#define setBit(number, i) (number |= (1 << i)) 
-
-int* LED_ADDRESS = (int*) (0b1000 << 28);
-int* MATRIX_ADDRESS = (int*) (0b1010 << 28);
-
+// DRIVERS Interface
 void display_led(int);
 void display_matrix(int matrix[8][8]);
+Input read_input(Input*);
 
-// const int LINE_WIDTH = 6;
-// const int SCALE_FACTOR = 24;
+const int LINE_WIDTH = 8;
+const int SCALE_FACTOR = 24;
 
-// struct Bar {
-//   int position;
-//   int size;
-//   int speed;
-// };
+struct Bar {
+  int position;
+  int size;
+  int speed;
+  int height;
+};
 
-// void draw_bar(struct Bar);
-// void update_bar(struct Bar*);
+void draw_bar(struct Bar);
+void update_bar(struct Bar*);
 
 int main() {
-  // struct Bar bar = {
-  //   .position = 0,
-  //   .size = 2,
-  //   .speed = 800
-  // };
+  struct Bar bar = {
+    .position = -8,
+    .size = 8,
+    .speed = 800,
+    .height = 0
+  };
 
-  // while(1) {
-  //   draw_bar(bar);
-  //   update_bar(&bar);
-  // }
+  struct Bar lastBar = {
+    .position = 0,
+    .size = 8,
+    .speed = 0,
+    .height = -1,
+  };
 
-  int matrix[8][8];
-
-  *LED_ADDRESS = 4;
-
-  for(int i=0;i<8;i++) {
-    for(int j=0;j<8;j++) {
-      matrix[i][j] = ((i+j) % 2) ? 1 : 0;
-    }
-  }
+  int grid[8][8];
 
   while(1) {
-    displayMatrix(matrix);
+    draw_bar(bar);
+    update_bar(&bar);
+  }
+
+  int grid[8][8];
+
+  while(1) {
+    displayMatrix(grid);
   }
   
   return 0;
@@ -74,9 +74,19 @@ int main() {
 // }
 
 // *** DRIVERS ***
+
+// Address
+int* LED_ADDRESS = (int*) (0b1000 << 28);
+int* MATRIX_ADDRESS = (int*) (0b1010 << 28);
+int* BUTTON_ADDRESS = (int*) (0b1001 << 28);
+
+// LED
 void display_led(int number) {
   *LED_ADDRESS = number;
 }
+
+// LED Matrix
+#define setBit(number, i) (number |= (1 << i))
 
 void display_cell(int i, int j) {
   int value = 0;
@@ -101,4 +111,35 @@ void display_matrix(int matrix[8][8]) {
     }
   }
   *MATRIX_ADDRESS = 0;
+}
+
+// Button
+
+struct Input {
+  int holding;
+  int pressed;
+  int released;
+};
+
+typedef struct Input Input;
+
+Input read_input(Input* inputBuffer) {
+  Input input = {
+    .holding = 0,
+    .pressed = 0,
+    .released = 0
+  };
+  input.holding = read_button();
+
+  if (input.holding != inputBuffer->holding) {
+    input.pressed = input.holding == 1;
+    input.released = input.holding == 0;
+  }
+  *inputBuffer = input;
+
+  return input;
+}
+
+int read_button() {
+  return *BUTTON_ADDRESS;
 }
