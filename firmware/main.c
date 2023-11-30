@@ -7,7 +7,7 @@ int* LED_ADDRESS = (int*) (0b1000 << 28);
 int* MATRIX_ADDRESS = (int*) (0b1010 << 28);
 
 void display_led(int);
-void displayMatrix(int matrix[8][8]);
+void display_matrix(int matrix[8][8]);
 
 // const int LINE_WIDTH = 6;
 // const int SCALE_FACTOR = 24;
@@ -78,7 +78,7 @@ void display_led(int number) {
   *LED_ADDRESS = number;
 }
 
-void displayCell(int i, int j) {
+void display_cell(int i, int j) {
   int value = 0;
 
   setBit(value, i);
@@ -91,7 +91,7 @@ void displayCell(int i, int j) {
   *MATRIX_ADDRESS = value;
 }
 
-void displayMatrix(int matrix[8][8]) {
+void display_matrix(int matrix[8][8]) {
   for(int i = 0; i < 8; i++) {
     for(int j = 0; j < 8; j++) {
       if(matrix[i][j]) {
