@@ -111,6 +111,8 @@ Control control(
   .func3(idFunct3),
   .func7(idFunct7),
   .branch(branch),
+  .jump(jump),
+  .jumpRegister(jumpRegister),
   .memRead(memRead),
   .memToReg(memToReg),
   .aluOp(aluOp),
@@ -124,6 +126,8 @@ Control control(
 );
 
 wire branch;
+wire jump;
+wire jumpRegister;
 wire [2:0] aluOp;
 wire aluSrc;
 wire memRead;
@@ -134,13 +138,13 @@ wire pcToAlu;
 wire byteLoad;
 wire halfLoad;
 wire unsignedLoad;
-wire [12:0] controlSignals;
+wire [14:0] controlSignals;
 
 assign controlSignals[5:0] = (isPipelineStalled) ? 0 :
                         {branch, aluSrc, memRead, memWrite, memToReg, regWrite};
 assign controlSignals[8:6] = (isPipelineStalled) ? 0 : aluOp;
-assign controlSignals[9] = (isPipelineStalled) ? 0 : pcToAlu;
-assign controlSignals[12:10] = (isPipelineStalled) ? 0 : {byteLoad, halfLoad, unsignedLoad};
+assign controlSignals[11:9] = (isPipelineStalled) ? 0 : {jumpRegister,jump, pcToAlu};
+assign controlSignals[14:12] = (isPipelineStalled) ? 0 : {byteLoad, halfLoad, unsignedLoad};
 
 ImmediateGeneration immediateGeneration(
   .instruction(idInstruction),
@@ -169,10 +173,12 @@ ID_EX_Barrier id_ex_barrier(
   .idMemToReg(controlSignals[1]),
   .idRegWrite(controlSignals[0]),
   .idPcToAlu(controlSignals[9]),
+  .idJump(controlSignals[10]),
+  .idJumpRegister(controlSignals[11]),
   .idBranch(controlSignals[5]),
-  .idByteLoad(controlSignals[12]),
-  .idHalfLoad(controlSignals[11]),
-  .idUnsignedLoad(controlSignals[10]),
+  .idByteLoad(controlSignals[14]),
+  .idHalfLoad(controlSignals[13]),
+  .idUnsignedLoad(controlSignals[12]),
   .exProgramCounter(exProgramCounter),
   .exLHSRegisterValue(exLHSRegisterValue),
   .exRHSRegisterValue(exRHSRegisterValue),
@@ -189,6 +195,8 @@ ID_EX_Barrier id_ex_barrier(
   .exMemToReg(exMemToReg),
   .exRegWrite(exRegWrite),
   .exPcToAlu(exPcToAlu),
+  .exJump(exJump),
+  .exJumpRegister(exJumpRegister),
   .exBranch(exBranch),
   .exByteLoad(exByteLoad),
   .exHalfLoad(exHalfLoad),
@@ -211,6 +219,8 @@ wire exMemRead;
 wire exMemToReg;
 wire exRegWrite;
 wire exPcToAlu;
+wire exJump;
+wire exJumpRegister;
 wire exBranch;
 wire exByteLoad;
 wire exHalfLoad;
@@ -262,6 +272,9 @@ _MUX4 mux4_rhsAluInputSelect(
 
 wire [31:0] rhsAluInput;
 
+wire [31:0] rhsAluInputJump;
+assign rhsAluInputJump = exJump ? 32'h00000004 : rhsAluInput;
+
 ALUControl aluControl(
   .ALUOp(exAluOp),
   .func3(exFunct3),
@@ -272,7 +285,7 @@ ALUControl aluControl(
 wire [5:0] aluControlInput;
 
 wire [31:0] rhsAluInputWithImmediate; // TODO: Better naming
-assign rhsAluInputWithImmediate = (exAluSrc) ? exImmediateValue : rhsAluInput;
+assign rhsAluInputWithImmediate = (exAluSrc) ? exImmediateValue : rhsAluInputJump;
 
 Alu alu(
   .ALUControl(aluControlInput),
@@ -285,10 +298,14 @@ Alu alu(
 wire [31:0] resultALU;
 wire zero;
 
+wire [31:0] branchBaseValue;
+assign branchBaseValue = (exJumpRegister) ? exLHSRegisterValue : exProgramCounter;
+
 BranchUnit branchUnit(
   .aluZero(zero),
   .isBranchOperation(exBranch),
-  .programCounter(exProgramCounter),
+  .jump(exJump),
+  .baseValue(branchBaseValue),
   .immediate(exImmediateValue),
   .shouldBranch(shouldBranch),
   .branchTarget(branchTarget)
