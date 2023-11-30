@@ -1,8 +1,8 @@
 // This, along with -ffunction-sections, ensures _start will be the entrypoint of our firmware
 int main (void) __attribute__ ((section (".text.entrypoint")));
 
-int* LED_ADDRESS = (int*) (0b1000 << 28);
-int* BUTTON_ADDRESS = (int*) (0b1001 << 28);
+int* const LED_ADDRESS = (int*) (0b1000 << 28);
+const int* const BUTTON_ADDRESS = (int*) (0b1001 << 28);
 
 struct Input {
   int holding;
