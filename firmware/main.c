@@ -9,6 +9,8 @@ struct Bar {
   int size;
 };
 
+void draw_bar(struct Bar);
+
 int main() {
   int speed = 800;
   int direction = 1;
@@ -21,17 +23,18 @@ int main() {
   while(1) {
     int unscaledPostion = bar.position >> 24;
 
-    int encodedBar = 0;
-    for (int i = 0; i < bar.size; i++) {
-      encodedBar += 1 << (unscaledPostion + i);
-    }
-    *LED_ADDRESS = encodedBar;
+    // int encodedBar = 0;
+    // for (int i = 0; i < bar.size; i++) {
+    //   encodedBar += 1 << (unscaledPostion + i);
+    // }
+    // *LED_ADDRESS = encodedBar;
+    draw_bar(bar);
 
-    if (direction == 1 && unscaledPostion > LINE_WIDTH - bar.size) {
+    if (direction == 1 && unscaledPostion >= LINE_WIDTH - bar.size) {
       direction = -1;
     } else if (direction == -1 && unscaledPostion < bar.size) {
       direction = 1;
-      bar.position = 0;
+      bar.position = -1;
     }
 
     if (direction == 1) {
@@ -44,6 +47,12 @@ int main() {
   return 0;
 }
 
-void draw_bar(int unscaledPosition) {
-  *LED_ADDRESS = 1 << unscaledPosition;
+void draw_bar(struct Bar bar) {
+  int unscaledPosition = bar.position >> 24;
+
+  int encodedBar = 0;
+  for (int i = 0; i < bar.size; i++) {
+    encodedBar += 1 << (unscaledPosition + i);
+  }
+  *LED_ADDRESS = encodedBar;
 }
