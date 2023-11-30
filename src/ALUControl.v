@@ -19,7 +19,7 @@ always @(ALUOp, func3, func7) begin
         3'b111: result = 6'b001101; //bgeu
         default: result = 6'b001000;
       endcase
-    3'b011: result = 6'b000010; //lui, auipc
+    3'b011: result = 6'b000010; //lui, auipc, jal, jalr
     
     3'b100: // atomic operations
       case (func7[6:2])

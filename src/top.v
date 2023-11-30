@@ -12,7 +12,7 @@ module top
 wire [5:0] debug;
 
 CPU cpu(
-  .clk(slowerClk),
+  .clk(clk),
   .rst(~rst),
   .buttonPeripheral(~button),
   .debug(debug),
