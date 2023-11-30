@@ -3,56 +3,51 @@ int main (void) __attribute__ ((section (".text.entrypoint")));
 
 int* LED_ADDRESS = (int*) (0b1000 << 28);
 const int LINE_WIDTH = 6;
+const int SCALE_FACTOR = 24;
 
 struct Bar {
   int position;
   int size;
+  int speed;
 };
 
 void draw_bar(struct Bar);
+void update_bar(struct Bar*);
 
 int main() {
-  int speed = 800;
-  int direction = 1;
-
   struct Bar bar = {
     .position = 0,
-    .size = 2
+    .size = 2,
+    .speed = 800
   };
 
   while(1) {
-    int unscaledPostion = bar.position >> 24;
-
-    // int encodedBar = 0;
-    // for (int i = 0; i < bar.size; i++) {
-    //   encodedBar += 1 << (unscaledPostion + i);
-    // }
-    // *LED_ADDRESS = encodedBar;
     draw_bar(bar);
-
-    if (direction == 1 && unscaledPostion >= LINE_WIDTH - bar.size) {
-      direction = -1;
-    } else if (direction == -1 && unscaledPostion < bar.size) {
-      direction = 1;
-      bar.position = -1;
-    }
-
-    if (direction == 1) {
-      bar.position += speed;
-    } else if (direction == -1) {
-      bar.position -= speed;
-    }
+    update_bar(&bar);
   }
 
   return 0;
 }
 
 void draw_bar(struct Bar bar) {
-  int unscaledPosition = bar.position >> 24;
+  int unscaledPosition = bar.position >> SCALE_FACTOR;
 
   int encodedBar = 0;
   for (int i = 0; i < bar.size; i++) {
     encodedBar += 1 << (unscaledPosition + i);
   }
   *LED_ADDRESS = encodedBar;
+}
+
+void update_bar(struct Bar* bar) {
+  int unscaledPosition = bar->position >> SCALE_FACTOR;
+
+  if (bar->speed > 0 && unscaledPosition >= LINE_WIDTH - bar->size) {
+    bar->speed = -bar->speed;
+  } else if (bar->speed < 0 && unscaledPosition < bar->size) {
+    bar->speed = -bar->speed;
+    bar->position = -1;
+  }
+
+  bar->position += bar->speed;
 }
