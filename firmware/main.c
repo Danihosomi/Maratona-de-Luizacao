@@ -40,15 +40,6 @@ int main() {
     draw_bar(bar);
     update_bar(&bar);
   }
-<<<<<<< HEAD
-
-  int grid[8][8];
-
-  while(1) {
-    displayMatrix(grid);
-  }
-=======
->>>>>>> 5bcd82782a57951a993662d76b35ee0672e314ac
   
   return 0;
 }
