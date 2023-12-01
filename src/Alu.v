@@ -16,11 +16,12 @@ wire [31:0] remainderResult;
 wire isDivisionOperation;
 wire isUnsigned;
 wire divisionBusy;
-wire done;
+wire divisionDone;
 
 assign isDivisionOperation = (ALUControl == 6'b010100 || ALUControl == 6'b010101 || ALUControl == 6'b010110 || ALUControl == 6'b010111);
 assign isUnsigned = (ALUControl == 6'b010101 || ALUControl == 6'b010111);
 assign aluBusy = divisionBusy;
+assign divisionBusy = isDivisionOperation & ~divisionDone;
 assign mult = operand1 * operand2;
 assign mulhsu = {{32'b0, operand1} * {32'b0, operand2}};
 assign mulhu = {{32'b0, operand1} * {32'b0, operand2}};
@@ -31,8 +32,7 @@ Div div(
   .divisor(operand2),
   .isUnsigned(isUnsigned),
   .start(isDivisionOperation),
-  .done(done),
-  .busy(divisionBusy),
+  .done(divisionDone),
   .val(divisionResult),
   .rem(remainderResult)
 );
@@ -42,7 +42,7 @@ Div div(
 `define isNegative(A) A[31] == 1
 
 
-always @(operand1, operand2, ALUControl) begin
+always @(operand1, operand2, ALUControl, divisionDone) begin
   case (ALUControl)
 
     6'b000010: resultALU = operand1 + operand2;  // 0010: ADD
