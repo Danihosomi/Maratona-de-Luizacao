@@ -61,12 +61,7 @@ int main() {
       
       lastBar = fixate_bar(bar, lastBar);
 
-      if(lastBar.size == 0) break;
-      
-      if(lastBar.size == GRID_WIDTH - 1) {
-        clear_grid(grid);
-        lastBar.height = 0;
-      }
+      if(lastBar.size == 0 || lastBar.size == GRID_WIDTH - 1) break;
 
       bar = create_new_bar(lastBar.size, lastBar.target - UPDATE_RATE, lastBar.height + 1);
 
