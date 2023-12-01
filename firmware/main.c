@@ -60,11 +60,17 @@ int main() {
     if(inputBuffer.pressed) {
       
       lastBar = fixate_bar(bar, lastBar);
-      draw_bar(lastBar, grid);
 
       if(lastBar.size == 0) break;
+      
+      if(lastBar.size == GRID_WIDTH - 1) {
+        clear_grid(grid);
+        lastBar.height = 0;
+      }
 
       bar = create_new_bar(lastBar.size, lastBar.target - UPDATE_RATE, lastBar.height + 1);
+
+      draw_bar(lastBar, grid);
       draw_bar(bar, grid);
     }
   }
