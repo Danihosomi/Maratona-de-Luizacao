@@ -44,7 +44,7 @@ int main() {
   }
 
   while(1) {
-    displayMatrix(matrix);
+    display_matrix(matrix);
   }
 
   return 0;
@@ -85,7 +85,7 @@ void display_cell(int i, int j) {
 
   for(int k=0; k < 8; k++) {
     if(k == j) continue;
-    setBit(value, k + 8);
+    setBit(value, (k + 8));
   }
 
   *MATRIX_ADDRESS = value;
@@ -95,7 +95,7 @@ void display_matrix(int matrix[8][8]) {
   for(int i = 0; i < 8; i++) {
     for(int j = 0; j < 8; j++) {
       if(matrix[i][j]) {
-        displayCell(i, j);
+        display_cell(i, j);
         for(int k=0; k < 10; k++);
       }
     }
