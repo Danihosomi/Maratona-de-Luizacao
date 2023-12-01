@@ -5,8 +5,8 @@ module Div (
     input isUnsigned,
     input start,
     output done,
-    output reg [31:0] val,
-    output reg [31:0] rem
+    output [31:0] val,
+    output [31:0] rem
 );
 
     parameter IDLE = 0;
