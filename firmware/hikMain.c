@@ -64,12 +64,11 @@ int main() {
     for (int i = 0; i < period; i++) {
       Input currentInput = read_input(&inputBuffer);
       if (currentInput.pressed) {
-        int delta = 0;
         for (int i = 0; i < GRID_WIDTH; i++) {
           if (i >= currentBar.position && i < currentBar.position + currentBar.size) {
             if (i < lastBar.position || i >= lastBar.position + lastBar.size) {
               *(MATRIX_ADDRESS + (currentBar.height << 3) + i) = 0;
-              delta++;
+              currentBar.size--;
             }
           }
         }
@@ -77,7 +76,6 @@ int main() {
         lastBar.position = currentBar.position;
         lastBar.size = currentBar.size;
 
-        currentBar.size -= delta;
         currentBar.height++;
         period -= 5000;
         break;
