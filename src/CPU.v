@@ -64,11 +64,12 @@ IF_ID_Barrier if_id_barrier(
 
 wire [31:0] idInstructionPreDecompression;
 
-//CompactInstructionsUnit compactInstructionUnit(
-//  .targetInstruction(idInstructionPreDecompression),
-//  .resultInstruction(idInstruction)
-//);
-assign idInstruction = idInstructionPreDecompression;
+CompactInstructionsUnit compactInstructionUnit(
+ .targetInstruction(idInstructionPreDecompression),
+ .resultInstruction(idInstruction),
+ .descompactedInstruction(idIsCompactInstruction)
+);
+wire idIsCompactInstruction;
 
 wire [31:0] idInstruction;
 wire [31:0] idProgramCounter;
@@ -155,7 +156,7 @@ wire [31:0] idImmediateValue;
 
 ID_EX_Barrier id_ex_barrier(
   .clk(clk),
-  .rst(rst || shouldBranch),
+  .rst(rst || (shouldBranch && !isPipelineFrozen)),
   .dontUpdate(isPipelineFrozen),
   .idProgramCounter(idProgramCounter),
   .idLHSRegisterValue(idLHSRegisterValue),
@@ -179,6 +180,7 @@ ID_EX_Barrier id_ex_barrier(
   .idByteLoad(controlSignals[14]),
   .idHalfLoad(controlSignals[13]),
   .idUnsignedLoad(controlSignals[12]),
+  .idJumpReturnOffset(idIsCompactInstruction ? 32'h00000002 : 32'h00000004),
   .exProgramCounter(exProgramCounter),
   .exLHSRegisterValue(exLHSRegisterValue),
   .exRHSRegisterValue(exRHSRegisterValue),
@@ -200,7 +202,8 @@ ID_EX_Barrier id_ex_barrier(
   .exBranch(exBranch),
   .exByteLoad(exByteLoad),
   .exHalfLoad(exHalfLoad),
-  .exUnsignedLoad(exUnsignedLoad)
+  .exUnsignedLoad(exUnsignedLoad),
+  .exJumpReturnOffset(exJumpReturnOffset)
 );
 
 wire [31:0] exProgramCounter;
@@ -272,8 +275,9 @@ _MUX4 mux4_rhsAluInputSelect(
 
 wire [31:0] rhsAluInput;
 
+wire [31:0] exJumpReturnOffset;
 wire [31:0] rhsAluInputJump;
-assign rhsAluInputJump = exJump ? 32'h00000004 : rhsAluInput;
+assign rhsAluInputJump = exJump ? exJumpReturnOffset : rhsAluInput;
 
 ALUControl aluControl(
   .ALUOp(exAluOp),
