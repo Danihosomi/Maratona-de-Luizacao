@@ -4,10 +4,10 @@ module Div (
     input [31:0] divisor,
     input isUnsigned,
     input start,
-    output done,
-    output busy,
-    output [31:0] val,
-    output [31:0] rem
+    output reg done,
+    output reg busy,
+    output reg [31:0] val,
+    output reg [31:0] rem
 );
 
     parameter IDLE = 0;
@@ -15,11 +15,15 @@ module Div (
     parameter DIVIDE = 2;
     parameter FINISH = 3;
 
-    wire [6:0] i;
-    wire [31:0] tmp_dividend, next_tmp_dividend;
-    wire [31:0] quo, next_quo, curr_rem, next_rem;
-    wire [31:0] a, b;
-    wire a_sign, b_sign;
+    initial begin
+        state = IDLE;
+    end
+
+    reg [6:0] i;
+    reg [63:0] tmp_dividend, next_tmp_dividend;
+    reg [31:0] quo, next_quo, curr_rem, next_rem;
+    reg [31:0] a, b;
+    reg a_sign, b_sign, sign;
     reg [2:0] state;
 
     always @* begin
@@ -28,9 +32,9 @@ module Div (
     end
 
     always @* begin
-        if(tmp_dividend <= curr_rem) begin
-            next_rem = next_rem - tmp_dividend;
-            next_quo = {quo, 1'b1};
+        if (tmp_dividend <= curr_rem) begin
+            next_rem = next_rem - tmp_dividend[31:0];
+            next_quo = {quo[30:0], 1'b1};
             next_tmp_dividend = tmp_dividend >> 1;
         end else begin
             next_quo = quo << 1;
