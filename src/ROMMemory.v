@@ -3,8 +3,8 @@ module ROMMemory (
   output reg [31:0] data
 );
 
-// 4 KB. If this is changed, please update the makefile -Tdata
-reg [31:0] rom [0:1023];
+// 1 KB. If this is changed, please update the makefile -Tdata
+reg [31:0] rom [0:511];
 
 initial begin
   $readmemh("rom.hex", rom);
@@ -17,10 +17,10 @@ always @* begin
   else if (address == 4) begin
     // Change the stack pointer to the top of the memory
     // if memory is changed, please update it
-    data = 32'h3fc10113; // Initializing the stack pointer
+    data = 32'hbfc10113; // Initializing the stack pointer
   end
   else begin
-    data = rom[address[11:2]];
+    data = rom[address[10:2]];
   end
 end
 
