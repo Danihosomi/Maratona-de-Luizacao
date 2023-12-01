@@ -30,8 +30,8 @@ wire unused3;
 
 CacheL1 instructionMemoryCacheL1(
   .clk(clk),
-  .byteRead(0),
-  .halfRead(0),
+  .byteOperation(0),
+  .halfOperation(0),
   .unsignedRead(0),
   .writeEnable(0),
   .readEnable(1),
@@ -80,8 +80,8 @@ wire dataMemoryCacheSuccess;
 
 CacheL1 dataMemoryCacheL1(
   .clk(clk),
-  .byteRead(dataMemoryReadByte),
-  .halfRead(dataMemoryReadHalf),
+  .byteOperation(dataMemoryReadByte),
+  .halfOperation(dataMemoryReadHalf),
   .unsignedRead(dataMemoryReadUnsigned),
   .writeEnable(dataMemoryWriteEnable),
   .readEnable(dataMemoryReadEnable),
