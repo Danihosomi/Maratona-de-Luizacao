@@ -24,6 +24,7 @@ module ID_EX_Barrier(
   input idByteLoad,
   input idHalfLoad,
   input idUnsignedLoad,
+  input [31:0] idJumpReturnOffset,
   output reg [31:0] exProgramCounter,
   output reg [31:0] exLHSRegisterValue,
   output reg [31:0] exRHSRegisterValue,
@@ -45,7 +46,8 @@ module ID_EX_Barrier(
   output reg exBranch,
   output reg exByteLoad,
   output reg exHalfLoad,
-  output reg exUnsignedLoad
+  output reg exUnsignedLoad,
+  output reg [31:0] exJumpReturnOffset
 );
 
 always @(posedge clk) begin
@@ -72,6 +74,7 @@ always @(posedge clk) begin
     exByteLoad <= idByteLoad;
     exHalfLoad <= idHalfLoad;
     exUnsignedLoad <= idUnsignedLoad;
+    exJumpReturnOffset <= idJumpReturnOffset;
   end
 
   if (rst) begin
@@ -87,6 +90,7 @@ always @(posedge clk) begin
     exByteLoad <= 0;
     exHalfLoad <= 0;
     exUnsignedLoad <= 0;
+    exJumpReturnOffset <= 0;
   end
 end
 
