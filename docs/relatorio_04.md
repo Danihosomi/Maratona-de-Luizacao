@@ -25,6 +25,13 @@ bugs detectados.
 O princpial deles foi que a instrução de jal usava hardcoded um offset de 4. Foi
 alterado para no caso de instruções compactas, usar `PC + 2` em vez de `PC + 4`.
 
+# Implementação do jogo Stacker
+Como escolha de um programa escrito em linguagem alto nível, foi feita a implementação
+do jogo Stacker na linguagem C. Sua implementação está no arquivo `main.c`.
+Ela utiliza os drivers da matrix de led e do botão, com uma lógica simples de código em C.
+A estrutura principal é o Bar que representa a barrinha que se move na matrix de LED.
+
+
 # Aprendizados
 
 ## Habilidades de debugging
@@ -58,8 +65,8 @@ passamos a apreciar muito os benefícios da extensão C de instruções.
 # Contribuições
 
 - **Luiz Henrique**: 
-- **Larissa**: 
-- **Gabriel**: 
+- **Larissa**:  
+- **Gabriel**:  
 - **Yan**: JAL e JALR
-- **Daniel**: 
+- **Daniel**: Elaboração do Jogo
 - **Vinícius**: 
