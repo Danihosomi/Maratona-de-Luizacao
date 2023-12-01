@@ -16,7 +16,6 @@ struct Input {
 typedef struct Input Input;
 
 Input read_input(Input*);
-void display_matrix(int upper_matrix, int lower_matrix);
 
 int main() {
 
@@ -43,30 +42,6 @@ int main() {
   }
 
   return 0;
-}
-
-void display_cell(int i, int j) {
-  int value = 0;
-
-  setBit(value, i);
-
-  for (int k = 0; k < 8; k++) {
-    if (k == j) continue;
-    setBit(value, (k + 8));
-  }
-
-  *MATRIX_ADDRESS = value;
-}
-
-// Given upper_matrix bits and lower_matrix bits, display the matrix
-void display_matrix(int upper_matrix, int lower_matrix) {
-  for (int i = 0; i < 4; i++) {
-    for (int j = 0; j < 8; j++) {
-      if (lower_matrix & (1 << ((i << 3) + j))) display_cell(i, j);
-      if (upper_matrix & (1 << ((i << 3) + j))) display_cell(i + 4, j);
-    }
-  }
-  *MATRIX_ADDRESS = 0;
 }
 
 Input read_input(Input* inputBuffer) {
