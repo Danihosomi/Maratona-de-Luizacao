@@ -105,8 +105,8 @@ module CacheL1(
   wire readReady;
   wire invalidMemory;
   wire cacheIdle;
-  assign tagMatch = tag[memoryAddress[6:2]] == memoryAddress[10:7];
-  assign hit = tagMatch & clean[memoryAddress[6:2]];
+  assign tagMatch = tag[address[6:2]] == address[10:7];
+  assign hit = tagMatch & clean[address[6:2]];
   assign nextAddressTagMatch = tag[nextAddress[6:2]] == nextAddress[10:7];
   assign nextAddressHit = nextAddressTagMatch & clean[nextAddress[6:2]];
   assign invalidMemory = address[31];
