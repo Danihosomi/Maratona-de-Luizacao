@@ -39,8 +39,8 @@ int is_inside_bounds(int idx);
 struct Bar fixate_bar(struct Bar bar, struct Bar lastBar);
 
 int main() {
-  struct Bar bar = create_new_bar(0, TARGET, 0);
-  struct Bar lastBar = create_new_bar(0, 0, -1);
+  struct Bar bar = create_new_bar(8, TARGET, 0);
+  struct Bar lastBar = create_new_bar(8, 0, -1);
 
   Input inputBuffer = {
     .holding = 0,
