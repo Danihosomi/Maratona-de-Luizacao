@@ -8,13 +8,13 @@ module LedMatrixPeripheral(
   output reg [7:0] ledMatrixColumn
 );
 
-reg [10:0] index;
+reg [15:0] index;
 reg [2:0] test;
 reg [7:0] values [0:7];
 
 always @(posedge clk) begin
-  ledMatrixRow <= 1 << index[10:8];
-  ledMatrixColumn <= ~values[index[10:8]];
+  ledMatrixRow <= 1 << index[15:13];
+  ledMatrixColumn <= ~values[index[15:13]];
   index <= index + 1;
 end
 
