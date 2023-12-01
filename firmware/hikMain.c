@@ -59,21 +59,27 @@ int main() {
     for (int j = 0; j < GRID_WIDTH; j++)
       *(MATRIX_ADDRESS + (i << 3) + j) = 0;
 
+  int period = 50000;
   while(1) {
-    for (int i = 0; i < 100000; i++) {
+    for (int i = 0; i < period; i++) {
       Input currentInput = read_input(&inputBuffer);
       if (currentInput.pressed) {
         int delta = 0;
-        int deltaLeft = lastBar.position - currentBar.position;
-        int deltaRight = (currentBar.position + currentBar.size) - (lastBar.position + lastBar.size);
-        if (deltaLeft > 0) delta = deltaLeft;
-        else if (deltaRight > 0) delta = deltaRight;
+        for (int i = 0; i < GRID_WIDTH; i++) {
+          if (i >= currentBar.position && i < currentBar.position + currentBar.size) {
+            if (i < lastBar.position || i >= lastBar.position + lastBar.size) {
+              *(MATRIX_ADDRESS + (currentBar.height << 3) + i) = 0;
+              delta++;
+            }
+          }
+        }
 
         lastBar.position = currentBar.position;
         lastBar.size = currentBar.size;
 
         currentBar.size -= delta;
         currentBar.height++;
+        period -= 5000;
         break;
       }
     }
