@@ -35,6 +35,7 @@ MMU mmu(
 );
 
 FreezeUnit freezeUnit(
+  .aluBusy(aluBusy),
   .isDataMemoryBlocked(~dataMemorySuccess),
   .isPipelineFrozen(isPipelineFrozen)
 );
