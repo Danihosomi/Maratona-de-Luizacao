@@ -39,12 +39,13 @@ int main() {
 
   for(int i=0;i<8;i++) {
     for(int j=0;j<8;j++) {
-      matrix[i][j] = ((i+j) % 2) ? 1 : 0;
+      matrix[i][j] = i + j;
     }
   }
 
+  display_matrix(matrix);
+
   while(1) {
-    displayMatrix(matrix);
   }
 
   return 0;
@@ -92,13 +93,11 @@ void display_cell(int i, int j) {
 }
 
 void display_matrix(int matrix[8][8]) {
+  int currentAddress = 0;
   for(int i = 0; i < 8; i++) {
     for(int j = 0; j < 8; j++) {
-      if(matrix[i][j]) {
-        displayCell(i, j);
-        for(int k=0; k < 10; k++);
-      }
+      *(MATRIX_ADDRESS + currentAddress) = matrix[i][j];
+      currentAddress++;
     }
   }
-  *MATRIX_ADDRESS = 0;
 }
