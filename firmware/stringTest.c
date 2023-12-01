@@ -8,7 +8,6 @@ int* LED_ADDRESS = (int*)(0b1000 << 28);
 int* MATRIX_ADDRESS = (int*)(0b1010 << 28);
 int* BUTTON_ADDRESS = (int*)(0b1001 << 28);
 
-char string[11] = "0123456789";
 
 struct Input {
   int holding;
@@ -20,6 +19,8 @@ typedef struct Input Input;
 Input read_input(Input*);
 
 int main() {
+  char string[11] = "1123456789";
+  string[0] = '0';
 
   Input inputBuffer;
   *LED_ADDRESS = 0;
