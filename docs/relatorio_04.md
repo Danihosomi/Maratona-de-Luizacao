@@ -1,5 +1,13 @@
 # Apresentação
 
+# Entregas Passadas
+
+## Instruções RV32I
+Nesta entrega as instruções RV32I foram finalizadas, com o término da implementação dos jumps e das instruções de store/load.
+
+### JAL e JALR
+As instruções jal e jalr foram implementadas utilizando o módulo BranchUnit, que já era utilizado para as instruções de branch, utilizando sinais de controle adicionais. Para guardar o PC+4 no registrador, utilizamos a própria ALU para fazer a soma do sinal de PC com um sinal de 4.
+
 # Suporte para código C
 A toolchain de compilação foi alterada para escrever em um hex file e suportar
 código C como fonte, em vez de apenas código assembly. Para isso, usamos várias
@@ -46,3 +54,12 @@ Por questões de limites da FPGA, tínhamos um cap de quanta memória conseguir�
 usar em nossos programas. Isso nos fez ser muito mais intencional na arquitetura
 do nosso código, otimizando o espaço de código sempre que possível. Além disso,
 passamos a apreciar muito os benefícios da extensão C de instruções.
+
+# Contribuições
+
+- **Luiz Henrique**: 
+- **Larissa**: 
+- **Gabriel**: 
+- **Yan**: JAL e JALR
+- **Daniel**: 
+- **Vinícius**: 
