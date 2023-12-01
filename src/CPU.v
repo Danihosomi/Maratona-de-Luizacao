@@ -288,15 +288,18 @@ wire [31:0] rhsAluInputWithImmediate; // TODO: Better naming
 assign rhsAluInputWithImmediate = (exAluSrc) ? exImmediateValue : rhsAluInputJump;
 
 Alu alu(
+  .clk(clk),
   .ALUControl(aluControlInput),
   .operand1(lhsAluInput),
   .operand2(rhsAluInputWithImmediate),
   .resultALU(resultALU),
-  .zero(zero)
+  .zero(zero),
+  .aluBusy(aluBusy)
 );
 
 wire [31:0] resultALU;
 wire zero;
+wire aluBusy;
 
 wire [31:0] branchBaseValue;
 assign branchBaseValue = (exJumpRegister) ? exLHSRegisterValue : exProgramCounter;
