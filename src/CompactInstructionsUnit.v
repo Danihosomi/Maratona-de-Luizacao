@@ -1,7 +1,10 @@
 module CompactInstructionsUnit(
  input [31:0] targetInstruction,
- output [31:0] resultInstruction
+ output [31:0] resultInstruction,
+ output descompactedInstruction
 );
+
+assign descompactedInstruction = isInstructionCompacted;
 
 wire isInstructionCompacted = targetInstruction != 0 && targetInstruction[1:0] != 2'b11;
 wire [15:0] compactInstruction = targetInstruction[15:0];
