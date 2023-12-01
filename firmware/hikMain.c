@@ -1,0 +1,132 @@
+// This, along with -ffunction-sections, ensures _start will be the entrypoint of our firmware
+int main (void) __attribute__ ((section (".text.entrypoint")));
+
+// int* LED_ADDRESS = (int*) (0b1000 << 28);
+// void test_led(int test) {
+//     *LED_ADDRESS = test;
+// }
+
+
+
+
+int* MATRIX_ADDRESS = (int*) (0b1010 << 28);
+
+struct Input {
+  int holding;
+  int pressed;
+  int released;
+};
+typedef struct Input Input;
+
+void display_led(int);
+void display_matrix(int matrix[8][8]);
+Input read_input(Input*);
+
+// *** GAME ***
+const int GRID_WIDTH = 8;
+
+struct Bar {
+  int position;
+  int size;
+  int height;
+  int direction;
+};
+typedef struct Bar Bar;
+
+void update_bar(struct Bar*);
+
+int main() {
+  Input inputBuffer = {
+    .holding = 0,
+    .pressed = 0,
+    .released = 0
+  };
+  
+  Bar lastBar = {
+    .position = 0,
+    .size = GRID_WIDTH,
+    .height = 0,
+    .direction = 0
+  };
+  Bar currentBar = {
+    .position = 0,
+    .size = 4,
+    .height = 0,
+    .direction = 1
+  };
+
+  for (int i = 0; i < GRID_WIDTH; i++)
+    for (int j = 0; j < GRID_WIDTH; j++)
+      *(MATRIX_ADDRESS + (i << 3) + j) = 0;
+
+  while(1) {
+    for (int i = 0; i < 100000; i++) {
+      Input currentInput = read_input(&inputBuffer);
+      if (currentInput.pressed) {
+        int delta = 0;
+        int deltaLeft = lastBar.position - currentBar.position;
+        int deltaRight = (currentBar.position + currentBar.size) - (lastBar.position + lastBar.size);
+        if (deltaLeft > 0) delta = deltaLeft;
+        else if (deltaRight > 0) delta = deltaRight;
+
+        lastBar.position = currentBar.position;
+        lastBar.size = currentBar.size;
+
+        currentBar.size -= delta;
+        currentBar.height++;
+        break;
+      }
+    }
+    update_bar(&currentBar);
+    // test_led(currentBar.position);
+  }
+
+  return 0;
+}
+
+void update_bar(struct Bar* bar) {
+  if (bar->position == 0 && bar->direction < 0) {
+    bar->direction = 1;
+  } else if (bar->position + bar->size == GRID_WIDTH && bar->direction > 0) {
+    bar->direction = -1;
+  }
+
+  bar->position += bar->direction;
+
+  for (int i = 0; i < GRID_WIDTH; i++) {
+    int* address = MATRIX_ADDRESS + (bar->height << 3) + i;
+    if (i < bar->position || i >= bar->position + bar->size) {
+      *address = 0;
+    } else {
+      *address = 1;
+    }
+  }
+}
+
+
+
+// *** DRIVERS ***
+// Address
+const int* const BUTTON_ADDRESS = (int*) (0b1001 << 28);
+
+// Button
+int read_button() {
+  return *BUTTON_ADDRESS;
+}
+
+Input read_input(Input* inputBuffer) {
+  Input input = {
+    .holding = 0,
+    .pressed = 0,
+    .released = 0
+  };
+  input.holding = read_button();
+
+  if (input.holding != inputBuffer->holding) {
+    input.pressed = input.holding == 1;
+    input.released = input.holding == 0;
+  }
+  *inputBuffer = input;
+
+  return input;
+}
