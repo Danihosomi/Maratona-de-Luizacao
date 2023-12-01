@@ -10,14 +10,21 @@ int* BUTTON_ADDRESS = (int*)(0b1001 << 28);
 
 int letter_r_upper_matrix = 0b00000000011111000100001001000010;
 int letter_r_lower_matrix = 0b01111100010010000100010001000010;
+
 int letter_o_upper_matrix = 0b00000000001111000100001001000010;
 int letter_o_lower_matrix = 0b01000010010000100100001000111100;
+
 int letter_d_upper_matrix = 0b00000000011111000100001001000010;
 int letter_d_lower_matrix = 0b01000010010000100100001001111100;
+
 int letter_l_upper_matrix = 0b00000000010000000100000001000000;
 int letter_l_lower_matrix = 0b01000000010000000100000001111110;
+
 int letter_f_upper_matrix = 0b00000000011111100100000001000000;
 int letter_f_lower_matrix = 0b01111000010000000100000001000000;
+
+int heart_upper_matrix = 0b00000000011001101111111111111111;
+int heart_lower_matrix = 0b11111111011111100011110000011000;
 
 struct Input {
   int holding;
@@ -39,7 +46,7 @@ int main() {
     Input currentInput = read_input(&inputBuffer);
 
     if (currentInput.pressed) letter_number++;
-    if (letter_number > 8) letter_number = 0;
+    if (letter_number > 9) letter_number = 0;
 
     *LED_ADDRESS = letter_number;
 
@@ -77,6 +84,10 @@ int main() {
 
     if (letter_number == 8) {
       display_matrix(letter_o_upper_matrix, letter_o_lower_matrix);
+    }
+
+    if (letter_number == 9) {
+      display_matrix(heart_upper_matrix, heart_lower_matrix);
     }
   }
 
