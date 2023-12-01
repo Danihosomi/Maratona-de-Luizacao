@@ -94,15 +94,12 @@ int main() {
   return 0;
 }
 
-void display_cell(int i, int j) {
+void display_line(int i, int j) {
   int value = 0;
 
   setBit(value, i);
 
-  for (int k = 0; k < 8; k++) {
-    if (k == j) continue;
-    setBit(value, (k + 8));
-  }
+  value |= ((~j) << 8);
 
   *MATRIX_ADDRESS = value;
 }
@@ -110,10 +107,11 @@ void display_cell(int i, int j) {
 // Given upper_matrix bits and lower_matrix bits, display the matrix
 void display_matrix(int upper_matrix, int lower_matrix) {
   for (int i = 0; i < 4; i++) {
-    for (int j = 0; j < 8; j++) {
-      if (lower_matrix & (1 << ((i << 3) + j))) display_cell(i, j);
-      if (upper_matrix & (1 << ((i << 3) + j))) display_cell(i + 4, j);
-    }
+    int val = upper_matrix >> (4 - i) * 8;
+    display_line(i, val);
+
+    val = lower_matrix >> (4 - i) * 8;
+    display_line(i + 4, val);
   }
   *MATRIX_ADDRESS = 0;
 }
