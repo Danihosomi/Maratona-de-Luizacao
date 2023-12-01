@@ -1,44 +1,82 @@
 module Div (
+    input clk,
     input [31:0] dividend,
     input [31:0] divisor,
-    output reg [31:0] quocient,
-    output reg [31:0] remainder
+    input isUnsigned,
+    input start,
+    output done,
+    output busy,
+    output [31:0] val,
+    output [31:0] rem
 );
 
-reg [63:0] tmp_divisor;
-reg [31:0] tmp_dividend;
-reg [31:0] aux;
+    parameter IDLE = 0;
+    parameter INIT = 1;
+    parameter DIVIDE = 2;
+    parameter FINISH = 3;
 
+    wire [6:0] i;
+    wire [31:0] tmp_dividend, next_tmp_dividend;
+    wire [31:0] quo, next_quo, curr_rem, next_rem;
+    wire [31:0] a, b;
+    wire a_sign, b_sign;
+    reg [2:0] state;
 
-always @* begin
-    aux = {1'b1, 31'b0};
-    quocient = 0;
-
-    if (divisor[31] == 1) begin
-        tmp_divisor = {~divisor + 1, 32'b0};
+    always @* begin
+        a_sign = dividend[31];
+        b_sign = divisor[31];
     end
-    if (dividend[31] == 1) begin
-        tmp_dividend =  ~dividend + 1;
-    end
-    
-    quocient = quocient << 1;
 
-    for (integer i = 0; i < 32; i = i + 1) begin
-        if (tmp_dividend - tmp_divisor >= 0) begin
-            tmp_dividend = tmp_dividend - tmp_divisor;
-            quocient = {quocient, 1};
-            tmp_divisor = tmp_divisor >> 1;
+    always @* begin
+        if(tmp_dividend <= curr_rem) begin
+            next_rem = next_rem - tmp_dividend;
+            next_quo = {quo, 1'b1};
+            next_tmp_dividend = tmp_dividend >> 1;
+        end else begin
+            next_quo = quo << 1;
+            next_tmp_dividend = tmp_dividend >> 1;
         end
     end
-    
-    remainder = tmp_dividend;
 
-    if (divisor[31] ^ dividend[31]) begin
-        quocient = ~quocient + 1;
-    end
-    if (dividend[31]) begin
-        remainder = ~remainder + 1;
-    end
-end
+    always @(posedge clk) begin
+        done <= 0;
+        case (state)
+            INIT: begin
+                state <= DIVIDE;
+                i <= 0;
+                curr_rem <= a;
+                tmp_dividend <= {b, 32'b0};
+            end
+            DIVIDE: begin
+                if (i == 31) state <= FINISH;
+                i <= i + 1;
+                tmp_dividend <= next_tmp_dividend;
+                curr_rem <= next_rem;
+                quo <= next_quo;
+            end
+            FINISH: begin
+                state <= IDLE;
+                busy <= 0;
+                done <= 1;
+                if (quo != 0) val <= (sign) ? (~quo + 1) : quo;
+                rem <= (a_sign & ~isUnsigned) ? (~curr_rem + 1) : curr_rem;
+            end
+            default: begin
+                if (start) begin
+                    state <= INIT;
+                    busy <= 1;
+                    if(~isUnsigned) begin
+                        a <= (a_sign) ? ~dividend + 1 : dividend;
+                        b <= (b_sign) ? ~divisor + 1 : divisor;
+                        sign <= a_sign ^ b_sign;
+                    end else begin
+                        a <= dividend;
+                        b <= divisor;
+                        sign <= 0;
+                    end
 
+                end
+            end
+        endcase
+    end
 endmodule
