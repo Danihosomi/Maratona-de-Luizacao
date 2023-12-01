@@ -74,8 +74,10 @@ int main() {
           }
         }
         currentBar.size -= delta;
-        lastBar.position = currentBar.position;
         lastBar.size = currentBar.size;
+        if (currentBar.position > lastBar.position) {
+          lastBar.position = currentBar.position;
+        }
 
         currentBar.height++;
         period -= 5000;
