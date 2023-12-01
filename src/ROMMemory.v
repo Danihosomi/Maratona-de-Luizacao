@@ -11,10 +11,13 @@ initial begin
 end
 
 always @* begin
-  if (address == 0 ) begin
+  if (address == 0) begin
+    data = 32'h00001137;
+  end
+  else if (address == 4) begin
     // Change the stack pointer to the top of the memory
     // if memory is changed, please update it
-    data = 32'hbfc00113; // Initializing the stack pointer
+    data = 32'hbfc10113; // Initializing the stack pointer
   end
   else begin
     data = rom[address[10:2]];

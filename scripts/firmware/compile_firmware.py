@@ -8,7 +8,8 @@ args = parser.parse_args()
 compiledMemory = []
 instructionAddress = 0
 
-# Starting at address 4
+# Starting at address 8
+compiledMemory.append(f'00000000\n')
 compiledMemory.append(f'00000000\n')
 
 with open(args.srcPath, 'rb') as machineCode:
