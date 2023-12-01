@@ -2,7 +2,7 @@
 int main (void) __attribute__ ((section (".text.entrypoint")));
 
 #define max(a, b) (a > b) ? a : b
-#define abs(a) (a > 0) ? a : -a
+#define abs(a) ((a) > 0) ? (a) : (-a)
 
 // *** DRIVERS Interface ***
 struct Input {
@@ -129,7 +129,7 @@ void update_bar(struct Bar* bar, int grid[GRID_WIDTH][GRID_WIDTH]) {
   if(bar->isLeft) {
     bar->position--;
     
-    if(bar->position == -GRID_WIDTH){ 
+    if(bar->position == -bar->size){ 
       bar->isLeft = 0;
     }
   }
