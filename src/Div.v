@@ -1,44 +1,72 @@
 module Div (
+    input clk,
     input [31:0] dividend,
     input [31:0] divisor,
-    output reg [31:0] quocient,
-    output reg [31:0] remainder
+    input isUnsigned,
+    input start,
+    output done,
+    output [31:0] val,
+    output [31:0] rem
 );
 
-reg [63:0] tmp_divisor;
-reg [31:0] tmp_dividend;
-reg [31:0] aux;
+    parameter IDLE = 0;
+    parameter DIVIDE = 1;
+    parameter FINISH = 2;
 
-
-always @* begin
-    aux = {1'b1, 31'b0};
-    quocient = 0;
-
-    if (divisor[31] == 1) begin
-        tmp_divisor = {~divisor + 1, 32'b0};
+    initial begin
+        state = IDLE;
     end
-    if (dividend[31] == 1) begin
-        tmp_dividend =  ~dividend + 1;
-    end
-    
-    quocient = quocient << 1;
 
-    for (integer i = 0; i < 32; i = i + 1) begin
-        if (tmp_dividend - tmp_divisor >= 0) begin
-            tmp_dividend = tmp_dividend - tmp_divisor;
-            quocient = {quocient, 1};
-            tmp_divisor = tmp_divisor >> 1;
+    reg [6:0] i;
+    reg [63:0] tmp_dividend, next_tmp_dividend;
+    reg [31:0] quo, next_quo, curr_rem, next_rem;
+    wire [31:0] a, b;
+    wire a_sign, b_sign, sign;
+    reg [2:0] state;
+
+    assign a_sign = dividend[31];
+    assign b_sign = divisor[31];
+    assign sign = isUnsigned ? 0 : a_sign ^ b_sign;
+
+    assign a = (a_sign & ~isUnsigned) ? ~dividend + 1 : dividend;
+    assign b = (b_sign & ~isUnsigned) ? ~divisor + 1 : divisor;
+
+    assign val = (sign) ? (~quo + 1) : quo;
+    assign rem = (a_sign & ~isUnsigned) ? (~curr_rem + 1) : curr_rem;
+
+    always @(tmp_dividend, curr_rem, quo) begin
+        if (tmp_dividend <= {32'b0, curr_rem}) begin
+          next_rem = curr_rem - tmp_dividend[31:0];
+          next_quo = {quo[30:0], 1'b1};
+          next_tmp_dividend = tmp_dividend >> 1;
+        end else begin
+          next_rem = curr_rem;
+          next_quo = quo << 1;
+          next_tmp_dividend = tmp_dividend >> 1;
         end
     end
-    
-    remainder = tmp_dividend;
 
-    if (divisor[31] ^ dividend[31]) begin
-        quocient = ~quocient + 1;
+    assign done = (state == FINISH);
+    always @(posedge clk) begin
+        case (state)
+            DIVIDE: begin
+                if (i == 32) state <= FINISH;
+                i <= i + 1;
+                tmp_dividend <= next_tmp_dividend;
+                curr_rem <= next_rem;
+                quo <= next_quo;
+            end
+            FINISH: begin
+                state <= IDLE;
+            end
+            default: begin
+                if (start) begin
+                state <= DIVIDE;
+                i <= 0;
+                curr_rem <= a;
+                tmp_dividend <= {b, 32'b0};
+                end
+            end
+        endcase
     end
-    if (dividend[31]) begin
-        remainder = ~remainder + 1;
-    end
-end
-
 endmodule

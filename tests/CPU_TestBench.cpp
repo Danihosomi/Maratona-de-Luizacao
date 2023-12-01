@@ -5,7 +5,7 @@
 
 #define str(x) #x".vcd"
 
-#define MAX_SIM_TIME 1000
+#define MAX_SIM_TIME 100000
 vluint64_t sim_time = 0;
 
 void runSimulation() {
@@ -19,6 +19,7 @@ void runSimulation() {
     while (sim_time < MAX_SIM_TIME) {
         dut->clk ^= 1;
         dut->eval();
+        dut->buttonPeripheral = (3 * sim_time % 1000) > 500;
         m_trace->dump(sim_time);
         sim_time++;
     }
