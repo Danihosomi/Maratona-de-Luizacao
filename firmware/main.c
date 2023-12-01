@@ -72,7 +72,7 @@ int main() {
         }
 
         currentBar.height++;
-        period -= 4000;
+        period = period / 2;
         break;
       }
     }
