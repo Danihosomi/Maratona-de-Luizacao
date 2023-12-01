@@ -4,8 +4,8 @@ module CacheL1(
   input [31:0] address,
   input readEnable,
   input writeEnable,
-  input byteRead,
-  input halfRead,
+  input byteOperation,
+  input halfOperation,
   input unsignedRead,
   input [31:0] dataIn,
   output [31:0] dataOut,
@@ -19,24 +19,30 @@ module CacheL1(
   output memoryWriteEnable,
   input memoryReady
 );
-  // Handling 'broken' memory reads
-  wire wordRead;
+  // Handling 'broken' memory reads and writes
+  wire wordOperation;
   wire needNextAddress;
+  wire needReadAddress;
   wire [31:0] nextAddress;
   wire [31:0] readAddress;
   wire [31:0] writeAddress;
   reg readNextAddress;
-  assign wordRead = ~(byteRead | halfRead);
-  assign needNextAddress = (wordRead & (address[1:0] != 2'b00)) || (halfRead & (address[1:0] == 2'b11));
+  reg writeNextAddress;
+  reg writeReadPhase;
+  wire writeWritePhase;
+  assign wordOperation = ~(byteOperation | halfOperation);
+  assign needNextAddress = (wordOperation & (address[1:0] != 2'b00)) | (halfOperation & (address[1:0] == 2'b11));
+  assign needReadAddress = (~(wordOperation & (address[1:0] == 2'b00)) & writeEnable) | ~hit | (needNextAddress & ~nextAddressHit);
   assign nextAddress = address + 4;
   assign readAddress = readNextAddress ? nextAddress : address;
-  assign writeAddress = address;
+  assign writeAddress = writeNextAddress ? nextAddress : address;
+  assign writeWritePhase = ~writeReadPhase;
 
-  // Wires passing throught cache
-  assign memoryDataOut = dataIn;
-  assign memoryAddress = readEnable ? readAddress : writeAddress;
-  assign memoryReadEnable = readEnable;
-  assign memoryWriteEnable = writeEnable;
+  // Memory wires
+  assign memoryDataOut = invalidMemory? dataIn : writeNextAddress ? bigCacheDataToWrite[63:32] : bigCacheDataToWrite[31:0];
+  assign memoryAddress = invalidMemory ? address : memoryReadEnable ? readAddress : writeAddress;
+  assign memoryReadEnable = invalidMemory ? readEnable : readEnable | (writeReadPhase & writeEnable);
+  assign memoryWriteEnable = invalidMemory ? writeEnable : writeWritePhase & writeEnable;
 
   // Machine states
   parameter IDLE = 2'b00;
@@ -88,18 +94,24 @@ module CacheL1(
     clean[31] = 0;
     state = IDLE;
     readNextAddress = 0;
+    writeNextAddress = 0;
+    writeReadPhase = 1;
   end
 
-  wire hit;
   wire tagMatch;
+  wire hit;
+  wire nextAddressTagMatch;
+  wire nextAddressHit;
   wire readReady;
   wire invalidMemory;
   wire cacheIdle;
   assign tagMatch = tag[memoryAddress[6:2]] == memoryAddress[10:7];
   assign hit = tagMatch & clean[memoryAddress[6:2]];
-  assign invalidMemory = memoryAddress[31];
+  assign nextAddressTagMatch = tag[nextAddress[6:2]] == nextAddress[10:7];
+  assign nextAddressHit = nextAddressTagMatch & clean[nextAddress[6:2]];
+  assign invalidMemory = address[31];
   assign cacheIdle = ~(readEnable | writeEnable);
-  assign readReady = hit & readEnable & ~needNextAddress;
+  assign readReady = memoryReadEnable & ~needReadAddress;
 
   // Cache controller with machine states
   always @(posedge clk) begin
@@ -114,13 +126,17 @@ module CacheL1(
             state <= IDLE;
           end
           else if (readReady) begin
-            state <= IDLE;
+            if (writeEnable) begin
+              writeReadPhase <= 0;
+              state <= WRITE;
+            end
+            else begin
+              state <= IDLE;
+            end
           end
-          else if (readEnable) begin
+          else if (memoryReadEnable) begin
+            readNextAddress <= hit;
             state <= READ;
-          end
-          else if (writeEnable) begin
-            state <= WRITE;
           end
           else begin
             state <= IDLE;
@@ -128,16 +144,22 @@ module CacheL1(
         end
         READ: begin
           if (memoryReady) begin
-            data[readAddress[6:2]] <= memoryDataIn;
-            tag[readAddress[6:2]] <= readAddress[10:7];
-            clean[readAddress[6:2]] <= 1;
-            if (needNextAddress == 1 & readNextAddress == 0) begin
+            data[memoryAddress[6:2]] <= memoryDataIn;
+            tag[memoryAddress[6:2]] <= memoryAddress[10:7];
+            clean[memoryAddress[6:2]] <= 1;
+            if (needNextAddress & ~readNextAddress & ~nextAddressHit) begin
               readNextAddress <= 1;
               state <= READ;
             end
             else begin
               readNextAddress <= 0;
-              state <= READY;
+              if (writeEnable) begin
+                writeReadPhase <= 0;
+                state <= WRITE;
+              end
+              else begin
+                state <= READY;
+              end
             end
           end
           else begin
@@ -146,8 +168,15 @@ module CacheL1(
         end
         WRITE: begin
           if (memoryReady) begin
-            clean[writeAddress[6:2]] <= (tagMatch) ? 0 : clean[writeAddress[6:2]];
-            state <= READY;
+            clean[memoryAddress[6:2]] <= (tagMatch) ? 0 : clean[memoryAddress[6:2]];
+            if (needNextAddress & ~writeNextAddress) begin
+              writeNextAddress <= 1;
+              state <= WRITE;
+            end
+            else begin
+              writeNextAddress <= 0;
+              state <= READY;
+            end
           end
           else begin
             state <= WRITE;
@@ -155,6 +184,7 @@ module CacheL1(
         end
         default: begin
           state <= IDLE;
+          writeReadPhase <= 1;
         end
       endcase
     end
@@ -163,11 +193,12 @@ module CacheL1(
   wire [63:0] bigCacheData;
   wire [31:0] signedData;
   wire [31:0] unsignedData;
+  reg  [63:0] bigCacheDataToWrite;
 
   assign bigCacheData = {data[nextAddress[6:2]], data[address[6:2]]};
 
   reg [5:0] startBit;
-  
+
   always @* begin
     startBit =
       (address[1:0] == 2'b00) ? 0 :
@@ -177,18 +208,31 @@ module CacheL1(
   end
 
   assign unsignedData =
-    (byteRead) ? {24'b0, bigCacheData[startBit +: 8]} :
-    (halfRead) ? {16'b0, bigCacheData[startBit +: 16]} :
-    (wordRead) ? bigCacheData[startBit +: 32] :
+    (byteOperation) ? {24'b0, bigCacheData[startBit +: 8]} :
+    (halfOperation) ? {16'b0, bigCacheData[startBit +: 16]} :
+    (wordOperation) ? bigCacheData[startBit +: 32] :
     0;
 
   assign signedData =
-    (byteRead) ? {{24{bigCacheData[startBit + 7]}}, bigCacheData[startBit +: 8]} :
-    (halfRead) ? {{16{bigCacheData[startBit + 15]}}, bigCacheData[startBit +: 16]} :
-    (wordRead) ? bigCacheData[startBit +: 32] :
+    (byteOperation) ? {{24{bigCacheData[startBit + 7]}}, bigCacheData[startBit +: 8]} :
+    (halfOperation) ? {{16{bigCacheData[startBit + 15]}}, bigCacheData[startBit +: 16]} :
+    (wordOperation) ? bigCacheData[startBit +: 32] :
     0;
 
+  always @* begin
+    bigCacheDataToWrite = bigCacheData;
+    if (byteOperation) begin
+      bigCacheDataToWrite[startBit +: 8] = dataIn[7:0];
+    end
+    else if (halfOperation) begin
+      bigCacheDataToWrite[startBit +: 16] = dataIn[15:0];
+    end
+    else if (wordOperation) begin
+      bigCacheDataToWrite[startBit +: 32] = dataIn;
+    end
+  end
+
   assign dataOut = unsignedRead ? unsignedData : signedData;
-  assign cacheReady = ((state == READY) | readReady | cacheIdle) && inFlightAddress == address;
+  assign cacheReady = ((state == READY) | (readReady & ~writeEnable) | cacheIdle) && inFlightAddress == address;
 
 endmodule
