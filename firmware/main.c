@@ -33,17 +33,15 @@ int main() {
   //   update_bar(&bar);
   // }
 
-  int matrix[8][8];
-
   *LED_ADDRESS = 4;
 
   for(int i=0;i<8;i++) {
     for(int j=0;j<8;j++) {
-      matrix[i][j] = i + j;
+      *(MATRIX_ADDRESS + 8 * i + j) = i + j;
     }
   }
 
-  display_matrix(matrix);
+  // display_matrix(matrix);
 
   while(1) {
   }
@@ -77,27 +75,4 @@ int main() {
 // *** DRIVERS ***
 void display_led(int number) {
   *LED_ADDRESS = number;
-}
-
-void display_cell(int i, int j) {
-  int value = 0;
-
-  setBit(value, i);
-
-  for(int k=0; k < 8; k++) {
-    if(k == j) continue;
-    setBit(value, k + 8);
-  }
-
-  *MATRIX_ADDRESS = value;
-}
-
-void display_matrix(int matrix[8][8]) {
-  int currentAddress = 0;
-  for(int i = 0; i < 8; i++) {
-    for(int j = 0; j < 8; j++) {
-      *(MATRIX_ADDRESS + currentAddress) = matrix[i][j];
-      currentAddress++;
-    }
-  }
 }
