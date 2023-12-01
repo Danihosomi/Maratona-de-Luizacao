@@ -8,7 +8,7 @@ int* LED_ADDRESS = (int*)(0b1000 << 28);
 int* MATRIX_ADDRESS = (int*)(0b1010 << 28);
 int* BUTTON_ADDRESS = (int*)(0b1001 << 28);
 
-char string[10] = "0123456789";
+char string[11] = "0123456789";
 
 struct Input {
   int holding;
@@ -23,24 +23,15 @@ int main() {
 
   Input inputBuffer;
   *LED_ADDRESS = 0;
-  int curr_operation = 3;
-  int curr_value = 1;
+  int curr_index = 0;
 
   while (1) {
     Input currentInput = read_input(&inputBuffer);
 
-    if (currentInput.pressed) curr_operation++;
-    curr_operation %= 4;
+    if (currentInput.pressed) curr_index++;
+    curr_index %= 10;
 
-    *LED_ADDRESS = string[curr_operation];
-
-    if (currentInput.pressed && curr_operation < 2) {
-      curr_value *= 7;
-    }
-
-    if (currentInput.pressed && curr_operation >= 2) {
-      curr_value /= 7;
-    }
+    *LED_ADDRESS = string[curr_index];
   }
 
   return 0;
