@@ -64,11 +64,10 @@ IF_ID_Barrier if_id_barrier(
 
 wire [31:0] idInstructionPreDecompression;
 
-//CompactInstructionsUnit compactInstructionUnit(
-//  .targetInstruction(idInstructionPreDecompression),
-//  .resultInstruction(idInstruction)
-//);
-assign idInstruction = idInstructionPreDecompression;
+CompactInstructionsUnit compactInstructionUnit(
+ .targetInstruction(idInstructionPreDecompression),
+ .resultInstruction(idInstruction)
+);
 
 wire [31:0] idInstruction;
 wire [31:0] idProgramCounter;
