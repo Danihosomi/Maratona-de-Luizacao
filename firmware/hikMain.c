@@ -1,6 +1,14 @@
 // This, along with -ffunction-sections, ensures _start will be the entrypoint of our firmware
 int main (void) __attribute__ ((section (".text.entrypoint")));
 
+// int* LED_ADDRESS = (int*) (0b1000 << 28);
+// void test_led(int test) {
+//     *LED_ADDRESS = test;
+// }
+
+
+
+
 int* MATRIX_ADDRESS = (int*) (0b1010 << 28);
 
 struct Input {
@@ -51,7 +59,7 @@ int main() {
     for (int j = 0; j < GRID_WIDTH; j++)
       *(MATRIX_ADDRESS + (i << 3) + j) = 0;
 
-  int period = 40000;
+  int period = 50000;
   while(1) {
     for (int i = 0; i < period; i++) {
       Input currentInput = read_input(&inputBuffer);
@@ -72,11 +80,12 @@ int main() {
         }
 
         currentBar.height++;
-        period -= 4000;
+        period -= 5000;
         break;
       }
     }
     update_bar(&currentBar);
+    // test_led(currentBar.position);
   }
 
   return 0;
