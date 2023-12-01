@@ -1,24 +1,48 @@
 module Alu (
+  input clk,
   input [5:0] ALUControl, // Change width to 6 bits
   input signed [31:0] operand1,
   input signed [31:0] operand2,
   output reg signed [31:0] resultALU,
-  output reg zero
+  output reg zero,
+  output aluBusy
 );
 
 wire [63:0] mult;
 wire [63:0] mulhsu;
 wire [63:0] mulhu;
+wire [31:0] divisionResult;
+wire [31:0] remainderResult;
+wire isDivisionOperation;
+wire isUnsigned;
+wire divisionBusy;
+wire divisionDone;
 
+assign isDivisionOperation = (ALUControl == 6'b010100 || ALUControl == 6'b010101 || ALUControl == 6'b010110 || ALUControl == 6'b010111);
+assign isUnsigned = (ALUControl == 6'b010101 || ALUControl == 6'b010111);
+assign aluBusy = divisionBusy;
+assign divisionBusy = isDivisionOperation & ~divisionDone;
 assign mult = operand1 * operand2;
 assign mulhsu = {{32'b0, operand1} * {32'b0, operand2}};
 assign mulhu = {{32'b0, operand1} * {32'b0, operand2}};
+
+Div div(
+  .clk(clk),
+  .dividend(operand1),
+  .divisor(operand2),
+  .isUnsigned(isUnsigned),
+  .start(isDivisionOperation),
+  .done(divisionDone),
+  .val(divisionResult),
+  .rem(remainderResult)
+);
+
 
 
 `define isNegative(A) A[31] == 1
 
 
-always @(operand1, operand2, ALUControl) begin
+always @(operand1, operand2, ALUControl, divisionDone) begin
   case (ALUControl)
 
     6'b000010: resultALU = operand1 + operand2;  // 0010: ADD
@@ -52,10 +76,10 @@ always @(operand1, operand2, ALUControl) begin
     6'b010001: resultALU = mult[63:32]; //mulh
     6'b010010: resultALU = mulhsu[63:32]; //mulhsu
     6'b010011: resultALU = mulhu[63:32]; //mulhu
-    //6'b010100: resultALU = (operand1 / operand2); //div
-    //6'b010101: resultALU = {{1'b0, operand1} / {1'b0, operand2}}; //divu
-    //6'b010110: resultALU = (operand1 % operand2); //rem
-    //6'b010111: resultALU = {{1'b0, operand1} % {1'b0, operand2}}; //remu
+    6'b010100: resultALU = divisionResult; //div
+    6'b010101: resultALU = divisionResult; //divu
+    6'b010110: resultALU = remainderResult; //rem
+    6'b010111: resultALU = remainderResult; //remu
 
     6'b100000: begin // min
       if (`isNegative(operand1) && !(`isNegative(operand2))) resultALU = operand1;
