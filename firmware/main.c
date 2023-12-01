@@ -1,81 +1,82 @@
-// This, along with -ffunction-sections, ensures _start will be the entrypoint of our firmware
-int main (void) __attribute__ ((section (".text.entrypoint")));
+// This, along with -ffunction-sections, ensures _start will be the entrypoint
+// of our firmware
+int main(void) __attribute__((section(".text.entrypoint")));
 
-#define setBit(number, i) (number |= (1 << i)) 
+#define setBit(number, i) (number |= (1 << i))
 
-int* LED_ADDRESS = (int*) (0b1000 << 28);
-int* MATRIX_ADDRESS = (int*) (0b1010 << 28);
+int* LED_ADDRESS = (int*)(0b1000 << 28);
+int* MATRIX_ADDRESS = (int*)(0b1010 << 28);
+int* BUTTON_ADDRESS = (int*)(0b1001 << 28);
 
-void display_led(int);
-void display_matrix(int matrix[8][8]);
+int letter_r_upper_matrix = 0b00000000011111000100001001000010;
+int letter_r_lower_matrix = 0b01111100010010000100010001000010;
+int letter_o_upper_matrix, letter_o_lower_matrix;
+int letter_d_upper_matrix, letter_d_lower_matrix;
+int letter_l_upper_matrix, letter_l_lower_matrix;
+int letter_f_upper_matrix, letter_f_lower_matrix;
 
-// const int LINE_WIDTH = 6;
-// const int SCALE_FACTOR = 24;
+struct Input {
+  int holding;
+  int pressed;
+  int released;
+};
+typedef struct Input Input;
 
-// struct Bar {
-//   int position;
-//   int size;
-//   int speed;
-// };
-
-// void draw_bar(struct Bar);
-// void update_bar(struct Bar*);
+Input read_input(Input*);
+void display_matrix(int upper_matrix, int lower_matrix);
 
 int main() {
-  // struct Bar bar = {
-  //   .position = 0,
-  //   .size = 2,
-  //   .speed = 800
-  // };
 
-  // while(1) {
-  //   draw_bar(bar);
-  //   update_bar(&bar);
-  // }
+  Input inputBuffer;
+  *LED_ADDRESS = 0;
+  int letter_number = 0;
 
-  int matrix[8][8];
+  while (1) {
+    Input currentInput = read_input(&inputBuffer);
 
-  *LED_ADDRESS = 4;
+    if (currentInput.pressed) letter_number++;
+    if (letter_number > 8) letter_number = 0;
 
-  for(int i=0;i<8;i++) {
-    for(int j=0;j<8;j++) {
-      matrix[i][j] = ((i+j) % 2) ? 1 : 0;
+    *LED_ADDRESS = letter_number;
+
+    if (letter_number == 0) {
+      display_matrix(letter_r_upper_matrix, letter_r_lower_matrix);
+    }
+
+    if (letter_number == 1) {
+      display_matrix(letter_o_upper_matrix, letter_o_lower_matrix);
+    }
+
+    if (letter_number == 2) {
+      display_matrix(letter_d_upper_matrix, letter_d_lower_matrix);
+    }
+
+    if (letter_number == 3) {
+      display_matrix(letter_l_upper_matrix, letter_l_lower_matrix);
+    }
+
+    if (letter_number == 4) {
+      display_matrix(letter_f_upper_matrix, letter_f_lower_matrix);
+    }
+
+    if (letter_number == 5) {
+      display_matrix(letter_f_upper_matrix, letter_f_lower_matrix);
+    }
+
+    if (letter_number == 6) {
+      display_matrix(letter_o_upper_matrix, letter_o_lower_matrix);
+    }
+
+    if (letter_number == 7) {
+      display_matrix(letter_r_upper_matrix, letter_r_lower_matrix);
+    }
+
+    if (letter_number == 8) {
+      display_matrix(letter_d_upper_matrix, letter_d_lower_matrix);
     }
   }
 
-  while(1) {
-    display_matrix(matrix);
-  }
-
   return 0;
-}
-
-// void draw_bar(struct Bar bar) {
-//   int unscaledPosition = bar.position >> SCALE_FACTOR;
-
-//   int encodedBar = 0;
-//   for (int i = 0; i < bar.size; i++) {
-//     encodedBar += 1 << (unscaledPosition + i);
-//   }
-//   *LED_ADDRESS = encodedBar;
-// }
-
-// void update_bar(struct Bar* bar) {
-//   int unscaledPosition = bar->position >> SCALE_FACTOR;
-
-//   if (bar->speed > 0 && unscaledPosition >= LINE_WIDTH - bar->size) {
-//     bar->speed = -bar->speed;
-//   } else if (bar->speed < 0 && unscaledPosition < bar->size) {
-//     bar->speed = -bar->speed;
-//     bar->position = -1;
-//   }
-
-//   bar->position += bar->speed;
-// }
-
-// *** DRIVERS ***
-void display_led(int number) {
-  *LED_ADDRESS = number;
 }
 
 void display_cell(int i, int j) {
@@ -83,22 +84,34 @@ void display_cell(int i, int j) {
 
   setBit(value, i);
 
-  for(int k=0; k < 8; k++) {
-    if(k == j) continue;
+  for (int k = 0; k < 8; k++) {
+    if (k == j) continue;
     setBit(value, (k + 8));
   }
 
   *MATRIX_ADDRESS = value;
 }
 
-void display_matrix(int matrix[8][8]) {
-  for(int i = 0; i < 8; i++) {
-    for(int j = 0; j < 8; j++) {
-      if(matrix[i][j]) {
-        display_cell(i, j);
-        for(int k=0; k < 10; k++);
-      }
+// Given upper_matrix bits and lower_matrix bits, display the matrix
+void display_matrix(int upper_matrix, int lower_matrix) {
+  for (int i = 0; i < 4; i++) {
+    for (int j = 0; j < 8; j++) {
+      if (lower_matrix & (1 << ((i << 3) + j))) display_cell(i, j);
+      if (upper_matrix & (1 << ((i << 3) + j))) display_cell(i + 4, j);
     }
   }
   *MATRIX_ADDRESS = 0;
+}
+
+Input read_input(Input* inputBuffer) {
+  Input input = {.holding = 0, .pressed = 0, .released = 0};
+  input.holding = *BUTTON_ADDRESS;
+
+  if (input.holding != inputBuffer->holding) {
+    input.pressed = input.holding == 1;
+    input.released = input.holding == 0;
+  }
+  *inputBuffer = input;
+
+  return input;
 }
