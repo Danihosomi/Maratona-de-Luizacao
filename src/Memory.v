@@ -11,7 +11,7 @@ wire [31:0] ramData;
 wire [31:0] romData;
 
 // If rom size is changed, please update it
-wire isRom = address[31:10] == 0;
+wire isRom = address[31:12] == 0;
 
 ROMMemory MemoryROM(
   .address(address),

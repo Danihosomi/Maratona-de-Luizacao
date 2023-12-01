@@ -3,8 +3,8 @@ module ROMMemory (
   output reg [31:0] data
 );
 
-// 1 KB. If this is changed, please update the makefile -Tdata
-reg [31:0] rom [0:255];
+// 4 KB. If this is changed, please update the makefile -Tdata
+reg [31:0] rom [0:1023];
 
 initial begin
   $readmemh("rom.hex", rom);
@@ -20,7 +20,7 @@ always @* begin
     data = 32'h3fc10113; // Initializing the stack pointer
   end
   else begin
-    data = rom[address[9:2]];
+    data = rom[address[11:2]];
   end
 end
 
