@@ -37,6 +37,16 @@ bugs detectados.
 O princpial deles foi que a instrução de jal usava hardcoded um offset de 4. Foi
 alterado para no caso de instruções compactas, usar `PC + 2` em vez de `PC + 4`.
 
+# Driver da Matriz de LEDs
+
+Mudamos a comunicação com o periférico para, ao invés de setarmos diretamente os bits
+que serão enviados para o periférico (8 sinais de coluna e 8 sinais de linhas), indicarmos
+qual posição da matriz queremos mudar de valor e qual é o novo valor dela. Dessa forma, o
+próprio periférico guarda seu estado (valor de cada um dos 64 LEDs).
+A partir do estado de cada LED, o periférico itera sobre cada uma das linhas da matriz e,
+a cada ciclo, acende apenas os LEDs da linha em questão. Como isso acontece todos os ciclos
+de clock, dá a ilusão de que todos os LEDs estão acesos ao mesmo tempo.
+
 # Implementação do jogo Stacker
 
 Como escolha de um programa escrito em linguagem alto nível, foi feita a implementação
@@ -86,7 +96,7 @@ Também pudemos compreender o motivo da _cache_ deixar a leitura de instruções
 # Contribuições
 
 - **Luiz Henrique**:
-- **Larissa**:
+- **Larissa**: Implementação do driver da matriz por software (plano A, descartado), auxílio da implementação do jogo Stacker e auxílio na implementação do Rodolfofo.
 - **Gabriel**: Novas implementações da _cache_, auxílio na integração das instruções de divisão na _pipeline_, _debug_ das funcionalidades adicionadas e auxílio na implementação do plano A- (nomeado errôneamente de plano B na branch _ploc/planb_).
 - **Yan**: JAL e JALR
 - **Daniel**: Elaboração do Jogo
