@@ -18,6 +18,20 @@ Para implementar _loads_ desalinhados, foi necessário adicionar um fio _bigCach
 
 Para implementar _stores_, foi adicionado um fio _bigCacheDataToWrite_ que guarda os dados que devem ser escritos na memória. A _cache_ lê os endereços necessários (se for preciso) e modifica o _bigCacheDataToWrite_ (de forma assíncrona) com os novos bits que devem ser escritos. Depois da leitura os dados no _bigCacheDataToWrite_ são escritos na memória novamente (apenas o(s) endereço(s) necessário(s)). Essa transição de ações é feita com a máquina de estados e sinais de registradores de escrita e leitura.
 
+## Instruções RV32M
+
+Nesta entrega a instruções RV32M também foram finalizadas, com o término da implementação das operações de divisão e de resto.
+
+### DIV, DIVU, REM e REMU
+
+As intruções de divisão e resto foram implementadas utilizando uma máquina de estados que leva 34 ciclos para concluir a operação.
+
+Para iniciar a divisão é necessário que a Alu mande um sinal de "start" para o módulo de divisão, que então irá inicializar as variáveis de divisor e dividendo, e outras auxiliares, transformando as variáveis de divisor e dividendo em não sinalizados, se necessário.
+
+A lógica dessa operações consiste subtrações sucessivas do dividendo, aumentando o tamanho do divisor para 64 bits e deslocando ele 32 bits para a esquerda e a cada ciclo verificando se é possível fazer uma subtração, caso seja possível, o divisor atual é subtraído do dividendo e é concatenado o bit 1 a direita do quociente, caso contrário o quociente é deslocado 1 bit para a esquerda. No final de todo ciclo o dividendo atual também é deslocado 1 bit para a direita. Ao final dos ciclos de divisão a máquina de estados atualiza os sinais com base nos sinais dos operandos e se a divisão é sinalizada ou não e manda um sinal de "done" para a Alu.
+
+Por fim, foi preciso fazer uma nova conexão da Alu com a CPU para que enquanto estivesse ocorrendo a divisão a pipeline fosse parada, para isso foi enviado um sinal de aluBusy para a FreezeUnit, que consiste em dizer que uma operação de divisão foi iniciada e ainda não terminou. 
+
 # Suporte para código C
 
 A toolchain de compilação foi alterada para escrever em um hex file e suportar
@@ -100,4 +114,4 @@ Também pudemos compreender o motivo da _cache_ deixar a leitura de instruções
 - **Gabriel**: Novas implementações da _cache_, auxílio na integração das instruções de divisão na _pipeline_, _debug_ das funcionalidades adicionadas e auxílio na implementação do plano A- (nomeado errôneamente de plano B na branch _ploc/planb_).
 - **Yan**: JAL e JALR
 - **Daniel**: Elaboração do Jogo
-- **Vinícius**:
+- **Vinícius**: Implementação do módulo da divisão e integração com a Alu e a CPU.
