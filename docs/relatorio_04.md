@@ -107,6 +107,10 @@ Para conseguir utilizar corretamente as instruções do tipo C e poder implement
 
 Também pudemos compreender o motivo da _cache_ deixar a leitura de instruções compactas tão mais eficiente, uma vez que muitas vezes ela já salva na _cache_ mais de uma instrução por vez. Pudemos ver essa eficiência na prática ao simularmos nosso jogo no _gtkwave_.
 
+## Máquina de estados
+
+Apesar de já implementada na cache, também foi possível ter uma maior familiaridade com a implementação de uma máquina de estados em verilog. Pela operação de divisão ser mais simples que o funcionamento da cache, o entendimento sobre esse asunto se tornou mais palpável.
+
 # Contribuições
 
 - **Luiz Henrique**:
