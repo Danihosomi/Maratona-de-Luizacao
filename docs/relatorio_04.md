@@ -113,7 +113,7 @@ Apesar de já implementada na cache, também foi possível ter uma maior familia
 
 # Contribuições
 
-- **Luiz Henrique**:
+- **Luiz Henrique**: Suporte para código C, debug e estabilização da CPU, reativação da extensão de instruções compactas, driver do botão, otimização do jogo para funcionar com as limitações de memória.
 - **Larissa**: Implementação do driver da matriz por software (plano A, descartado), auxílio da implementação do jogo Stacker e auxílio na implementação do Rodolfofo.
 - **Gabriel**: Novas implementações da _cache_, auxílio na integração das instruções de divisão na _pipeline_, _debug_ das funcionalidades adicionadas e auxílio na implementação do plano A- (nomeado errôneamente de plano B na branch _ploc/planb_).
 - **Yan**: JAL e JALR
